@@ -32,14 +32,14 @@ const Form: React.FC<FormProps> = ({
             <h2 className="font-bold text-2xl">{title}</h2>
             <div className='flex flex-col items-center justify-center gap-3' >
 
-           
-            {elements.map(element => {
 
-                return element
+                {elements.map(element => {
+
+                    return element
 
 
-            })}
-             </div>
+                })}
+            </div>
             {errors && <div>{errors}</div>}
 
             <button className="flex items-center justify-center h-12 px-6 w-64 bg-blue-600 mt-8 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700" type="submit" >

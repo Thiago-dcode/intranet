@@ -6,7 +6,7 @@ interface WrapperProps {
 
 const Wrapper: React.FC<WrapperProps> = ({ children }) => {
     return (
-        <main className='flex justify-center items-center h-screen bg-gray-100'>
+        <main className=' overscroll-auto flex justify-center items-center h-screen bg-gray-100'>
             <div className=''>
                 {children}
             </div>

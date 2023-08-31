@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import '../App.css'
-import Wrapper from '../container/Wrapper'
+import mantenimiento from '../assets/img/mantenimiento.png'
+
 function Home() {
   const [count, setCount] = useState(0)
 
   return (
-    <Wrapper>
-        <div className='bg-slate-800 text-cyan-500'>
-        Intranet Arzuma
+   
+        <div  className='bg-arzumaBlack text-cyan-500 h-screen'>
+          <img className='object-cover' src={mantenimiento} alt="En mantenimiento" />
       </div>
-    </Wrapper>
+
   )
 }
 

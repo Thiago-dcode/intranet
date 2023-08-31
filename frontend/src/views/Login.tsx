@@ -11,7 +11,6 @@ const Login = () => {
     }
 
     return (
-        <Wrapper>
 
 
             <Form
@@ -27,7 +26,6 @@ const Login = () => {
 
             />
 
-        </Wrapper>
     )
 }
 
