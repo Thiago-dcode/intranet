@@ -10,7 +10,7 @@ const Form = ({
     handleSubmit,
     buttonText,
     isPending = null,
-    errors = null
+    error = ''
 }) => {
     return (
         <form className='flex flex-col items-center justify-between  bg-white rounded shadow-lg p-5' onSubmit={(e) => {
@@ -27,7 +27,7 @@ const Form = ({
 
                 })}
             </div>
-            {errors && <div>{errors}</div>}
+            {error && <div>{error}</div>}
 
             <button className="flex items-center justify-center h-12 px-6 w-64 bg-blue-600 mt-8 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700" type="submit" >
                 {isPending ? 'Submitting...' : buttonText}

@@ -14,6 +14,8 @@ export default function Input({
   name,
 
   type,
+  value,
+  handleInput,
   classInput,
   classLabel,
 
@@ -29,6 +31,7 @@ export default function Input({
       </label>
       {type === "textarea" && (
         <textarea
+
           style={style}
           name={name.toLocaleLowerCase()}
           id=""
@@ -39,12 +42,13 @@ export default function Input({
       )}
       {type !== "select" && type !== "textarea" && (
         <input
-          // onChange={({ target }) => {
-          //     handleInput(target.value);
-          // }}
+          onChange={({ target }) => {
+              handleInput(target.value);
+          }}
           className={
             "flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2"
           }
+          value={value}
           style={style}
           required
           name={name.toLocaleLowerCase()}
