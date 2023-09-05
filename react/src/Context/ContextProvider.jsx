@@ -13,13 +13,13 @@ export const ContextProvider = ({ children }) => {
   const [userToken, _setUserToken] = useState(ls.get("ACCESS_TOKEN"));
 
   const setCurrentUser = (user) => {
-    console.log(user)
+    console.log(user);
     ls.set("user", user);
 
     _setCurrentUser(user);
   };
   const setUserToken = (token) => {
-    console.log(token)
+    console.log(token);
     ls.set("ACCESS_TOKEN", token);
 
     _setCurrentUser(token);

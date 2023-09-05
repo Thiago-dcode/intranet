@@ -1,44 +1,36 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { redirect } from "react-router-dom";
 import Api from "../api/Api";
 import Form from "../components/form/Form";
 import Input from "../components/form/Input";
-import { userStateContext } from "../Context/ContextProvider";
+import useAjax from "../hooks/useAjax";
 
 export default function Login() {
-  const state = userStateContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isPending, setIsPending] = useState(false);
-  const login = async (formData, signal) => {
-    setIsPending(true);
-    try {
-      const { data } = await Api.post("/login", formData, { signal });
 
-  
-      state.setCurrentUser(data.data.user);
-      state.setUserToken(data.data.token);
-
-      setError("");
-    } catch (error) {
-      console.log(error.response.data);
-      setError(error.response.data.message);
-    } finally {
-      setIsPending(false);
-    }
-  };
+  const [session, error, isPending, setForm] = useAjax(
+    "/api/login",
+    "POST",
+    {},
+    {},
+    {},
+    true
+  );
 
   const handleSubmit = (e) => {
+    console.log("submit");
     e.preventDefault();
-    setError("");
     if (!email || !password) return;
-    const controller = new AbortController();
-    const signal = controller.signal;
 
-    login({ email, password }, signal);
-
-    return () => controller.abort();
+    setForm({
+      email,
+      password,
+    });
   };
+  useEffect(() => {
+    console.log(session);
+  }, [session, error, isPending]);
 
   return (
     <Form

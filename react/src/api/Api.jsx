@@ -3,13 +3,15 @@ import ls from "localstorage-slim";
 const Api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
+    "X-Requested-With": "XMLHttpRequest",
     "Content-Type": `multipart/form-data`,
     Accept: "application/json",
   },
+  withCredentials: true,
 });
 
 Api.interceptors.request.use((config) => {
-  const token = ls.get("ACCESS_TOKEN");
+  const token = ls.get('"ACCESS_TOKEN"');
 
   config.headers.Authorization = `Bearer ${token}`;
 
