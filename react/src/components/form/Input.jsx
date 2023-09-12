@@ -12,7 +12,7 @@ const defaultProps = {
 
 export default function Input({
   name,
-
+  id,
   type,
   value,
   handleInput,
@@ -22,7 +22,7 @@ export default function Input({
   style,
 }) {
   return (
-    <div>
+    <>
       <label
         className={"font-semibold text-xs self-start"}
         htmlFor={name.toLocaleLowerCase()}
@@ -31,7 +31,6 @@ export default function Input({
       </label>
       {type === "textarea" && (
         <textarea
-
           style={style}
           name={name.toLocaleLowerCase()}
           id=""
@@ -43,7 +42,7 @@ export default function Input({
       {type !== "select" && type !== "textarea" && (
         <input
           onChange={({ target }) => {
-              handleInput(target.value);
+            handleInput(target.value);
           }}
           className={
             "flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2"
@@ -63,7 +62,7 @@ export default function Input({
                     })}
                 </select>
             )} */}
-    </div>
+    </>
   );
 }
 

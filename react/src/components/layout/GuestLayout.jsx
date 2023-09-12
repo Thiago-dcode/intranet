@@ -3,7 +3,7 @@ import { Link, Outlet, Navigate, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 import Wrapper from "../../container/Wrapper";
 
-import useIsAuth from "../../hooks/useIsAuth";
+import {useIsAuth} from "../../hooks/useAuth";
 export default function GuestLayout() {
   const navigate = useNavigate();
   const isAuth = useIsAuth();
