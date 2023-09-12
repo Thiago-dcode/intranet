@@ -5,6 +5,7 @@ import AuthLayout from "./components/layout/AuthLayout";
 import Login from "./views/Login";
 import Home from "./views/Home.jsx";
 import Intranet from "./views/Intranet/Home";
+import Middle from "./views/Intranet/Middle";
 console.log("access");
 const router = createBrowserRouter([
   {
@@ -16,8 +17,8 @@ const router = createBrowserRouter([
         element: <Intranet />,
       },
       {
-        path: "",
-        element: <Home />,
+        path: "middle",
+        element: <Middle />,
       },
     ],
   },
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "",
+        index: true,
         element: <Home />,
       },
     ],

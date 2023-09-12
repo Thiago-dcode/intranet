@@ -5,7 +5,7 @@ import React, { ReactNode } from 'react';
 
 const Form = ({
 
-    title,
+    title= '',
     elements,
     handleSubmit,
     buttonText,

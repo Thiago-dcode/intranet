@@ -16,14 +16,14 @@ class AuthController extends Controller
     public function login(Request $request, Schedule $schedule)
     {
 
-
+    
         $fields = $request->validate([
             'email' => 'required|max:255',
             'password' => 'required',
         ]);
 
         if (!Auth::attempt($fields)) {
-            return $this->error('', 'Credenciales errónea', 401);
+            return $this->error('', 'Credenciales errónea', 422);
         }
         $user = Auth::user();
         return $this->success([
@@ -37,13 +37,17 @@ class AuthController extends Controller
     public function register(Request $resquest)
     {
     }
-    public function logout(Request $resquest)
+    public function logout(Request $request)
     {
-
-        return Auth::logout();
-        Auth::user()->currentAccessToken()->delete();
-        return  response()->json([
-            'message' => 'token deleted successfully'
+        Auth::guard('web')->logout();
+      
+     
+        return response([
+            'success' => true
         ]);
+    }
+    public function me(Request $request)
+    {
+        return $request->user();
     }
 }

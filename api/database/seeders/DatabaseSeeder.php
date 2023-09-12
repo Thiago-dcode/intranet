@@ -24,10 +24,12 @@ class DatabaseSeeder extends Seeder
         ]);
       $beraTextil =   Company::firstOrCreate([
             'name' => 'bera-textil',
+            'color' => '#0082CA',
             
         ]);
         $carnicasPozas =   Company::firstOrCreate([
             'name' => 'carnicaspozas',
+            'color' => '#739640',
             
         ]);
       $moduleClientes =  Module::firstOrCreate([

@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { redirect } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Api from "../api/Api";
 import Form from "../components/form/Form";
 import Input from "../components/form/Input";
 import useAjax from "../hooks/useAjax";
-
+import ls from "localstorage-slim";
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -28,8 +29,16 @@ export default function Login() {
       password,
     });
   };
+  const redirect = () => {
+    if (session && !error && !isPending) {
+      console.log(session.data.token);
+      ls.set("USER", session.data.user.id);
+      ls.set("ACCESS_TOKEN", session.data.token);
+      navigate("/middle");
+    }
+  };
   useEffect(() => {
-    console.log(session);
+    redirect();
   }, [session, error, isPending]);
 
   return (

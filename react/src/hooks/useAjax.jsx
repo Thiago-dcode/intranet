@@ -41,7 +41,6 @@ export default function useAjax(
   useEffect(() => {
     if (!_url || !url) return;
     if (method === "POST" && !Object.keys(form).length) return;
-    console.log("hello");
     const controller = new AbortController();
     const signal = controller.signal;
     ajax(signal);
@@ -49,23 +48,25 @@ export default function useAjax(
     return () => controller.abort();
   }, [_url, form]);
 
-  //   useEffect(() => {
-
-  //     if (!url) return;
-  //     console.log(url, method);
-  //     const controller = new AbortController();
-  //     const signal = controller.signal;
-  //     ajax(signal);
-  //     return () => controller.abort();
-  //   }, [method, url, formData, headers, config]);
-
-  //   useEffect(() => {
-  //     console.log(form);
-  //     const controller = new AbortController();
-  //     const signal = controller.signal;
-  //     ajax(signal);
-  //     return () => controller.abort();
-  //   }, []);
+  useEffect(() => {
+    if (_url !== "api/login" || _url !== "api/logout") {
+      return;
+    }
+    if (data && !error) {
+      if (_url === "api/logout") {
+        ls.remove("USER");
+        ls.remove("ACCESS_TOKEN");
+        navigate("/login");
+        return;
+      }
+      if (_url === "api/login") {
+        console.log(data.data.token);
+        ls.set("USER", data.data.user.id);
+        ls.set("ACCESS_TOKEN", data.data.token);
+        navigate("/middle");
+      }
+    }
+  }, [data, error]);
 
   return [data, error, isPending, setForm];
 }
