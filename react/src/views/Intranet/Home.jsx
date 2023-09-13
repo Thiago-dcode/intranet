@@ -13,16 +13,17 @@ export default function Home() {
       setCompany(data.data.company);
       return;
     }
-    
   }, [data, error]);
   return (
     <>
       {!isPending && !error && company ? (
+
+        
         <div className="bg-arzumaBlack text-cyan-500 h-screen">
           <p>Hola, {company.name} bienvenido a la Intranet</p>
         </div>
       ) : null}
-      {error?.status=== 404? <Page404/>:null}
+      {error?.status === 404 ? <Page404 /> : null}
     </>
   );
 }

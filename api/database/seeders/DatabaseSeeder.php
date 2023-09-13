@@ -15,12 +15,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+       
 
-        $user = User::firstOrCreate([
+        $userArzuma = User::firstOrCreate([
             'name' => 'arzuma',
             'email' => 'arzuma@arzuma.es',
             'password'=> 'arzuma@arzuma.es'
+        ]);
+        $userExample = User::firstOrCreate([
+            'name' => 'example',
+            'email' => 'example@example.es',
+            'password'=> 'example@example.es'
         ]);
       $beraTextil =   Company::firstOrCreate([
             'name' => 'bera-textil',
@@ -34,23 +39,29 @@ class DatabaseSeeder extends Seeder
         ]);
       $moduleClientes =  Module::firstOrCreate([
             'name' => 'clientes',
-            'route'=>'/clientes'
+            'route'=>'/clientes',
+            'logo' => 'user'
         ]);
-      $moduleProductos =   Module::firstOrCreate([
-            'name' => 'productos',
-            'route'=>'/productos'
+      $moduleArticulos =   Module::firstOrCreate([
+            'name' => 'articulos',
+            'route'=>'/articulos',
+            'logo'=> "cart-shopping"
+
         ]);
        $moduleGraficos = Module::firstOrCreate([
             'name' => 'graficos',
-            'route'=>'/graficos'
+            'route'=>'/graficos',
+            'logo' => 'chart-pie'
         ]);
 
         //seeding pivot tables
 
 
-        $user->companies()->attach([$beraTextil->id,$carnicasPozas->id]);
-        $user->modules()->attach([ $moduleClientes->id, $moduleProductos->id, $moduleGraficos->id]);
-        $beraTextil->modules()->attach([ $moduleClientes->id, $moduleProductos->id, $moduleGraficos->id]);
-        $carnicasPozas->modules()->attach([ $moduleClientes->id, $moduleProductos->id]);
+        $userArzuma->companies()->attach([$beraTextil->id,$carnicasPozas->id]);
+        $userArzuma->modules()->attach([ $moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id]);
+        $beraTextil->modules()->attach([ $moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id]);
+        $carnicasPozas->modules()->attach([ $moduleClientes->id, $moduleArticulos->id]);
+        $userExample->companies()->attach([$carnicasPozas->id]);
+
     }
 }
