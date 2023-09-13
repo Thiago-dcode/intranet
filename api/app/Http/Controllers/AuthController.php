@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Dotenv\Exception\ValidationException;
@@ -16,7 +17,7 @@ class AuthController extends Controller
     public function login(Request $request, Schedule $schedule)
     {
 
-    
+
         $fields = $request->validate([
             'email' => 'required|max:255',
             'password' => 'required',
@@ -32,7 +33,6 @@ class AuthController extends Controller
             'token' => $user->createToken('Api Token of ' . $user->name)->plainTextToken
 
         ], 'Inicio de sesión exitoso');
-
     }
     public function register(Request $resquest)
     {
@@ -40,8 +40,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
-      
-     
+
+
         return response([
             'success' => true
         ]);
@@ -49,5 +49,25 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return $request->user();
+    }
+    public function company(Request $request)
+    {
+        if (!isset($request["company"])) {
+            return $this->error('', '', 401);
+        }
+
+        foreach ($request->user()['companies'] as $company) {
+
+            if ($company['name'] !== $request["company"]) continue;
+
+            $company = Company::where('name', '=', $request["company"])->firstOrFail();
+            return $this->success([
+
+                'company' => $company,
+
+
+            ], '');
+        }
+        return $this->error('', 'Credenciales errónea', 404);
     }
 }

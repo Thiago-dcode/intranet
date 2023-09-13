@@ -5,25 +5,23 @@ import { useEffect, useState } from "react";
 
 export function useIsAuth() {
   const navigate = useNavigate();
-  const [isAuth, setIsAuth] = useState(true);
-  const token = ls.get("ACCESS_TOKEN");
-  const [data, error, isPending] = useAjax("/api/me", "GET");
+  const [isAuth, setIsAuth] = useState();
+  const [data, error, IsPending] = useAjax("/api/me");
+  const handleIsAuth = () => {
+    const token = ls.get("ACCESS_TOKEN");
+
+    if (!token || (!data && error)) return false;
+    return true;
+  };
 
   useEffect(() => {
-    if (!token) {
-      setIsAuth(false);
-      navigate("/");
-      return;
-    }
-    if (token && !data && error && !isPending) {
-      setIsAuth(false);
-      navigate("/");
-      return;
-    }
-    console.log(token);
-    navigate("/middle");
-    setIsAuth(true);
+    setIsAuth(handleIsAuth());
   }, []);
+
+  useEffect(() => {
+    if (isAuth) navigate("/");
+    else navigate("");
+  }, [isAuth]);
 
   return isAuth;
 }
@@ -38,6 +36,7 @@ export function useLogin() {
   useEffect(() => {
     if (data && !error) {
       console.log(data.data.token);
+      ls.config.ttl = 60 * 60 * 3;
       ls.set("USER", data.data.user.id);
       ls.set("ACCESS_TOKEN", data.data.token);
       navigate("/middle");
@@ -57,9 +56,7 @@ export function useLogout() {
   };
 
   useEffect(() => {
-  
     if (data && !error) {
-     
       ls.remove("USER");
       ls.remove("ACCESS_TOKEN");
       navigate("/login");

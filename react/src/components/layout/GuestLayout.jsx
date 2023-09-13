@@ -1,16 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ls from "localstorage-slim";
 import { Link, Outlet, Navigate, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 import Wrapper from "../../container/Wrapper";
 
-import {useIsAuth} from "../../hooks/useAuth";
+import { useIsAuth } from "../../hooks/useAuth";
 export default function GuestLayout() {
   const navigate = useNavigate();
-  const isAuth = useIsAuth();
-  
+  const [token, setToken] = useState(ls.get("ACCESS_TOKEN"));
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      navigate("/middle");
+      return;
+    }
+    setIsGuest(true)
+  }, []);
+
   return (
     <>
-      {!isAuth && (
+      {isGuest ? (
         <>
           <header className=" sticky top-0 flex items-center w-full justify-center  shadow-md bg-white">
             <nav className=" w-full max-w-4xl px-4 py-4 flex justify-between items-center">
@@ -31,7 +41,7 @@ export default function GuestLayout() {
             <Outlet />
           </Wrapper>
         </>
-      )}
+      ) : null}
     </>
   );
 }

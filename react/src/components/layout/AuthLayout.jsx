@@ -1,19 +1,30 @@
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import ls from "localstorage-slim";
 import logo from "../../assets/img/logo.png";
 import Wrapper from "../../container/Wrapper";
-import { useIsAuth, useLogout } from "../../hooks/useAuth";
+import { useLogout } from "../../hooks/useAuth";
 
 export default function AuthLayout() {
   const navigate = useNavigate();
-  const isAuth = useIsAuth();
   const logOut = useLogout();
+  const [token, setToken] = useState(ls.get("ACCESS_TOKEN"));
+  const [isAuth, setisAuth] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+      return;
+    }
+    setisAuth(true);
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     logOut();
   };
   return (
     <>
-      {isAuth && (
+      {isAuth ? (
         <>
           <header className=" sticky top-0 flex items-center w-full justify-center  shadow-md bg-white">
             <nav className=" w-full max-w-4xl px-4 py-4 flex justify-between items-center">
@@ -36,7 +47,7 @@ export default function AuthLayout() {
             <Outlet />
           </Wrapper>
         </>
-      )}
+      ) : null}
     </>
   );
 }
