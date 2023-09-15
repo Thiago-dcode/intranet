@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import Api from "../api/Api";
 import { useNavigate } from "react-router-dom";
-import page404 from "../components/error/Page404";
+
 export default function useAjax(
   url = "",
   method = "GET",
@@ -25,7 +25,8 @@ export default function useAjax(
     setIsPending(true);
     try {
       if (_url === "/api/login") {
-        await Api.get("/sanctum/csrf-cookie");
+        const response = await Api.get("/sanctum/csrf-cookie");
+        console.log(response);
       }
       const { data } = await Api({
         method,
@@ -36,8 +37,8 @@ export default function useAjax(
       });
       setData(data);
     } catch (error) {
-      setError(error.response?.data);
-      console.log(error.response?.data?.status);
+      setError(error.response?.data.message);
+      console.log(error);
       switch (error.response?.data?.status) {
         case 401:
           ls.clear();
@@ -51,7 +52,8 @@ export default function useAjax(
     }
   };
 
-  const fetch = () => {
+  const fetch = () => {};
+  useEffect(() => {
     if (!_url || !url) return;
 
     if (
@@ -62,13 +64,6 @@ export default function useAjax(
     const controller = new AbortController();
     const signal = controller.signal;
     ajax(signal);
-  };
-  useEffect(() => {
-    if (!url || !formData || !method) return;
-    return fetch();
-  }, []);
-  useEffect(() => {
-    return fetch();
   }, [_url, form]);
 
   useEffect(() => {

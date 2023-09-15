@@ -4,8 +4,11 @@ import GuestLayout from "./components/layout/GuestLayout";
 import AuthLayout from "./components/layout/AuthLayout";
 import Login from "./views/Login";
 import Home from "./views/Home.jsx";
-import Intranet from "./views/Intranet/Home";
-import Middle from "./views/Intranet/Middle";
+import IntranetLayout from "./Intranet/layout/IntranetLayout";
+import HomeIntranet from "./Intranet/views/Home.jsx";
+import Middle from "./Intranet/views/Middle";
+import Articulos from "./Intranet/views/modules/Articulos";
+import { modules } from "./moduleRegister";
 console.log("access");
 const router = createBrowserRouter([
   {
@@ -14,7 +17,14 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/:company",
-        element: <Intranet />,
+        element: <IntranetLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomeIntranet />,
+          },
+         ...modules
+        ],
       },
       {
         path: "middle",

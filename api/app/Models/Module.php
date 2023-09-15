@@ -16,8 +16,5 @@ class Module extends Model
         return $this->belongsToMany(Company::class);
     }
 
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
+ 
 }

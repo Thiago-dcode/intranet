@@ -24,7 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
     ];
-    protected $with = ['companies','modules'];
+    protected $with = ['companies'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,8 +52,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Company::class);
     }
 
-    public function modules()
+    public function modules($companyId, $userId)
     {
-        return $this->belongsToMany(Module::class);
+
+        return ModuleUser::where('company_id', $companyId)->where('user_id',$userId);
     }
 }

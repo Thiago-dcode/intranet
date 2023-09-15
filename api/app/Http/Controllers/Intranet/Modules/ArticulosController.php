@@ -22,6 +22,7 @@ class ArticulosController extends Controller
 
 
                 return $this->success([
+                        'data'=> 'articulos module'
             
                     ], 'Articulo module');
 

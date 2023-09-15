@@ -30,12 +30,14 @@ export function useLogin() {
   const [data, error, isPending, setForm] = useAjax("/api/login", "POST");
   const navigate = useNavigate();
   const login = (form) => {
+    console.log(form)
     setForm(form);
   };
 
   useEffect(() => {
     if (data && !error) {
       console.log(data.data.token);
+      console.log(data);
       ls.config.ttl = 60 * 60 * 3;
       ls.set("USER", data.data.user.id);
       ls.set("ACCESS_TOKEN", data.data.token);

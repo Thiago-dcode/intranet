@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Company;
+use App\Models\ModuleUser;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
-use Dotenv\Exception\ValidationException;
-use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Dotenv\Exception\ValidationException;
+use Illuminate\Console\Scheduling\Schedule;
 
 class AuthController extends Controller
 {
@@ -39,6 +41,8 @@ class AuthController extends Controller
     }
     public function logout(Request $request)
     {
+
+        $user = User::where('id', $request->user()->id)->update(['company_active' => null]);
         Auth::guard('web')->logout();
 
 
@@ -50,6 +54,26 @@ class AuthController extends Controller
     {
         return $request->user();
     }
+
+    public function activeCompany(Request $request)
+    {
+
+
+        if (!isset($request["company"])) {
+            return $this->error('', '', 401);
+        }
+
+        User::where('id', $request['user_id'])->update(['company_active' => $request['company']]);
+
+
+        return $this->success([
+            'id' => $request['user_id'],
+            'user' => User::find($request['user_id']),
+
+
+        ], '');
+    }
+
     public function company(Request $request)
     {
         if (!isset($request["company"])) {
@@ -69,5 +93,19 @@ class AuthController extends Controller
             ], '');
         }
         return $this->error('', 'Credenciales errónea', 404);
+    }
+    public function modules(Request $request)
+    {
+
+
+        $modulesIds = ModuleUser::where('user_id', $request->user()->id)->where('company', $request->user()->company_active)->pluck('module_id')->toArray();
+
+        $modules = DB::table('modules')->whereIn('id', $modulesIds)->get();
+        return $this->success([
+
+            'modules' => $modules,
+
+
+        ], '');
     }
 }

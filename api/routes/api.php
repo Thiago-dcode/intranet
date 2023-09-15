@@ -1,10 +1,12 @@
 <?php
 
 use App\Models\User;
+use App\Models\ModuleUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-
 use App\Http\Controllers\ValidateTokenController;
 use App\Http\Controllers\Intranet\Modules\ArticulosController;
 
@@ -25,11 +27,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/company',[AuthController::class,'company']);
+    Route::post('/active-company',[AuthController::class,'activeCompany']);
+    Route::get('/modules',[AuthController::class,'modules']);
     if($user){
 
+
+   $modulesIds = ModuleUser::where('user_id',$user->id)->pluck('module_id')->toArray();
+   $modules = DB::table('modules')->whereIn('id', $modulesIds)->get();
+
      require_once __DIR__.'/modules.php';
-      
-      moduleRoutes($user->modules);
+    
+      moduleRoutes($modules->toArray());
 
 
     }
