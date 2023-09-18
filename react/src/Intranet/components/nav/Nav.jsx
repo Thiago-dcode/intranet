@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
 import { useLogout } from "../../../hooks/useAuth";
 export default function IntraNav({ modules, company }) {
-const logOut = useLogout()
+  const logOut = useLogout();
   const handleSubmit = (e) => {
     e.preventDefault();
     logOut();

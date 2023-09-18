@@ -1,5 +1,5 @@
 import React from "react";
 
-export default  function Articulos() {
-  return <div>Articulos</div>;
-};
+export default function Articulos() {
+  return <div>Already exists</div>;
+}

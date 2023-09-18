@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\User;
+use App\Models\Module;
 use App\Models\Company;
 use App\Models\ModuleUser;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use App\Intranet\ModuleBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +19,7 @@ use Illuminate\Console\Scheduling\Schedule;
 class AuthController extends Controller
 {
     use HttpResponses;
+
     public function login(Request $request, Schedule $schedule)
     {
 
@@ -52,6 +56,9 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
+       
+    dd(ModuleBuilder::generateView(Module::where('name', 'articulos')->firstOrFail()));
+
         return $request->user();
     }
 
@@ -74,26 +81,26 @@ class AuthController extends Controller
         ], '');
     }
 
-    public function company(Request $request)
-    {
-        if (!isset($request["company"])) {
-            return $this->error('', '', 401);
-        }
+    // public function company(Request $request)
+    // {
+    //     if (!isset($request["company"])) {
+    //         return $this->error('', '', 401);
+    //     }
 
-        foreach ($request->user()['companies'] as $company) {
+    //     foreach ($request->user()['companies'] as $company) {
 
-            if ($company['name'] !== $request["company"]) continue;
+    //         if ($company['name'] !== $request["company"]) continue;
 
-            $company = Company::where('name', '=', $request["company"])->firstOrFail();
-            return $this->success([
+    //         $company = Company::where('name', '=', $request["company"])->firstOrFail();
+    //         return $this->success([
 
-                'company' => $company,
+    //             'company' => $company,
 
 
-            ], '');
-        }
-        return $this->error('', 'Credenciales errónea', 404);
-    }
+    //         ], '');
+    //     }
+    //     return $this->error('', 'Credenciales errónea', 404);
+    // }
     public function modules(Request $request)
     {
 

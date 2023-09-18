@@ -8,6 +8,7 @@ use App\Models\Module;
 use App\Models\Company;
 
 use App\Models\ModuleUser;
+use App\Intranet\ModuleBuilder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -60,6 +61,11 @@ class DatabaseSeeder extends Seeder
             'route' => '/graficos',
             'logo' => 'ChartPie'
         ]);
+        $moduleEmail = Module::firstOrCreate([
+            'name' => 'email',
+            'route' => '/email',
+            'logo' => 'Envelope'
+        ]);
 
         //seeding pivot tables
 
@@ -92,13 +98,27 @@ class DatabaseSeeder extends Seeder
         ]);
         ModuleUser::firstOrCreate([
 
+            'user_id' => $userExample->id, 
+            'company' => $carnicasPozas->name,
+            'module_id' => $moduleEmail->id
+        ]); 
+        ModuleUser::firstOrCreate([
+
             'user_id' => $userExample->id,
             'company' => $carnicasPozas->name,
             'module_id' => $moduleGraficos->id
         ]);
+        
+
         $userArzuma->companies()->attach([$beraTextil->id, $carnicasPozas->id]);
         $beraTextil->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id, $moduleEans->id]);
-        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id]);
+        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id,$moduleEmail->id]);
         $userExample->companies()->attach([$carnicasPozas->id]);
+
+        $modules = Module::all();
+        ModuleBuilder::generateRoutes($modules);
+        foreach ($modules as $key => $module) {
+           ModuleBuilder::generateView($module);
+        }
     }
 }

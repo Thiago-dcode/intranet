@@ -23,7 +23,7 @@ const router = createBrowserRouter([
             index: true,
             element: <HomeIntranet />,
           },
-         ...modules
+          ...modules,
         ],
       },
       {
