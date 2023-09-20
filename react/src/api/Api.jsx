@@ -1,6 +1,5 @@
 import axios from "axios";
 import ls from "localstorage-slim";
-import { useNavigate } from "react-router-dom";
 const Api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {

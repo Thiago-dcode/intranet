@@ -7,7 +7,7 @@ import Home from "./views/Home.jsx";
 import IntranetLayout from "./Intranet/layout/IntranetLayout";
 import HomeIntranet from "./Intranet/views/Home.jsx";
 import Middle from "./Intranet/views/Middle";
-import Articulos from "./Intranet/views/modules/Articulos";
+
 import { modules } from "./moduleRegister";
 console.log("access");
 const router = createBrowserRouter([
