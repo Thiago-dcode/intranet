@@ -22,7 +22,7 @@ class ModuleBuilder
         foreach ($modules as $key => $module) {
 
             $import .= "import ".  ucfirst($module['name']) . " from './Intranet/views/modules/" .  ucfirst($module['name']) . "';\r\n";
-            $moduleObject .= "{\r\n path: '" . $module['name']. "' ,\r\nelement: <".ucfirst($module['name'])." />,\r\n},\r\n";
+            $moduleObject .= "{\r\n path: '" . $module['route']. "' ,\r\nelement: <".ucfirst($module['name'])." />,\r\n},\r\n";
         }   
        
         $content = $import . $openArr . $moduleObject . $closeArr;

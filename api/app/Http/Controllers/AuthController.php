@@ -56,8 +56,7 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
-       
-    dd(ModuleBuilder::generateView(Module::where('name', 'articulos')->firstOrFail()));
+    //    dd(env('PUBLIC_STORAGE'). '/companyLogo'.'/bera-textil.png');
 
         return $request->user();
     }
@@ -80,34 +79,21 @@ class AuthController extends Controller
 
         ], '');
     }
+    public function company(Request $request){
 
-    // public function company(Request $request)
-    // {
-    //     if (!isset($request["company"])) {
-    //         return $this->error('', '', 401);
-    //     }
+            $company = Company::where('name', $request->user()->company_active)->firstOrFail();
 
-    //     foreach ($request->user()['companies'] as $company) {
+            if(!$company) return \response('',401);
+            return \response($company);
+    }
 
-    //         if ($company['name'] !== $request["company"]) continue;
-
-    //         $company = Company::where('name', '=', $request["company"])->firstOrFail();
-    //         return $this->success([
-
-    //             'company' => $company,
-
-
-    //         ], '');
-    //     }
-    //     return $this->error('', 'Credenciales errónea', 404);
-    // }
     public function modules(Request $request)
     {
 
 
         $modulesIds = ModuleUser::where('user_id', $request->user()->id)->where('company', $request->user()->company_active)->pluck('module_id')->toArray();
 
-        $modules = DB::table('modules')->whereIn('id', $modulesIds)->get();
+        $modules = ModuleUser::userModulesByCompany($request->user()->id,$request->user()->company_active);
         return $this->success([
 
             'modules' => $modules,

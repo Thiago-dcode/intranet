@@ -10,7 +10,7 @@ import Email from './Intranet/views/modules/Email';
 element: <Clientes />,
 },
 {
- path: 'eans' ,
+ path: 'articulos/eans' ,
 element: <Eans />,
 },
 {

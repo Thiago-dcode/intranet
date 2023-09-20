@@ -1,5 +1,4 @@
-import React from "react";
-
-export default  function Eans() {
-  return <div>Eans</div>;
+import React from 'react';
+export default  function Eans(){
+return <div>Eans</div>;
 };

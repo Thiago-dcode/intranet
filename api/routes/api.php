@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
   $user = auth('sanctum')->user();
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/company',[AuthController::class,'company']);
+    Route::get('/company',[AuthController::class,'company']);
     Route::post('/active-company',[AuthController::class,'activeCompany']);
     Route::get('/modules',[AuthController::class,'modules']);
     if($user){

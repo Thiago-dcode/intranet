@@ -3,6 +3,9 @@ import useAjax from "../../hooks/useAjax";
 import logo from "../../assets/img/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import Wrapper from "../../container/Wrapper";
+import Header from "../../components/header/Header";
+import Nav from "../../components/header/Nav";
+import LogOutBtn from "../../components/button/LogOutBtn";
 export default function Middle() {
   const navigate = useNavigate();
   const [user, error, isPending] = useAjax("/api/me");
@@ -42,28 +45,18 @@ export default function Middle() {
     if (!companyActive) return;
 
     navigate("/" + companyActive);
-    
   }, [companyActive]);
 
   return (
     <>
-      <header className=" sticky top-0 flex items-center w-full justify-center  shadow-md bg-white">
-        <nav className=" w-full max-w-4xl px-4 py-4 flex justify-between items-center">
+      <Header>
+        <Nav>
           <Link className="text-3xl font-bold leading-none" to={"/"}>
             <img className="h-10" src={logo}></img>
           </Link>
-
-          <form
-            className=" lg:inline-block lg:ml-auto lg:mr-3 py-2 px-6 bg-arzumaOrange hover:bg-gray-100 text-sm text-gray-900 font-bold  rounded-xl transition duration-200"
-            to="/login"
-            onSubmit={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            <button type="submit">Salir</button>
-          </form>
-        </nav>
-      </header>
+          <LogOutBtn />
+        </Nav>
+      </Header>
 
       <Wrapper>
         {!isPending && user ? (
