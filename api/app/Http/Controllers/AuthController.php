@@ -8,11 +8,12 @@ use App\Models\Module;
 use App\Models\Company;
 use App\Models\ModuleUser;
 use Illuminate\Http\Request;
+use App\Intranet\Utils\Utils;
 use App\Traits\HttpResponses;
-use App\Intranet\Modules\ModuleBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Intranet\Modules\ModuleBuilder;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Console\Scheduling\Schedule;
 
@@ -59,8 +60,8 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
-        
-       
+
+       dd(env('DBHOST_BERA_TXTIL_PYME'));
         return $request->user();
     }
 

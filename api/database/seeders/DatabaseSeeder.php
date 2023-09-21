@@ -8,8 +8,9 @@ use App\Models\Module;
 use App\Models\Company;
 
 use App\Models\ModuleUser;
-use App\Intranet\Modules\ModuleBuilder;
+use App\Intranet\Utils\Utils;
 use Illuminate\Database\Seeder;
+use App\Intranet\Modules\ModuleBuilder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -129,6 +130,18 @@ class DatabaseSeeder extends Seeder
             ModuleBuilder::generateView($module);
 
             ModuleBuilder::generateController($module);
+        }
+
+
+        $companies = Company::all();
+
+        foreach ($companies as $company) {
+
+            if ($company['name'] !== 'bera-textil') continue;
+            $companyNameEnv = strtoupper(str_replace('-', '_', $company['name']));
+            $envKey = 'DBHOST_' . $companyNameEnv . '_PYME';
+            var_dump($envKey);
+            Utils::createEnvVar($envKey, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
         }
     }
 }
