@@ -24,24 +24,20 @@ use App\Http\Controllers\Intranet\Modules\ArticulosController;
 
 Route::middleware('auth:sanctum')->group(function () {
   $user = auth('sanctum')->user();
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::get('/company',[AuthController::class,'company']);
-    Route::post('/active-company',[AuthController::class,'activeCompany']);
-    Route::get('/modules',[AuthController::class,'modules']);
-    if($user){
+  Route::post('/logout', [AuthController::class, 'logout']);
+  Route::get('/me', [AuthController::class, 'me']);
+  Route::get('/company', [AuthController::class, 'company']);
+  Route::post('/active-company', [AuthController::class, 'activeCompany']);
+  Route::post('/active-module', [AuthController::class, 'activeModule']);
+  Route::get('/modules', [AuthController::class, 'modules']);
+  if ($user) {
+   
+    $modules = ModuleUser::allUserModules($user->id);
+  
+    require_once __DIR__ . '/modules.php';
 
-
-   $modulesIds = ModuleUser::where('user_id',$user->id)->pluck('module_id')->toArray();
-   $modules = DB::table('modules')->whereIn('id', $modulesIds)->get();
-
-     require_once __DIR__.'/modules.php';
-    
-      moduleRoutes($modules->toArray());
-
-
-    }
+    moduleRoutes($modules->toArray());
+  }
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-

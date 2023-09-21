@@ -5,7 +5,7 @@ import Form from "../components/form/Form";
 import Input from "../components/form/Input";
 import useAjax from "../hooks/useAjax";
 import ls from "localstorage-slim";
-import { useLogin } from "../hooks/useAuth";
+import useLogin from "../hooks/useLogIn";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -11,7 +11,7 @@
        use App\Http\Controllers\Controller;
 
        
-       class ArticulosController extends Controller
+       class ClientesController extends Controller
 
        {
 
@@ -24,7 +24,7 @@
 
        
 
-                return response('Articulos module created successfully.');
+                return response('Clientes module created successfully.');
                 //start your logic here
        
                }

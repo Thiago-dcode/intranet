@@ -17,12 +17,12 @@ export default function Middle() {
   ] = useAjax("/api/active-company", "POST");
   const [companyActive, setCompanyActive] = useState(null);
   const [company, setCompany] = useState(null);
+
   const handleSubmit = (e) => {
     e.preventDefault();
   };
 
   useEffect(() => {
-    console.log(user);
     if (userCompanyActive === null) return;
 
     if (userCompanyActive && !errorUserCompanyActive) {

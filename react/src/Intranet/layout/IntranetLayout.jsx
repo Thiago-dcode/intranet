@@ -37,9 +37,7 @@ export default function IntranetLayout() {
       setModules(userModules.data.modules);
     }
   }, [userModules]);
-  useEffect(() => {
-    console.log(company);
-  }, [company]);
+  useEffect(() => {}, [company]);
   return (
     <>
       {allowed && modules ? (

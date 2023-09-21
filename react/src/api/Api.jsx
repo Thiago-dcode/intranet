@@ -11,7 +11,7 @@ const Api = axios.create({
 });
 
 Api.interceptors.request.use((config) => {
-  const token = ls.get('"ACCESS_TOKEN"');
+  const token = ls.get("ACCESS_TOKEN", { decrypt: true });
 
   config.headers.Authorization = `Bearer ${token}`;
 
@@ -24,7 +24,7 @@ Api.interceptors.response.use(
   (error) => {
     const { response } = error;
     if (response.status === 401) {
-      ls.remove("ACCESS_TOKEN");
+      ls.clear();
     }
     throw error;
   }

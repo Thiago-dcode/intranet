@@ -5,7 +5,6 @@ import logo from "../../assets/img/logo.png";
 import Wrapper from "../../container/Wrapper";
 import Header from "../header/Header";
 import Nav from "../header/Nav";
-import { useIsAuth } from "../../hooks/useAuth";
 export default function GuestLayout() {
   const navigate = useNavigate();
   const [token, setToken] = useState(ls.get("ACCESS_TOKEN"));

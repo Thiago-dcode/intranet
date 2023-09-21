@@ -8,7 +8,7 @@ use App\Models\Module;
 use App\Models\Company;
 
 use App\Models\ModuleUser;
-use App\Intranet\ModuleBuilder;
+use App\Intranet\Modules\ModuleBuilder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -33,13 +33,13 @@ class DatabaseSeeder extends Seeder
         $beraTextil =   Company::firstOrCreate([
             'name' => 'bera-textil',
             'color' => '#0082CA',
-            'logo' => env('PUBLIC_STORAGE'). '/companyLogo'.'/bera-textil.png'
+            'logo' => env('PUBLIC_STORAGE') . '/companyLogo' . '/bera-textil.png'
 
         ]);
         $carnicasPozas =   Company::firstOrCreate([
             'name' => 'carnicaspozas',
             'color' => '#739640',
-            'logo' =>  env('PUBLIC_STORAGE'). '/companyLogo'.'/carnicaspozas.png'
+            'logo' =>  env('PUBLIC_STORAGE') . '/companyLogo' . '/carnicaspozas.png'
 
         ]);
         $moduleClientes =  Module::firstOrCreate([
@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
 
         $userArzuma->companies()->attach([$beraTextil->id, $carnicasPozas->id]);
         $beraTextil->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id, $moduleEans->id]);
-        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id,$moduleEmail->id]);
+        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleEmail->id]);
         $userExample->companies()->attach([$carnicasPozas->id]);
 
         //Assign modules to user.
@@ -108,24 +108,27 @@ class DatabaseSeeder extends Seeder
         ]);
         ModuleUser::firstOrCreate([
 
-            'user_id' => $userExample->id, 
+            'user_id' => $userExample->id,
             'company' => $carnicasPozas->name,
             'module_id' => $moduleEmail->id
-        ]); 
+        ]);
         ModuleUser::firstOrCreate([
 
             'user_id' => $userExample->id,
             'company' => $carnicasPozas->name,
             'module_id' => $moduleGraficos->id
         ]);
-        
 
-       
+
+
 
         $modules = Module::all();
-        ModuleBuilder::generateRoutes($modules);
+        ModuleBuilder::generateFrontEndRoutes($modules);
+        ModuleBuilder::generateApiRoutes($modules);
         foreach ($modules as $key => $module) {
-           ModuleBuilder::generateView($module);
+            ModuleBuilder::generateView($module);
+
+            ModuleBuilder::generateController($module);
         }
     }
 }

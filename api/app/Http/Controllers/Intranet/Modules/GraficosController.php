@@ -1,30 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Intranet\Modules;
 
-use App\Models\User;
-use App\Models\Company;
-use Illuminate\Http\Request;
+       namespace App\Http\Controllers\Intranet\Modules;
 
-use App\Traits\HttpResponses;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Dotenv\Exception\ValidationException;
-use Illuminate\Console\Scheduling\Schedule;
+       
+       use Illuminate\Http\Request;
 
-class GraficosController extends Controller
-{
+       use App\Traits\HttpResponses;
 
-        use HttpResponses;
+       use App\Http\Controllers\Controller;
 
-        public function index(){
+       
+       class GraficosController extends Controller
 
+       {
 
-                return $this->success([
             
-                    ],'Graficos module');
+               use HttpResponses;
 
+               
 
-        }
-}
+               public function index(){
+
+       
+
+                return response('Graficos module created successfully.');
+                //start your logic here
+       
+               }
+
+       }

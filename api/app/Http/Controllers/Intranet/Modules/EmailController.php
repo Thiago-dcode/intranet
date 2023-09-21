@@ -11,7 +11,7 @@
        use App\Http\Controllers\Controller;
 
        
-       class ArticulosController extends Controller
+       class EmailController extends Controller
 
        {
 
@@ -24,7 +24,7 @@
 
        
 
-                return response('Articulos module created successfully.');
+                return response('Email module created successfully.');
                 //start your logic here
        
                }

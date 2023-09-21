@@ -9,7 +9,7 @@ use App\Models\Company;
 use App\Models\ModuleUser;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
-use App\Intranet\ModuleBuilder;
+use App\Intranet\Modules\ModuleBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +33,8 @@ class AuthController extends Controller
             return $this->error('', 'Credenciales errónea', 422);
         }
         $user = Auth::user();
+        User::where('id', $user->id)->update(['company_active' => null,'module_active' => null]);
+
         return $this->success([
 
             'user' => $user,
@@ -46,7 +48,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
 
-        $user = User::where('id', $request->user()->id)->update(['company_active' => null]);
+        $user = User::where('id', $request->user()->id)->update(['company_active' => null,'module_active' => null]);
+
         Auth::guard('web')->logout();
 
 
@@ -56,8 +59,8 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
-    //    dd(env('PUBLIC_STORAGE'). '/companyLogo'.'/bera-textil.png');
-
+        
+       
         return $request->user();
     }
 
@@ -68,8 +71,37 @@ class AuthController extends Controller
         if (!isset($request["company"])) {
             return $this->error('', '', 401);
         }
+        
+        if(!User::find($request['user_id'])->companies()->where('name', $request['company'])->first()){
 
+            return $this->error('', '', 401);
+
+        }
         User::where('id', $request['user_id'])->update(['company_active' => $request['company']]);
+
+
+        return $this->success([
+            'id' => $request['user_id'],
+            'user' => User::find($request['user_id']),
+
+
+        ], '');
+    }
+    public function activeModule(Request $request)
+    {
+
+
+        if (!isset($request["module"])) {
+
+            return $this->error('', '', 401);
+        }
+
+   if(!ModuleUser::findUserModule( $request->user()->id, $request->user()->company_active,$request['module'])){
+
+    return $this->error('', '', 401);
+   };
+       
+        User::where('id', $request->user()->id)->update(['module_active' => $request['module']]);
 
 
         return $this->success([
@@ -91,9 +123,8 @@ class AuthController extends Controller
     {
 
 
-        $modulesIds = ModuleUser::where('user_id', $request->user()->id)->where('company', $request->user()->company_active)->pluck('module_id')->toArray();
-
-        $modules = ModuleUser::userModulesByCompany($request->user()->id,$request->user()->company_active);
+        
+        $modules = ModuleUser::allUserModulesByCompany($request->user()->id,$request->user()->company_active);
         return $this->success([
 
             'modules' => $modules,

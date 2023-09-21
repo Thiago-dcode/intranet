@@ -24,6 +24,7 @@ export default function useAjax(
     setError("");
     setIsPending(true);
     try {
+    
       if (_url === "/api/login") {
         const response = await Api.get("/sanctum/csrf-cookie");
         console.log(response);
@@ -38,10 +39,10 @@ export default function useAjax(
       setData(data);
     } catch (error) {
       setError(error.response?.data.message);
-      console.log(error);
+      console.log("useAjax.jsx:", error);
       switch (error.response?.data?.status) {
         case 401:
-          ls.clear();
+          // ls.clear();
           break;
 
         default:
@@ -52,7 +53,6 @@ export default function useAjax(
     }
   };
 
-  const fetch = () => {};
   useEffect(() => {
     if (!_url || !url) return;
 
