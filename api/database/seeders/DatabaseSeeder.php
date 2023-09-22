@@ -11,7 +11,7 @@ use App\Models\ModuleUser;
 use App\Intranet\Utils\Utils;
 use Illuminate\Database\Seeder;
 use App\Intranet\Modules\ModuleBuilder;
-use App\Intranet\Modules\CompanyBuilder;
+use App\Intranet\Companies\CompanyBuilder;
 
 class DatabaseSeeder extends Seeder
 {

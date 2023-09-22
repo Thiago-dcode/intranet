@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Intranet\Modules;
+namespace App\Intranet\Companies;
 use App\Intranet\Utils\Path;
 use App\Intranet\Utils\Utils;
 
@@ -9,7 +9,7 @@ class CompanyBuilder
 {
 
 
-        public function generateHostEnvVar($company,$host){
+        public static function generateHostEnvVar($company,$host){
 
             $company = Utils::objectToArray($company);
             $companyNameEnv = strtoupper(str_replace('-', '_', $company['name']));
