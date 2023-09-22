@@ -11,6 +11,7 @@ use App\Models\ModuleUser;
 use App\Intranet\Utils\Utils;
 use Illuminate\Database\Seeder;
 use App\Intranet\Modules\ModuleBuilder;
+use App\Intranet\Modules\CompanyBuilder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -137,11 +138,9 @@ class DatabaseSeeder extends Seeder
 
         foreach ($companies as $company) {
 
-            if ($company['name'] !== 'bera-textil') continue;
-            $companyNameEnv = strtoupper(str_replace('-', '_', $company['name']));
-            $envKey = 'DBHOST_' . $companyNameEnv . '_PYME';
-            var_dump($envKey);
-            Utils::createEnvVar($envKey, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
+            if($company['name'] !== 'bera-textil') continue;
+            CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
+         
         }
     }
 }
