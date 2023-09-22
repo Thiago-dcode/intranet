@@ -61,7 +61,7 @@ class AuthController extends Controller
     public function me(Request $request)
     {
 
-       dd(env('DBHOST_BERA_TXTIL_PYME'));
+    //    dd(env('DBHOST_BERA_TXTIL_PYME'));
         return $request->user();
     }
 

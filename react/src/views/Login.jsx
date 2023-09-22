@@ -22,6 +22,9 @@ export default function Login() {
   };
 
   return (
+    <div className="mt-14">
+
+  
     <Form
       title="Iniciar sesión"
       handleSubmit={handleSubmit}
@@ -45,5 +48,6 @@ export default function Login() {
       isPending={isPending}
       buttonText="Iniciar sesión"
     />
+      </div>
   );
 }

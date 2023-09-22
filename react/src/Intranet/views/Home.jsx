@@ -7,5 +7,5 @@ export default function Home() {
   useEffect(() => {
     console.log(company);
   }, [company, error]);
-  return <>{company && <div>{"Bienvenido a " + company.name}</div>}</>;
+  return <>{company && <h1 >{"Bienvenido a " + company.name}</h1>}</>;
 }

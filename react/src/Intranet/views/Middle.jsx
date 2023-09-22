@@ -60,8 +60,8 @@ export default function Middle() {
 
       <Wrapper>
         {!isPending && user ? (
-          <div className="justify-self-center self-center">
-            <h1>Hola {user.name}</h1>
+          <div className="mt-14 flex items-center flex-col gap-2">
+            <h1 className="text-lg">Hola {user.name}!</h1>
             <form
               onSubmit={(e) => {
                 handleSubmit(e);

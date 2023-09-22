@@ -57,9 +57,9 @@ export default function IntranetLayout() {
                 )}
               </HeaderNav>
             </Header>
-            <div className=" bg-slate-100 border-2 h-full flex items-center justify-between w-full">
+            <div className=" h-full flex items-center justify-between w-full">
               <Nav company={dataUser?.company_active} modules={modules} />
-              <main className="flex items-center justify-center w-full h-full ">
+              <main className="w-full border-4 flex flex-col items-center h-full">
                 <Outlet />
               </main>
             </div>
