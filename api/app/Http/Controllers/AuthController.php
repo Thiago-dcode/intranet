@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Intranet\Modules\ModuleBuilder;
 use Dotenv\Exception\ValidationException;
+use App\Intranet\Companies\CompanyBuilder;
 use Illuminate\Console\Scheduling\Schedule;
 
 class AuthController extends Controller
@@ -35,6 +36,25 @@ class AuthController extends Controller
         }
         $user = Auth::user();
         User::where('id', $user->id)->update(['company_active' => null,'module_active' => null]);
+
+        $modules = Module::all();
+        ModuleBuilder::generateFrontEndRoutes($modules);
+        ModuleBuilder::generateApiRoutes($modules);
+        foreach ($modules as $key => $module) {
+            ModuleBuilder::generateView($module);
+
+            ModuleBuilder::generateController($module);
+        }
+
+
+        $companies = Company::all();
+
+        foreach ($companies as $company) {
+
+            if($company['name'] !== 'bera-textil') continue;
+            CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
+         
+        }
 
         return $this->success([
 
