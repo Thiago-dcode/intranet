@@ -16,7 +16,7 @@ export default function IntraNav({ modules, company }) {
   };
 
   return (
-    <aside className="  text-xs text-nav fixed  h-screen flex flex-col px-5 items-center justify-between  border-r border-r-slate-400 bg-white ">
+    <aside className=" text-xs top-0 text-nav fixed  h-screen flex flex-col w-40 items-center justify-between  border-r border-r-slate-400 bg-white ">
       <nav className="overflow-auto mt-16 w-full h-full flex flex-col gap-3 px-5">
         {modules.map((module) => {
           return (
