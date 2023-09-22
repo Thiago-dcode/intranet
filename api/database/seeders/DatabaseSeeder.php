@@ -124,23 +124,23 @@ class DatabaseSeeder extends Seeder
 
 
 
-        // $modules = Module::all();
-        // ModuleBuilder::generateFrontEndRoutes($modules);
-        // ModuleBuilder::generateApiRoutes($modules);
-        // foreach ($modules as $key => $module) {
-        //     ModuleBuilder::generateView($module);
+        $modules = Module::all();
+        ModuleBuilder::generateFrontEndRoutes($modules);
+        ModuleBuilder::generateApiRoutes($modules);
+        foreach ($modules as $key => $module) {
+            ModuleBuilder::generateView($module);
 
-        //     ModuleBuilder::generateController($module);
-        // }
+            ModuleBuilder::generateController($module);
+        }
 
 
-        // $companies = Company::all();
+        $companies = Company::all();
 
-        // foreach ($companies as $company) {
+        foreach ($companies as $company) {
 
-        //     if($company['name'] !== 'bera-textil') continue;
-        //     CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
+            if($company['name'] !== 'bera-textil') continue;
+            CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
          
-        // }
+        }
     }
 }
