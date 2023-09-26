@@ -27,12 +27,55 @@ class EansController extends Controller
                 $cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
                 $id_proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
 
-                return \response(Eans::getAll($limit, $cod_articulo, $id_proveedor));
+                $eans = Eans::getAll($limit, $cod_articulo, $id_proveedor);
+                if (count($eans) > 0) {
+                        return \response($eans);
+                }
+                return $this->error([], 'No se ha encontrado ningún artículo', 404);
         }
         public function proveedores(Request $request)
         {
 
 
                 return \response(Eans::getProveedores());
+        }
+
+        public function update(Request $request)
+        {
+
+                $eansError = [];
+                $eansWithoutNum = [];
+                foreach ($request->toArray() as $article) {
+
+                        $eanWithoutNum = [];
+
+                        if (!isset($article['num'])) continue;
+
+
+
+                        if (!Eans::validateEans($article[$article['num'] . '-CODBARRANUEVO'])) {
+                                array_push($eansError, $article);
+                        }
+
+                        foreach ($article as $key => $value) {
+                                if ($key === 'num') continue;
+
+                                $keyWithoutNum = explode('-', $key)[1];
+                                $eanWithoutNum[$keyWithoutNum] = $value;
+                        }
+                        array_push($eansWithoutNum, $eanWithoutNum);
+                }
+
+                if ($eansError) {
+                        return $this->error($eansError, "Algunos de los códigos de barras no cumple con EAN13.", 422);
+                }
+
+                foreach ($eansWithoutNum as $ean) {
+
+                        if (!Eans::updateCodeBar($ean)) {
+                                return $this->error($ean, "Algo fue mal con ese ean.", 422);
+                        };
+                }
+                return $this->success([], 'Los códigos de barras han sido actualizados correctamente');
         }
 }

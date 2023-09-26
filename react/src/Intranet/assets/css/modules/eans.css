@@ -1,27 +1,28 @@
 #eans-module {
-
   width: 100%;
 }
 
 #eans-module td {
-    padding: 0.2rem;
-    overflow: scroll;
+  padding: 0.2rem;
+  overflow: scroll;
   margin: auto;
-
 }
 #eans-module td input {
-   
   background: none;
 
   text-align: center;
-    width: fit-content;
+  width: fit-content;
+}
+.cod-barra-nuevo input {
+  width: 100%;
+}
+#eans-module td,
+th {
+  border: 1px solid black;
+  font-size: 0.6rem;
+  width: 10px;
+}
 
-}
-.cod-barra-nuevo input{
-    width: 100%;
-}
-#eans-module td, th{
-    border: 1px solid black;
-    font-size: .6rem;
-    width: 10px;
+.ean-error {
+  background-color: red;
 }

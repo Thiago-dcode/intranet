@@ -44,7 +44,7 @@ export default function Login() {
           name="Contraseña"
         />,
       ]}
-      error={error}
+      error={error?.message}
       isPending={isPending}
       buttonText="Iniciar sesión"
     />

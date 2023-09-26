@@ -19,6 +19,7 @@ export default function useAjax(
   const [isPending, setIsPending] = useState(false);
   const [_url, _setUrl] = useState(url);
   const [form, setForm] = useState(formData);
+  const [_method, setMethod] = useState(method)
 
 
 
@@ -26,21 +27,22 @@ export default function useAjax(
 
     if (__url) _setUrl(__url);
     if (form) setForm(form);
+    if (method) setMethod(method);
 
 
   }
   const ajax = async (signal) => {
-   
+
     setError("");
     setIsPending(true);
     try {
 
       if (_url === "/api/login") {
         const response = await Api.get("/sanctum/csrf-cookie");
-        console.log(response);
+
       }
       const { data } = await Api({
-        method,
+        method: _method,
         url: _url,
         data: form,
         headers: { ...headers },
@@ -48,7 +50,7 @@ export default function useAjax(
       });
       setData(data);
     } catch (error) {
-      setError(error.response?.data.message);
+      setError(error.response?.data);
       console.log("useAjax.jsx:", error);
       switch (error.response?.data?.status) {
         case 401:
@@ -66,16 +68,16 @@ export default function useAjax(
   useEffect(() => {
 
     if (!_url) return;
-    console.log(_url,method)
+
     if (
-      method === "POST" &&
+      _method === "POST" &&
       !(Object.keys(form).length || Object.keys(formData).length)
     )
       return;
     const controller = new AbortController();
     const signal = controller.signal;
     ajax(signal);
-  }, [_url, form]);
+  }, [_url, form, _method]);
 
   useEffect(() => {
     if (!data && error) {
