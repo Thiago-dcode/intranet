@@ -52,5 +52,18 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 
        
     }
+    public static function getProveedores(){
+        
+        $sql = 'select nombrecomercial, codigo from proveed order by nombrecomercial';
+        $stmt =  PymeConnection::start(env('DBHOST_BERA_TEXTIL_PYME'))->prepare($sql);
+        $stmt->execute([]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $proveedores = [];
+        foreach ($result as $key => $value) {
+            $proveedores[$value['NOMBRECOMERCIAL']] = $value['CODIGO'];
+        }
+        return $proveedores;
+
+    }
     
 }

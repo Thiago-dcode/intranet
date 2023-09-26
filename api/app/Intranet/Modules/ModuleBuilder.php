@@ -60,7 +60,8 @@ use App\Intranet\Utils\Utils;';
              break;
      }
     }
-   
+    
+    require_once __DIR__ . '/modulesCustomRoutes.php';
 
 }";
         $switchConditional = '';

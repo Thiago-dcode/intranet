@@ -38,6 +38,7 @@ use App\Http\Controllers\Intranet\Modules\EmailController;
              break;
      }
     }
-   
+    
+    require_once __DIR__ . '/modulesCustomRoutes.php';
 
 }

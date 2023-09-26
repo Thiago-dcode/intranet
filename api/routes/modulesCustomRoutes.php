@@ -7,10 +7,13 @@
 
 switch ($module["name"]) {
     case 'articulos':
-        Route::get('/module/articulos/example',[ArticulosController::class, 'example']); 
+        Route::get('/modules/articulos/example',[ArticulosController::class, 'example']); 
 
         break;
-    
+    case 'eans':
+
+        Route::get('/modules/eans/proveedores',[EansController::class,'proveedores']);
+
     default:
         # code...
         break;

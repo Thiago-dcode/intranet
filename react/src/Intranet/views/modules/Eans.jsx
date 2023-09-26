@@ -32,7 +32,7 @@ export default function Eans() {
 
   useEffect(() => {
     console.log(codarticulo)
-    setQuery(`?limit=${50}&codarticulo=${codarticulo?codarticulo:''}&proveedor=${proveedor?proveedor:''}`);
+    setQuery(`?limit=${50}&codarticulo=${codarticulo ? codarticulo : ''}&proveedor=${proveedor ? proveedor : ''}`);
 
   }, [codarticulo, proveedor])
 
