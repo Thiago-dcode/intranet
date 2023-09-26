@@ -1,39 +1,32 @@
 <?php
 
-       namespace App\Http\Controllers\Intranet\Modules;
+namespace App\Http\Controllers\Intranet\Modules;
 
-       use App\Intranet\Modules\Eans;
-       use Illuminate\Http\Request;
+use App\Intranet\Modules\Eans;
+use Illuminate\Http\Request;
 
-       use App\Traits\HttpResponses;
+use App\Traits\HttpResponses;
 
-       use App\Http\Controllers\Controller;
-
-       
-       class EansController extends Controller 
-
-       {
-
-            
-               use HttpResponses;
-
-               
-
-               public function index(Request $request){
+use App\Http\Controllers\Controller;
 
 
-                $limit = isset($request['limit'])?isset($request['limit']): '';
-                $cod_articulo = isset($request['cod_articulo'])?isset($request['cod_articulo']): '';
-                $id_proveedor = isset($request['id_proveedor'])?isset($request['id_proveedor']): '';
+class EansController extends Controller
 
-               return \response(Eans::getAll($limit,$cod_articulo,$id_proveedor));
-                
-       
-               }
-
-               
+{
 
 
-               
+        use HttpResponses;
 
-       }
+
+
+        public function index(Request $request)
+        {
+
+             
+                $limit = isset($request['limit']) ? $request['limit'] : 50;
+                $cod_articulo = isset($request['codarticulo']) ?$request['codarticulo'] : '';
+                $id_proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
+           
+                return \response(Eans::getAll($limit, $cod_articulo, $id_proveedor));
+        }
+}

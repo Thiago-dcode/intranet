@@ -17,14 +17,24 @@ export default function useAjax(
   const [error, setError] = useState(null);
 
   const [isPending, setIsPending] = useState(false);
-  const [_url, setUrl] = useState(url);
+  const [_url, _setUrl] = useState(url);
   const [form, setForm] = useState(formData);
 
+
+
+  const setConfig = (__url = '', form = null, method = '') => {
+
+    if (__url) _setUrl(__url);
+    if (form) setForm(form);
+
+
+  }
   const ajax = async (signal) => {
+   
     setError("");
     setIsPending(true);
     try {
-    
+
       if (_url === "/api/login") {
         const response = await Api.get("/sanctum/csrf-cookie");
         console.log(response);
@@ -54,8 +64,9 @@ export default function useAjax(
   };
 
   useEffect(() => {
-    if (!_url || !url) return;
 
+    if (!_url) return;
+    console.log(_url,method)
     if (
       method === "POST" &&
       !(Object.keys(form).length || Object.keys(formData).length)
@@ -75,5 +86,5 @@ export default function useAjax(
     }
   }, [data, error]);
 
-  return [data, error, isPending, setForm];
+  return [data, error, isPending, setForm, setConfig];
 }
