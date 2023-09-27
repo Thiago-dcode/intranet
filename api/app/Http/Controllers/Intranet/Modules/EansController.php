@@ -45,6 +45,7 @@ class EansController extends Controller
 
                 $eansError = [];
                 $eansWithoutNum = [];
+
                 foreach ($request->toArray() as $article) {
 
                         $eanWithoutNum = [];
@@ -52,13 +53,15 @@ class EansController extends Controller
                         if (!isset($article['num'])) continue;
 
 
+                        if (!isset($article['update'])) {
 
-                        if (!Eans::validateEans($article[$article['num'] . '-CODBARRANUEVO'])) {
-                                array_push($eansError, $article);
+                                if (!Eans::validateEans($article[$article['num'] . '-CODBARRANUEVO'])) {
+                                        array_push($eansError, $article);
+                                }
                         }
 
                         foreach ($article as $key => $value) {
-                                if ($key === 'num') continue;
+                                if ($key === 'num' || $key === 'update') continue;
 
                                 $keyWithoutNum = explode('-', $key)[1];
                                 $eanWithoutNum[$keyWithoutNum] = $value;
@@ -69,13 +72,14 @@ class EansController extends Controller
                 if ($eansError) {
                         return $this->error($eansError, "Algunos de los códigos de barras no cumple con EAN13.", 422);
                 }
-
+                $eanSucess = [];
                 foreach ($eansWithoutNum as $ean) {
 
                         if (!Eans::updateCodeBar($ean)) {
                                 return $this->error($ean, "Algo fue mal con ese ean.", 422);
                         };
+                        array_push($eanSucess, $ean);
                 }
-                return $this->success([], 'Los códigos de barras han sido actualizados correctamente');
+                return $this->success($eanSucess, 'Los códigos de barras han sido actualizados correctamente');
         }
 }
