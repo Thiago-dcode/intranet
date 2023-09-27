@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Module;
 use App\Models\Company;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,6 +52,10 @@ class User extends Authenticatable
     public function companies()
     {
         return $this->belongsToMany(Company::class);
+    }
+    public function charts(){
+
+        return $this->hasMany(Chart::class);
     }
 
     public function modules($companyId, $userId)

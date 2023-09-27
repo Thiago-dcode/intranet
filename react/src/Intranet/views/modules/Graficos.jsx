@@ -55,13 +55,13 @@ export default function Graficos() {
                 <form className="flex flex-col items-center  w-full gap-4">
                     <div className='flex flex-col gap-1 w-full'>
                         <label htmlFor="grafico">Tipo de Gráfico</label>
-                        <select  className='bg-white py-2 px-2' name="grafico" id="grafico"><option value="barras">barras</option></select>
+                        <select className='bg-white py-2 px-2' name="grafico" id="grafico"><option value="barras">barras</option></select>
                     </div>
                     <div className='flex flex-col gap-1 w-full'>
                         <label htmlFor="sql">SQL</label>
                         <textarea placeholder="Escribe tu SQL" name="sql" id="sql" cols="5" rows="5"></textarea>
                     </div>
-                  
+
                     <button className=' border-white bg-arzumaRed w-20 rounded-md text-white'>Crear</button>
                 </form>
             </div>
