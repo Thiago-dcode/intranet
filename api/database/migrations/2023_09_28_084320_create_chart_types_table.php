@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('chart_types', function (Blueprint $table) {
             $table->id();
             $table->string('type')->unique();
+            $table->string('icon')->unique();
             $table->timestamps();
         });
     }

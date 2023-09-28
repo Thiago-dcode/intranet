@@ -34,7 +34,7 @@ class AuthController extends Controller
             return $this->error('', 'Credenciales errónea', 422);
         }
         $user = Auth::user();
-        User::where('id', $user->id)->update(['company_active' => null,'module_active' => null]);
+        User::find($user->id)->update(['company_active' => null,'module_active' => null]);
 
         return $this->success([
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
 
-        $user = User::where('id', $request->user()->id)->update(['company_active' => null,'module_active' => null]);
+        $user = User::find($request->user()->id)->update(['company_active' => null,'module_active' => null]);
 
         Auth::guard('web')->logout();
 

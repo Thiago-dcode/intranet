@@ -79,7 +79,7 @@ class User extends Authenticatable
     public static function findModule($userId, $companyName, $moduleName)
     {
 
-        foreach (static::alluserModulesByCompany($userId, $companyName) as $key => $module) {
+        foreach (static::allModulesByCompany($userId, $companyName) as $key => $module) {
             $module = Utils::objectToArray($module);
 
             if ($module['name'] !== $moduleName) continue;
