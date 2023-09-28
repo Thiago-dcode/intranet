@@ -24,7 +24,13 @@ function customModulesRoutes($moduleName){
     
             Route::get('/modules/eans/proveedores',[ App\Http\Controllers\Intranet\Modules\EansController::class,'proveedores']);
             Route::post('/modules/eans/update',[ App\Http\Controllers\Intranet\Modules\EansController::class,'update']);
-    
+            break;
+            case 'graficos':
+                Route::get('/modules/graficos/types',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'types']);
+                Route::post('/modules/graficos/create',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'create']);
+                Route::patch('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'update']);
+                Route::delete('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'delete']);
+                break;
         default:
             # code...
             break;

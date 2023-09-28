@@ -122,8 +122,11 @@ class AuthController extends Controller
 
     public function modules(Request $request)
     {
+    
+        if(!$request->user()->company_active){
 
-
+            return $this->error([],"User don't has a active company",401);
+        }
         
         $modules = User::allModulesByCompany($request->user()->id,$request->user()->company_active);
         return $this->success([

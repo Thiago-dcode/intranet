@@ -1,4 +1,5 @@
 import React from 'react';
+import useAjax from '../../../hooks/useAjax';
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts'
 const data = [
     {
@@ -46,6 +47,10 @@ const data = [
 ];
 
 export default function Graficos() {
+
+    const [chartTypes, chartTypesError, isPending] = useAjax('/api/modules/graficos/types');
+
+
     return (
 
         <div className='px-5 flex flex-col items-center justify-center w-full h-full gap-4'>

@@ -112,8 +112,7 @@ use App\Intranet\Utils\Utils;';
         $path =  Path::ROOT."api/app/Http/Controllers/Intranet/Modules/$moduleName" . "Controller.php";
         if (file_exists($path)) return;
        $content = "<?php\r\n
-
-       namespace App\Http\Controllers\Intranet\Modules;\r\n
+                    namespace App\Http\Controllers\Intranet\Modules;\r\n
        
        use Illuminate\Http\Request;\r\n
        use App\Traits\HttpResponses;\r\n

@@ -4,14 +4,16 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
+use App\Models\Modules\Chart;
 use App\Models\Module;
-use App\Models\Company;
 
+use App\Models\Company;
 use App\Models\ModuleUser;
 use App\Intranet\Utils\Utils;
 use Illuminate\Database\Seeder;
 use App\Intranet\Modules\ModuleBuilder;
 use App\Intranet\Companies\CompanyBuilder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,7 +22,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
+        $userBera = User::firstOrCreate([
+            'name' => 'Bera',
+            'email' => 'bera-textil@bera-textil.es',
+            'password' => 'bera-textil@bera-textil.es'
+        ]);
 
         $userArzuma = User::firstOrCreate([
             'name' => 'arzuma',
@@ -71,16 +77,51 @@ class DatabaseSeeder extends Seeder
             'logo' => 'Envelope'
         ]);
 
+        //assigning companies to the users:
+        $userBera->companies()->attach([$beraTextil->id]);
         $userArzuma->companies()->attach([$beraTextil->id, $carnicasPozas->id]);
-        $beraTextil->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id, $moduleEans->id]);
-        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleEmail->id]);
         $userExample->companies()->attach([$carnicasPozas->id]);
+
+        //Assigning modules to companies.
+        $beraTextil->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleGraficos->id, $moduleEans->id, $moduleEmail->id]);
+        $carnicasPozas->modules()->attach([$moduleClientes->id, $moduleArticulos->id, $moduleEmail->id]);
 
         //Assign modules to user.
         //IMPORTANT! before assign a module to a user, a company already must have that module
         //IMPORTANT! A module cannot be assigned twice to a user. Example if the user already has the module articulos in
         // the company bera-textil, that module cannot be assigned again to the same company.
 
+
+        //Assigning modules to Bera User
+        ModuleUser::firstOrCreate([
+
+            'user_id' => $userBera->id,
+            'company' => $beraTextil->name,
+            'module_id' => $moduleEans->id
+        ]);
+
+        ModuleUser::firstOrCreate([
+
+            'user_id' => $userBera->id,
+            'company' => $beraTextil->name,
+            'module_id' => $moduleEmail->id
+        ]);
+
+        ModuleUser::firstOrCreate([
+
+            'user_id' => $userBera->id,
+            'company' => $beraTextil->name,
+            'module_id' => $moduleArticulos->id
+        ]);
+
+        ModuleUser::firstOrCreate([
+
+            'user_id' => $userBera->id,
+            'company' => $beraTextil->name,
+            'module_id' => $moduleGraficos->id
+        ]);
+
+        //Assigning modules to Arzuma User
         ModuleUser::firstOrCreate([
 
             'user_id' => $userArzuma->id,
@@ -108,6 +149,8 @@ class DatabaseSeeder extends Seeder
             'company' => $carnicasPozas->name,
             'module_id' => $moduleArticulos->id
         ]);
+
+        //Assigning modules to Example User
         ModuleUser::firstOrCreate([
 
             'user_id' => $userExample->id,
@@ -134,13 +177,47 @@ class DatabaseSeeder extends Seeder
         }
 
 
-        $companies = Company::all();
+        //Creating chart types
 
-        foreach ($companies as $company) {
 
-            if($company['name'] !== 'bera-textil') continue;
-            CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
-         
-        }
+
+        DB::table('chart_types')->insert([[
+            'type' => 'pie',
+        ], [
+            'type' => 'bar',
+        ]]);
+
+        //Creating charts, and assigning it to user Bera
+        Chart::firstOrCreate([
+            'sql' => 'select * from table',
+            'type' => DB::table('chart_types')
+                ->where('type', 'bar')
+                ->first()->type,
+            'user_id' => $userBera->id,
+            'company_name' => $beraTextil->name
+        ]);
+
+        Chart::firstOrCreate([
+            'sql' => 'select * from table',
+            'type' => DB::table('chart_types')
+                ->where('type', 'pie')
+                ->first()->type,
+            'user_id' => $userBera->id,
+            'company_name' => $beraTextil->name
+        ]);
+
+
+        // TODO: rebuild env var builder
+
+        // $companies = Company::all();
+
+
+
+        // foreach ($companies as $company) {
+
+        //     if($company['name'] !== 'bera-textil') continue;
+        //     CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
+
+        // }
     }
 }

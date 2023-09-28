@@ -3,7 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Chart;
+use App\Models\Modules\Chart;
 use App\Models\Module;
 use App\Models\Company;
 use App\Models\ModuleUser;
