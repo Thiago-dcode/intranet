@@ -6,7 +6,10 @@ namespace App\Models;
 use App\Models\Chart;
 use App\Models\Module;
 use App\Models\Company;
+use App\Models\ModuleUser;
+use App\Intranet\Utils\Utils;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -54,14 +57,33 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Company::class);
     }
-    public function charts(){
+    public function charts()
+    {
 
         return $this->hasMany(Chart::class);
     }
 
-    public function modules($companyId, $userId)
+    public static function allModules($userId)
     {
 
-        return ModuleUser::where('company_id', $companyId)->where('user_id',$userId);
+        $modulesIds = ModuleUser::where('user_id', $userId)->pluck('module_id')->toArray();
+        return DB::table('modules')->whereIn('id', $modulesIds)->get();
+    }
+    public static function allModulesByCompany($userId, $companyName)
+    {
+
+        $modulesIds = ModuleUser::where('user_id', $userId)->where('company', $companyName)->pluck('module_id')->toArray();
+
+        return  DB::table('modules')->whereIn('id', $modulesIds)->get();
+    }
+    public static function findModule($userId, $companyName, $moduleName)
+    {
+
+        foreach (static::alluserModulesByCompany($userId, $companyName) as $key => $module) {
+            $module = Utils::objectToArray($module);
+
+            if ($module['name'] !== $moduleName) continue;
+            return $module;
+        }
     }
 }

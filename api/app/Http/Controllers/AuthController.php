@@ -97,7 +97,7 @@ class AuthController extends Controller
             return $this->error('', '', 401);
         }
 
-   if(!ModuleUser::findUserModule( $request->user()->id, $request->user()->company_active,$request['module'])){
+   if(!User::findModule( $request->user()->id, $request->user()->company_active,$request['module'])){
 
     return $this->error('', '', 401);
    };
@@ -125,7 +125,7 @@ class AuthController extends Controller
 
 
         
-        $modules = ModuleUser::allUserModulesByCompany($request->user()->id,$request->user()->company_active);
+        $modules = User::allModulesByCompany($request->user()->id,$request->user()->company_active);
         return $this->success([
 
             'modules' => $modules,

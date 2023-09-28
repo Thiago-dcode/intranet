@@ -54,16 +54,20 @@ use App\Intranet\Utils\Utils;';
              switch ( $module["name"]) {';
 
         
-        $close = "
+        $close = '
             default:
              # code...
              break;
      }
+
+     require_once __DIR__ . "/modulesCustomRoutes.php";
+     customModulesRoutes($module["name"]);
+     
     }
     
-    require_once __DIR__ . '/modulesCustomRoutes.php';
+   
 
-}";
+}';
         $switchConditional = '';
         $moduleObject = '';
        

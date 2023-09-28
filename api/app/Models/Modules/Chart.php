@@ -9,4 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Chart extends Model
 {
     
+
+    
+
 }

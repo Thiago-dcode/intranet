@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/modules', [AuthController::class, 'modules']);
   if ($user) {
    
-    $modules = ModuleUser::allUserModules($user->id);
+    $modules = User::allModules($user->id);
   
     require_once __DIR__ . '/modules.php';
 
