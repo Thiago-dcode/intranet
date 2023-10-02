@@ -2,21 +2,27 @@ import React, { useEffect, useState } from 'react'
 import useAjax from '../../../../hooks/useAjax';
 import Icon from '../../icon/Icon';
 import Dropdown from '../../dropdown/Dropdown';
-export default function GraficosForm({ isPending, setConfig, error }) {
+export default function GraficosForm({cleanField = true, url = '/api/modules/graficos/new', method='POST', titleVal ='',sqlVal='',id, idDrop = 'chart-type-create', titleForm = 'Crea tu propio gráfico.', titleDrop, titleBtn = 'Crear', result, isPending, setConfig, error, classNameDrop = ' top-8 bg-white  rounded-md gap-2 p-2 w-full border border-black', }) {
     const [chartTypes, chartTypesError, isPendingChartTypes] = useAjax('/api/modules/graficos/types');
-    const [title,setTitle] = useState('');
+    const [title, setTitle] = useState('');
     const [type, setType] = useState('');
     const [sql, setSql] = useState('');
     const [dropTitle, setDropTitle] = useState('Tipo de gráfico');
+    const [dropError, setDropError] = useState(null)
     const [form, setForm] = useState(null);
     const handleSubmit = (e) => {
-       
-        e.preventDefault();
 
-        if (!title||!type || !sql) return
-        console.log(title)
+        e.preventDefault();
+        if (!type) {
+
+            setDropError(['El campo tipo de gráfico es obligatorio.'])
+            return
+        }
+        if (!title || !sql) return
+        setDropError(null)
+       
         setForm({
-           title, type, sql: sql.trim()
+            title, type, sql: sql.trim()
         })
     }
     const handleType = (value) => {
@@ -24,27 +30,41 @@ export default function GraficosForm({ isPending, setConfig, error }) {
 
         setType(value)
         setDropTitle(value)
-        document.querySelector(`#chart-form .container`).classList.remove('show');
+        document.querySelector(`#${idDrop} .container`).classList.remove('show');
 
     }
 
     useEffect(() => {
 
         if (!form) return
-        console.log(form);
-        setConfig('/api/modules/graficos/new', form, 'POST')
+       
+        setConfig(url, form, method)
 
     }, [form])
     useEffect(() => {
 
         if (!isPending && !error) {
 
-            document.querySelector(`#chart-view .container`).classList.remove('show');
+            document.querySelector(`#${id} .container`).classList.remove('show');
+
+            if(!cleanField) return
             setSql('');
+            setTitle('')
 
         }
 
     }, [isPending, error])
+    useEffect(()=>{
+      
+                setTitle(titleVal)
+         
+           
+                setSql(sqlVal)
+           
+         
+        
+
+    },[titleVal,sqlVal])
 
     return (
         <>
@@ -52,12 +72,13 @@ export default function GraficosForm({ isPending, setConfig, error }) {
                 (<form onSubmit={(e) => {
                     handleSubmit(e)
                 }} className="flex flex-col items-center  w-full gap-4">
-                    <h2 className='text-white text-lg font-semibold capitalize w-full rounded-md pl-2'>Crear tu propio gráfico.</h2>
-                    <input onChange={(e)=>{
+                    <h2 className='text-white text-lg font-semibold capitalize w-full rounded-md pl-2'>{titleForm}</h2>
+                    <input required onChange={(e) => {
                         setTitle(e.target.value)
-                    }} type="text" className='w-full p-2 rounded-md' placeholder=' Título del Gráfico'  />
-                    <Dropdown classNameDrop='absolute top-8 bg-white  flex flex-col rounded-md gap-2 p-2 w-full container border border-black' id={'chart-form'} title={dropTitle}>
-                            
+                    }} value={title} type="text" className='w-full p-2 rounded-md' placeholder=' Título del Gráfico' />
+
+                    <Dropdown errors={dropError} classNameDrop={classNameDrop} id={idDrop} title={dropTitle}>
+
                         {chartTypes.data?.map(chartType => {
 
                             return (
@@ -78,12 +99,12 @@ export default function GraficosForm({ isPending, setConfig, error }) {
                     </Dropdown>
                     <div className='flex flex-col gap-1 w-full'>
 
-                        <textarea onChange={(e) => {
+                        <textarea required onChange={(e) => {
                             setSql(e.target.value)
-                        }} className='p-5 rounded-md' placeholder="Escribe tu SQL" name="sql" id="sql" cols="5" rows="5"></textarea>
+                        }} value={sql} className='p-5 rounded-md' placeholder="Escribe tu SQL" name="sql" id="sql" cols="5" rows="5"></textarea>
                     </div>
 
-                    {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>Crear</button> : <p className=' px-1 border-white bg-arzumaRed w-20 rounded-md text-white '>Creando...</p>}
+                    {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>{titleBtn}</button> : <p className=' px-1 border-white bg-arzumaRed w-20 rounded-md text-white '>Submitting...</p>}
 
                     <div>  {error &&
                         error.data.map(err => {

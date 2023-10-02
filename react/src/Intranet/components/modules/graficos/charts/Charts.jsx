@@ -43,30 +43,41 @@ export function ChartRadial({ data }) {
         </ResponsiveContainer>
     )
 }
-export function ChartBar({ data }) {
+export function ChartBar({ data, barConfig = {
+    dataKey: 'Comercial',
+    min: 0,
+    max: 250000,
+
+    data: [
+       { barData: 'Ventas 1', color: 'red'}
+    ],
+
+} }) {
 
 
     useEffect(() => {
-
-        console.log(data)
-
+        console.log(data);
     }, [data])
 
     return (
 
         <ResponsiveContainer width={'100%'} height={'100%'} >
-            <BarChart width={730} height={250} data={example}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+            <BarChart width={500}
+                height={300} data={data}>
+                <CartesianGrid stroke="#ccc" />
+                <XAxis label={{ position: "inside", dy: 10 }} text interval={0} fontSize={'0.5rem'} className='text-xs' dataKey={barConfig.dataKey} />
+                <YAxis domain={[barConfig.min, barConfig.max]} />
                 <Tooltip />
                 <Legend />
-               
 
-                    <Bar dataKey="x" fill="#8884d8" />
+
+                {barConfig.data.map(bar => {
                   
+                     return <Bar dataKey={bar.barData} fill={bar.color} />
+                })}
 
-               
+
+
             </BarChart>
         </ResponsiveContainer>
     )

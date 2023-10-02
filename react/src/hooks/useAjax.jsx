@@ -38,10 +38,16 @@ export default function useAjax(
         const response = await Api.get("/sanctum/csrf-cookie");
 
       }
+     
+
+      // if (_method === 'PATCH') {
+      //   const { data } = await Api.patch(_url, form, {...headers}, { signal ,...config})
+      //   setData(data)
+      // }
       const { data } = await Api({
-        method: _method,
+        method: _method==='PATCH'? 'POST':_method,
         url: _url,
-        data: form,
+        data: _method==='PATCH'? {...form,  _method: "patch"}:form,
         headers: { ...headers },
         params: { signal, ...config },
       });
@@ -67,10 +73,11 @@ export default function useAjax(
     if (!_url) return;
 
     if (
-      _method === "POST" &&
+      (_method === "POST" || _method === "PATCH") &&
       !(Object.keys(form).length)
     )
       return;
+
     const controller = new AbortController();
     const signal = controller.signal;
     ajax(signal);

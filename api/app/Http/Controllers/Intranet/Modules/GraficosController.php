@@ -33,7 +33,7 @@
                         return $this->error([],'User must has a company activated',401);
                 }
                 
-               $userChartsByCompany =  DB::table('charts')->where('user_id',$request->user()->id)->where('company_name',$company )->get();
+               $userChartsByCompany =  DB::table('charts')->where('user_id',$request->user()->id)->where('company_name',$company )->orderBy('created_at', 'desc')->get();
                 
                $chartsWithData = [];
 
@@ -105,14 +105,23 @@
                public function update($id,Request $request){
                         
 
-                                $errors = [];
-                               $fields = $request->validate([
-
+                $errors = [];
+                $user = $request->user();
+             
+                $fields = $request->validate([
+                          'title'=> 'required',
                                 'sql'=> 'required',
                                 'type'=> 'required',
                         ]);
 
                 //Handle sql error
+
+                $sqlValidation = Validate::sql($user->company_active,$fields['sql']);
+                if(!$sqlValidation['result'] ){  
+                
+                array_push($errors,$sqlValidation['message']);
+        
+        }
                         
                if(!DB::table('chart_types')->where('type',  $fields['type'])->exists()){
 
@@ -125,6 +134,7 @@
                 $chart = Chart::find($id);
 
               $chartUpdated =  $chart->update([
+                'title' => $fields['title'],
                 'sql' => $fields['sql'],
                 'type'=> $fields['type'],
               ]);

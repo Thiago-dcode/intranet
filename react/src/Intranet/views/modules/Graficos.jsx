@@ -5,56 +5,13 @@ import Dropdown from '../../components/dropdown/Dropdown';
 import { ChartBar, ChartRadial } from '../../components/modules/graficos/charts/Charts';
 import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
-const data = [
-    {
-        name: 'Page A',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: 'Page B',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-    },
-    {
-        name: 'Page C',
-        uv: 2000,
-
-
-    },
-    {
-        name: 'Page D',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-    },
-    {
-        name: 'Page E',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
-    },
-    {
-        name: 'Page F',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
-    },
-    {
-        name: 'Page G',
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
-    },
-];
 
 export default function Graficos() {
 
 
     const [userCharts, userChartsError, isPendingUserCharts] = useAjax('/api/modules/graficos');
     const [charts, setCharts] = useState(null);
+    const [chart, setChart] = useState();
     const [newChart, newChartError, isPendingNewChart, setConfigNewChart] = useAjax();
 
 
@@ -62,6 +19,8 @@ export default function Graficos() {
     useEffect(() => {
 
         if (userCharts) {
+
+
             setCharts(userCharts.data)
         }
         if (userChartsError) {
@@ -73,44 +32,85 @@ export default function Graficos() {
     }, [userCharts, userChartsError])
 
     useEffect(() => {
+        setChart(null)
+
+        if (newChartError) {
+
+            setChart(null);
+            return
+        }
 
         if (newChart) {
-            if (!newChartError) {
-                if (!userCharts) setCharts([...newChart.data]);
 
-                setCharts(prevData => {
-                    let exist = false
-                    for (let i = 0; i < prevData.length; i++) {
-                        const element = prevData[i];
-
-                        if (element.id === newChart.data.id) {
-                            exist === true
-                            break;
-                        }
-
-                    }
-                    if (!exist) return
-                    { [newChart.data, ...prevData] }
-                })
+            let exist = false
+            if (!charts) {
+                setChart(newChart.data)
+                return
             }
-        }
-        if (newChartError) {
-            console.log(newChartError)
-        }
+            for (let index = 0; index < charts.length; index++) {
+                const element = charts[index];
 
+
+                exist = false
+                if (element.id === newChart.data.id) {
+                    exist = true
+                    break
+                }
+
+
+            }
+            if (!exist) {
+
+                setChart(newChart.data)
+            }
+
+        }
 
     }, [newChart, newChartError])
+
+    const handleEdit = (chartEdited) => {
+
+        let chartsUpdated = charts.map(chart => {
+
+            if (chart.id === chartEdited.id) {
+                return chartEdited
+            }
+            return chart
+
+        })
+      
+        setCharts(chartsUpdated);
+
+    }
+    const handleDelete = (chartToDelete) => {
+      
+        let chartsUpdated = charts.filter(chart => chart.id !== chartToDelete.id)
+
+        setCharts(chartsUpdated);
+
+    }
+    useEffect(() => {
+
+    }, [charts])
+    useEffect(() => {
+
+        if (!chart) return
+
+        setCharts(prev => [chart, ...prev])
+
+
+    }, [chart])
     return (
 
-        <div className='px-5 flex flex-col items-center justify-between w-full h-full gap-4'>
+        <div className='overflow-auto mt-5 px-5 flex flex-col items-center justify-between w-full  h-full mb-20 gap-4'>
 
-            <div className='w-1/3 self-baseline mt-20'>
+            <div className='w-full max-w-3xl self-baseline'>
                 <Dropdown arrow={false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
-                    <GraficosForm isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError} />
+                    <GraficosForm id={'chart-view'} result={newChart} isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError} />
                 </Dropdown>
 
             </div>
-            {charts ? <div className='overflow-auto w-full h-full  flex-wrap flex gap-4'>
+            {charts !== null && charts.length > 0 ? <div className=' items-center justify-between  w-full h-full  flex-wrap flex gap-4'>
 
                 {charts.map(chart => {
 
@@ -127,13 +127,15 @@ export default function Graficos() {
                         default:
                             break;
                     }
-                    return chartsToRender.map(element => <ChartWrapper title={chart.title}>{element}</ChartWrapper>)
+                    return chartsToRender.map(element => <ChartWrapper _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title}>{element}</ChartWrapper>)
 
 
                 })}
 
 
-            </div> : <p className='flex gap-4   w-full h-full'>cargando...</p>}
+            </div> : null}
+            {isPendingUserCharts && !userChartsError && <p className='flex gap-4  w-full h-full'>cargando...</p>}
+            {!isPendingUserCharts && !userChartsError && Array.isArray(charts) && charts.length === 0 && <div className='text-black flex gap-4  justify-self-center w-full h-full'>No tienes ningún gráfico, empiezar creando uno.</div>}
         </div>
     )
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('company_name');
+            $table->text('config');
             $table->text('sql');
             $table->string('type');
             $table->timestamps();
