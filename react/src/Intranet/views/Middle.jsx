@@ -13,8 +13,8 @@ export default function Middle() {
     userCompanyActive,
     errorUserCompanyActive,
     isPendingUserCompanyActive,
-    setForm,
-  ] = useAjax("/api/active-company", "POST");
+    setConfig,
+  ] = useAjax();
   const [companyActive, setCompanyActive] = useState(null);
   const [company, setCompany] = useState(null);
 
@@ -35,10 +35,10 @@ export default function Middle() {
   useEffect(() => {
     if (!company) return;
 
-    setForm({
+    setConfig("/api/active-company", {
       user_id: user.id,
       company,
-    });
+    }, "POST");
   }, [company]);
 
   useEffect(() => {

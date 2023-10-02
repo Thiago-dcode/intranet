@@ -27,7 +27,7 @@ class EansController extends Controller
                 $cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
                 $id_proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
 
-                $eans = Eans::getAll($limit, $cod_articulo, $id_proveedor);
+                $eans = Eans::getAll($request->user()->company_active,$limit, $cod_articulo, $id_proveedor);
                 if (count($eans) > 0) {
                         return \response($eans);
                 }
@@ -37,7 +37,7 @@ class EansController extends Controller
         {
 
 
-                return \response(Eans::getProveedores());
+                return \response(Eans::getProveedores($request->user()->company_active));
         }
 
         public function update(Request $request)
@@ -75,7 +75,7 @@ class EansController extends Controller
                 $eanSucess = [];
                 foreach ($eansWithoutNum as $ean) {
 
-                        if (!Eans::updateCodeBar($ean)) {
+                        if (!Eans::updateCodeBar($request->user()->company_active,$ean)) {
                                 return $this->error($ean, "Algo fue mal con ese ean.", 422);
                         };
                         array_push($eanSucess, $ean);

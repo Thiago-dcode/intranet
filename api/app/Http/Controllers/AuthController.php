@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\User;
 use App\Models\Module;
 use App\Models\Company;
@@ -13,7 +12,7 @@ use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Intranet\Modules\ModuleBuilder;
+use App\Intranet\Utils\ModuleBuilder;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Console\Scheduling\Schedule;
 

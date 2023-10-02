@@ -23,7 +23,8 @@ Api.interceptors.response.use(
   },
   (error) => {
     const { response } = error;
-    if (response.status === 401) {
+    console.log(response)
+    if (response && response.status === 401) {
       ls.clear();
     }
     throw error;

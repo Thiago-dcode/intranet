@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Intranet\Modules;
+namespace App\Intranet\Utils;
 use App\Intranet\Utils\Path;
 use App\Intranet\Utils\Utils;
 use App\Models\Module;

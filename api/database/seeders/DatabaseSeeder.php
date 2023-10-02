@@ -11,7 +11,7 @@ use App\Models\Company;
 use App\Models\ModuleUser;
 use App\Intranet\Utils\Utils;
 use Illuminate\Database\Seeder;
-use App\Intranet\Modules\ModuleBuilder;
+use App\Intranet\Utils\ModuleBuilder;
 use App\Intranet\Companies\CompanyBuilder;
 use Illuminate\Support\Facades\DB;
 
@@ -165,8 +165,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-
-
         $modules = Module::all();
         ModuleBuilder::generateFrontEndRoutes($modules);
         ModuleBuilder::generateApiRoutes($modules);
@@ -190,51 +188,20 @@ class DatabaseSeeder extends Seeder
         ]]);
 
         //Creating charts, and assigning it to user Bera
-        Chart::firstOrCreate([
-            'sql' => "select sum(IMPORTEBASE) as 'Ventas 1', agente.nombre as 'Comercial'
-            from doccab , agente
-            where doccab.tipo=1
-            and CODAGENTE in (2,3,5,15,17,19,100,101,102,103)
-            and doccab.serie='OI2023'
-            and doccab.codcliente between 2000 and 30000
-            and doccab.codagente = agente.codigo
-            group by agente.nombre
-            order by 'Ventas 1' DESC",
-            'type' => DB::table('chart_types')
-                ->where('type', 'bar')
-                ->first()->type,
-
-            'user_id' => $userBera->id,
-            'company_name' => $beraTextil->name
-        ]);
-
-        Chart::firstOrCreate([
-            'sql' => "select sum(IMPORTEBASE) as 'Ventas 1'
-            from doccab where tipo=2
-            and CODALMACEN=2
-            and serie='CONTI'
-            and codcliente between 2000 and 30000
-            and fecha between current_date -7 and current_date ",
-            'type' => DB::table('chart_types')
-                ->where('type', 'radial')
-                ->first()->type,
-
-            'user_id' => $userBera->id,
-            'company_name' => $beraTextil->name
-        ]);
+       
 
 
         // TODO: rebuild env var builder
 
-        // $companies = Company::all();
+        
+        
+        $companies = Company::all();
 
+        foreach ($companies as $company) {
 
+            if($company['name'] !== 'bera-textil') continue;
+            CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.fdb');
 
-        // foreach ($companies as $company) {
-
-        //     if($company['name'] !== 'bera-textil') continue;
-        //     CompanyBuilder::generateHostEnvVar($company, '141.95.252.198:C:\Distrito\Pyme\Database\BERA200\2020.FDB');
-
-        // }
+        }
     }
 }

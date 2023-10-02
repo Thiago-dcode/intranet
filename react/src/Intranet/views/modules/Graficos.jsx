@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../assets/css/modules/graficos.css'
 import useAjax from '../../../hooks/useAjax';
 import Dropdown from '../../components/dropdown/Dropdown';
-import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts'
+import { ChartBar, ChartRadial } from '../../components/modules/graficos/charts/Charts';
+import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
 const data = [
     {
@@ -53,64 +54,86 @@ export default function Graficos() {
 
 
     const [userCharts, userChartsError, isPendingUserCharts] = useAjax('/api/modules/graficos');
+    const [charts, setCharts] = useState(null);
+    const [newChart, newChartError, isPendingNewChart, setConfigNewChart] = useAjax();
+
+
 
     useEffect(() => {
 
-        console.log(userCharts)
+        if (userCharts) {
+            setCharts(userCharts.data)
+        }
+        if (userChartsError) {
+            console.log(userChartsError)
+        }
+
+
 
     }, [userCharts, userChartsError])
+
+    useEffect(() => {
+
+        if (newChart) {
+            if (!newChartError) {
+                if (!userCharts) setCharts([...newChart.data]);
+
+                setCharts(prevData => {
+                    let exist = false
+                    for (let i = 0; i < prevData.length; i++) {
+                        const element = prevData[i];
+
+                        if (element.id === newChart.data.id) {
+                            exist === true
+                            break;
+                        }
+
+                    }
+                    if (!exist) return
+                    { [newChart.data, ...prevData] }
+                })
+            }
+        }
+        if (newChartError) {
+            console.log(newChartError)
+        }
+
+
+    }, [newChart, newChartError])
     return (
 
-        <div className='px-5 flex flex-col items-center justify-center w-full h-full gap-4'>
-            <h2>Graficos</h2>
-            <div className='w-1/3 self-start '>
-                <Dropdown arrow = {false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
-                    <GraficosForm />
+        <div className='px-5 flex flex-col items-center justify-between w-full h-full gap-4'>
+
+            <div className='w-1/3 self-baseline mt-20'>
+                <Dropdown arrow={false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
+                    <GraficosForm isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError} />
                 </Dropdown>
 
             </div>
-            <div className='flex w-full h-full '>
-                <ResponsiveContainer width="50%" height="50%">
-                    <BarChart width={500}
-                        height={300}
-                        data={data}
-                        margin={{
-                            top: 5,
-                            right: 5,
-                            left: 5,
-                            bottom: 5,
-                        }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="pv" fill="#8884d8" />
-                        <Bar dataKey="uv" fill="#82ca9d" />
-                    </BarChart>
-                </ResponsiveContainer>
+            {charts ? <div className='overflow-auto w-full h-full  flex-wrap flex gap-4'>
 
-                <ResponsiveContainer width="50%" height="50%">
-                    <BarChart width={500}
-                        height={300}
-                        data={data}
-                        margin={{
-                            top: 5,
-                            right: 0,
-                            left: 0,
-                            bottom: 5,
-                        }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="pv" fill="#8884d8" />
-                        <Bar dataKey="uv" fill="#82ca9d" />
-                        <Bar dataKey="amt" fill="#fffff" />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
+                {charts.map(chart => {
+
+                    let chartsToRender = [];
+
+                    switch (chart.type) {
+                        case "radial":
+                            chartsToRender.push(<ChartRadial data={chart.data} />)
+                            break;
+                        case "bar":
+                            chartsToRender.push(<ChartBar data={chart.data} />)
+                            break;
+
+                        default:
+                            break;
+                    }
+                    return chartsToRender.map(element => <ChartWrapper title={chart.title}>{element}</ChartWrapper>)
+
+
+                })}
+
+
+            </div> : <p className='flex gap-4   w-full h-full'>cargando...</p>}
         </div>
     )
 }

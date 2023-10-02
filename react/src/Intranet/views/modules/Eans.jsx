@@ -14,8 +14,8 @@ export default function Eans() {
   const [codarticulo, setCodArticulo] = useState(null);
   const [proveedor, setProveedor] = useState(null);
   const [searchParams] = useSearchParams();
-  const [data, error, isPending, setFormData, setConfig] = useAjax();
-  const [update, errorUpdate, isPendingUpdate, setFormUpdate, setConfigUpdate] = useAjax();
+  const [data, error, isPending, setConfig] = useAjax();
+  const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
   const [form, setForm] = useState(null);
   const [proveedores] = useAjax('/api/modules/eans/proveedores');
   const [eans, setEans] = useState(null);
@@ -159,7 +159,7 @@ export default function Eans() {
 
     setUrl("/modules/eans?limit=" + limit + "&codarticulo=" + codarticulo + '&proveedor=' + proveedor)
 
-  }, [searchParams])
+  }, [])
   useEffect(() => {
     setConfig('/api' + url)
   }, [url])
@@ -248,7 +248,7 @@ export default function Eans() {
                   </tbody>
 
                 </table>
-               
+
               </div>
               {!eanError && <button type="submit " className="sticky bottom-0 bg-black text-white px-2">Actualizar</button>}
 

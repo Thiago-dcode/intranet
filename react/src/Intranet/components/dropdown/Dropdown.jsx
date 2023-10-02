@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Dropdown({ classNameDrop = 'absolute top-10 bg-black/40  flex flex-col rounded-md gap-2 p-2 w-full container border-2 border-white', classNameBtn = 'flex items-center gap-5 bg-white px-2 rounded-md', id, title, children, arrow = true }) {
+export default function Dropdown({ classNameDrop = 'absolute top-10 bg-black/70  flex flex-col rounded-md gap-2 p-2 w-full container border-white', classNameBtn = 'flex items-center gap-5 bg-white px-2 rounded-md', id, title, children, arrow = true }) {
 
     const handleDropDown = () => {
 

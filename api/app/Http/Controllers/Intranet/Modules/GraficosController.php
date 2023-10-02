@@ -1,7 +1,13 @@
 <?php
-  namespace App\Http\Controllers\Intranet\Modules;
 
-  use App\Models\Modules\Chart;
+
+
+
+  namespace App\Http\Controllers\Intranet\Modules;
+  use App\Intranet\Utils\Utils;
+  use App\Intranet\Modules\Graficos;
+         use App\Intranet\Utils\Validate;
+        use App\Models\Modules\Chart;
        use Illuminate\Support\Facades\DB;
        use Illuminate\Http\Request;
 
@@ -21,14 +27,28 @@
 
                public function index(Request $request){
 
-                
-                if(!$request->user()->company_active){
+              $company = $request->user()->company_active;
+                if(!$company ){
 
                         return $this->error([],'User must has a company activated',401);
                 }
                 
-               $userChartsByCompany =  DB::table('charts')->where('user_id',$request->user()->id)->where('company_name',$request->user()->company_active)->get();
-              return $this->success($request->user()->charts);
+               $userChartsByCompany =  DB::table('charts')->where('user_id',$request->user()->id)->where('company_name',$company )->get();
+                
+               $chartsWithData = [];
+
+               foreach ($userChartsByCompany as $chart) {
+                $chart = Utils::objectToArray($chart);
+             
+                $chartWithData = [...$chart];
+                Graficos::get($company,$chart['sql']);
+                $chartWithData['data'] =  Graficos::get($company,$chart['sql']);
+
+                array_push($chartsWithData,$chartWithData);
+
+               }
+            
+              return $this->success($chartsWithData);
                 //start your logic here
        
                }
@@ -41,13 +61,21 @@
                public function create(Request $request){
 
                         $errors = [];
-                $fields = $request->validate([
-
+                        $user = $request->user();
+                        $fields = $request->validate([
+                        'title' =>'required',
                         'sql'=> 'required',
                         'type'=> 'required',
                        ]);
 
                         //Handle sql error
+                      $sqlValidation = Validate::sql($user->company_active,$fields['sql']);
+                        if(!$sqlValidation['result'] ){  
+                        
+                        array_push($errors,$sqlValidation['message']);
+                
+                }
+                        
 
                        if(!DB::table('chart_types')->where('type',  $fields['type'])->exists()){
 
@@ -57,9 +85,10 @@
                        if(!$errors)
                       {
                         
-                        $user = $request->user();
+                      
 
                       $newChart =  Chart::create([
+                        'title' => $fields['title'],
                         'sql' => $fields['sql'],
                         'type'=> $fields['type'],
                         'user_id'=> $user->id,

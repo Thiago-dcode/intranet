@@ -5,13 +5,14 @@ use PDO;
 use App\Models\Module;
 use App\Intranet\Utils\Path;
 use App\Intranet\Utils\Utils;
+use App\Intranet\Utils\Constants;
 use App\Intranet\Pyme\PymeConnection;
 
 class Eans
 {
 
 
-    public static function getAll($limit = 50, $codArticulo = '', $proveedor = '')
+    public static function getAll($company,$limit = 50, $codArticulo = '', $proveedor = '')
     {
 
         $filter = '';
@@ -42,7 +43,7 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 			  
 	;
        
-        $stmt = PymeConnection::start(env('DBHOST_BERA_TEXTIL_PYME'))->prepare($sql);
+        $stmt = PymeConnection::start(Constants::get($company))->prepare($sql);
         $stmt->execute([]);
 
 
@@ -52,10 +53,10 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 
        
     }
-    public static function getProveedores(){
+    public static function getProveedores($company){
         
         $sql = 'select nombrecomercial, codigo from proveed order by nombrecomercial';
-        $stmt =  PymeConnection::start(env('DBHOST_BERA_TEXTIL_PYME'))->prepare($sql);
+        $stmt =  PymeConnection::start(Constants::get($company))->prepare($sql);
         $stmt->execute([]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $proveedores = [];
@@ -100,7 +101,7 @@ ORDER BY cb.codarticulo, cb.valorcaract;
         return false;
 
     }
-    public static function updateCodeBar($data)
+    public static function updateCodeBar($company,$data)
     {
         $result1 = false;
         $result2 = false;
@@ -110,7 +111,7 @@ ORDER BY cb.codarticulo, cb.valorcaract;
                 WHERE CODARTICULO = :codarticulo
                 AND codbarras = :codbarras";
         try {
-            $stmt =  PymeConnection::start(env('DBHOST_BERA_TEXTIL_PYME'))->prepare($sql);
+            $stmt =  PymeConnection::start(Constants::get($company))->prepare($sql);
 
             $params = [
                 ':cod_barra_nuevo' => $data['CODBARRANUEVO'],

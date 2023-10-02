@@ -4,10 +4,11 @@ import ls from "localstorage-slim";
 import { useEffect, useState } from "react";
 
 export default function useLogin() {
-  const [data, error, isPending, setForm] = useAjax("/api/login", "POST");
+  const [data, error, isPending, setConfig] = useAjax();
   const navigate = useNavigate();
-  const login = (form) => {
-    setForm(form);
+  const login = (e,form) => {
+    e.preventDefault()
+    setConfig("/api/login",form, "POST");
   };
 
   useEffect(() => {

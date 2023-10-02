@@ -27,7 +27,7 @@ function customModulesRoutes($moduleName){
             break;
             case 'graficos':
                 Route::get('/modules/graficos/types',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'types']);
-                Route::post('/modules/graficos/create',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'create']);
+                Route::post('/modules/graficos/new',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'create']);
                 Route::patch('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'update']);
                 Route::delete('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'delete']);
                 break;

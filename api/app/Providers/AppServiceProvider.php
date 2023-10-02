@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Company;
+use App\Intranet\Utils\Constants;
 use Illuminate\Support\ServiceProvider;
+use App\Intranet\Companies\CompanyBuilder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        foreach (Company::all(['name']) as  $company) {
+
+            CompanyBuilder::generateHostConstant($company['name']);
+        };
     }
 }

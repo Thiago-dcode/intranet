@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import Api from "../api/Api";
-import { useNavigate } from "react-router-dom";
 
 export default function useAjax(
   url = "",
@@ -9,9 +8,7 @@ export default function useAjax(
   formData = {},
   config = {},
   headers = {},
-  csrf = false
 ) {
-  const navigate = useNavigate();
   const [data, setData] = useState(null);
 
   const [error, setError] = useState(null);
@@ -54,7 +51,7 @@ export default function useAjax(
       console.log("useAjax.jsx:", error);
       switch (error.response?.data?.status) {
         case 401:
-          // ls.clear();
+          ls.clear();
           break;
 
         default:
@@ -71,7 +68,7 @@ export default function useAjax(
 
     if (
       _method === "POST" &&
-      !(Object.keys(form).length || Object.keys(formData).length)
+      !(Object.keys(form).length)
     )
       return;
     const controller = new AbortController();
@@ -83,10 +80,10 @@ export default function useAjax(
     if (!data && error) {
       if (error.status === 401) {
         console.log(error);
-        // navigate("/login");
+
       }
     }
   }, [data, error]);
 
-  return [data, error, isPending, setForm, setConfig];
+  return [data, error, isPending, setConfig];
 }
