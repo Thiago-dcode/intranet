@@ -13,12 +13,12 @@ export default function Dropdown({ Element = null, errors, classNameDrop = 'bg-b
 
     }
     return (
-        <div id={id} className='relative flex flex-col gap-1 w-full items-start dropdown z-[99]'>
+        <div id={id} className={`relative flex flex-col w-full  items-start dropdown class-${id} z-[99]`}>
             <button onClick={(e) => {
                 handleDropDown();
-            }} type='button' className={classNameBtn}>{!Element ? (<span>{title}</span>): Element}{arrow && <i class="arrow down"></i>}</button>
-            <div className='flex w-full flex-col'>
-                <div className={` container absolute top-10 flex flex-col ${classNameDrop} `}>{children}</div>
+            }} type='button' className={`${classNameBtn}`}>{!Element ? (<span>{title}</span>) : Element}{arrow && <i class="arrow down"></i>}</button>
+            <div className='flex flex-col'>
+                <div className={`${classNameDrop}  items-start container absolute top-10 flex flex-col`}>{children}</div>
                 <div>
                     {errors && errors.map(error => {
                         return <p className='text-white'>{error}</p>

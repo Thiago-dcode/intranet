@@ -78,12 +78,12 @@ export default function Graficos() {
             return chart
 
         })
-      
+
         setCharts(chartsUpdated);
 
     }
     const handleDelete = (chartToDelete) => {
-      
+
         let chartsUpdated = charts.filter(chart => chart.id !== chartToDelete.id)
 
         setCharts(chartsUpdated);
@@ -115,17 +115,26 @@ export default function Graficos() {
                 {charts.map(chart => {
 
                     let chartsToRender = [];
+                    if (!chart.config) {
 
-                    switch (chart.type) {
-                        case "radial":
-                            chartsToRender.push(<ChartRadial data={chart.data} />)
-                            break;
-                        case "bar":
-                            chartsToRender.push(<ChartBar data={chart.data} />)
-                            break;
+                        chartsToRender.push(<div className='w-full h-full items-center flex justify-center mb-10'><button onClick={() => {
 
-                        default:
-                            break;
+                            document.querySelector(`#config-chart-${chart.id} .container`).classList.add('show')
+
+                        }} className='bg-arzumaBlack p-2 text-white rounded-md font-bold text-xl '> click para configurar gráfico tipo barra</button></div>)
+                    }
+                    else {
+                        switch (chart.type) {
+                            case "radial":
+                                chartsToRender.push(<ChartRadial data={chart.data} />)
+                                break;
+                            case "bar":
+                                chartsToRender.push(<ChartBar barConfig={chart.config} data={chart.data} />)
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
                     return chartsToRender.map(element => <ChartWrapper _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title}>{element}</ChartWrapper>)
 

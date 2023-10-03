@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useAjax from '../../../../hooks/useAjax';
 import Icon from '../../icon/Icon';
 import Dropdown from '../../dropdown/Dropdown';
-export default function GraficosForm({cleanField = true, url = '/api/modules/graficos/new', method='POST', titleVal ='',sqlVal='',id, idDrop = 'chart-type-create', titleForm = 'Crea tu propio gráfico.', titleDrop, titleBtn = 'Crear', result, isPending, setConfig, error, classNameDrop = ' top-8 bg-white  rounded-md gap-2 p-2 w-full border border-black', }) {
+export default function GraficosForm({ cleanField = true, url = '/api/modules/graficos/new', method = 'POST', titleVal = '', sqlVal = '', id, idDrop = 'chart-type-create', titleForm = 'Crea tu propio gráfico.', titleDrop, titleBtn = 'Crear', result, isPending, setConfig, error, classNameDrop = ' top-8 bg-white rounded-md gap-2 p-2 w-full border border-black', }) {
     const [chartTypes, chartTypesError, isPendingChartTypes] = useAjax('/api/modules/graficos/types');
     const [title, setTitle] = useState('');
     const [type, setType] = useState('');
@@ -20,7 +20,7 @@ export default function GraficosForm({cleanField = true, url = '/api/modules/gra
         }
         if (!title || !sql) return
         setDropError(null)
-       
+
         setForm({
             title, type, sql: sql.trim()
         })
@@ -37,7 +37,7 @@ export default function GraficosForm({cleanField = true, url = '/api/modules/gra
     useEffect(() => {
 
         if (!form) return
-       
+
         setConfig(url, form, method)
 
     }, [form])
@@ -47,24 +47,24 @@ export default function GraficosForm({cleanField = true, url = '/api/modules/gra
 
             document.querySelector(`#${id} .container`).classList.remove('show');
 
-            if(!cleanField) return
+            if (!cleanField) return
             setSql('');
             setTitle('')
 
         }
 
     }, [isPending, error])
-    useEffect(()=>{
-      
-                setTitle(titleVal)
-         
-           
-                setSql(sqlVal)
-           
-         
-        
+    useEffect(() => {
 
-    },[titleVal,sqlVal])
+        setTitle(titleVal)
+
+
+        setSql(sqlVal)
+
+
+
+
+    }, [titleVal, sqlVal])
 
     return (
         <>
@@ -77,7 +77,7 @@ export default function GraficosForm({cleanField = true, url = '/api/modules/gra
                         setTitle(e.target.value)
                     }} value={title} type="text" className='w-full p-2 rounded-md' placeholder=' Título del Gráfico' />
 
-                    <Dropdown errors={dropError} classNameDrop={classNameDrop} id={idDrop} title={dropTitle}>
+                    <Dropdown errors={dropError} classNameDrop={classNameDrop + ' w-full'} id={idDrop} title={dropTitle}>
 
                         {chartTypes.data?.map(chartType => {
 
@@ -87,7 +87,7 @@ export default function GraficosForm({cleanField = true, url = '/api/modules/gra
                                     handleType(chartType.type)
 
 
-                                }} name='type' value={chartType.type} className='hover:bg-slate-500 hover:text-white flex items-center  justify-between p-2 '>
+                                }} name='type' value={chartType.type} className='hover:bg-slate-500 hover:text-white flex items-center  justify-between p-2 w-full '>
                                     <Icon icon={chartType.icon} />
                                     <span className='text-left ml-2 w-full'>{chartType.type}</span>
 

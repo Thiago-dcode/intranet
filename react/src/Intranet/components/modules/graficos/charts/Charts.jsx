@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import { config } from '@fortawesome/fontawesome-svg-core';
+import React, { useEffect, useState } from 'react';
 //General imports
-import { ResponsiveContainer, CartesianGrid, Legend, Tooltip } from 'recharts';
+import { ResponsiveContainer, CartesianGrid, Legend, Tooltip, LabelList } from 'recharts';
 //Radial bar imports
 import { RadialBarChart, RadialBar } from 'recharts'
 import { BarChart, Bar, XAxis, YAxis } from 'recharts'
@@ -28,7 +29,7 @@ export function ChartRadial({ data }) {
             <RadialBarChart
 
                 width={730}
-                height={250}
+
                 innerRadius="40%"
                 outerRadius="50%"
                 data={example}
@@ -43,42 +44,59 @@ export function ChartRadial({ data }) {
         </ResponsiveContainer>
     )
 }
-export function ChartBar({ data, barConfig = {
-    dataKey: 'Comercial',
-    min: 0,
-    max: 250000,
+export function ChartBar({ data, barConfig }) {
 
-    data: [
-       { barData: 'Ventas 1', color: 'red'}
-    ],
-
-} }) {
+    const [config, setConfig] = useState(null)
 
 
     useEffect(() => {
         console.log(data);
     }, [data])
+    useEffect(() => {
+
+        if (!barConfig) {
+
+            setConfig(null)
+            return
+        }
+        setConfig(JSON.parse(barConfig))
+    }, [barConfig])
+    useEffect(() => {
+
+
+    }, [config])
 
     return (
-
-        <ResponsiveContainer width={'100%'} height={'100%'} >
-            <BarChart width={500}
-                height={300} data={data}>
-                <CartesianGrid stroke="#ccc" />
-                <XAxis label={{ position: "inside", dy: 10 }} text interval={0} fontSize={'0.5rem'} className='text-xs' dataKey={barConfig.dataKey} />
-                <YAxis domain={[barConfig.min, barConfig.max]} />
-                <Tooltip />
-                <Legend />
-
-
-                {barConfig.data.map(bar => {
-                  
-                     return <Bar dataKey={bar.barData} fill={bar.color} />
-                })}
+        <>
+            {config &&
+                (<ResponsiveContainer width={'100%'} height={'100%'} >
+                    <BarChart width={500}
+                        margin={{ top: 1, right: 30, left: 20, bottom: 1 }}
+                         data={data}>
+                        <CartesianGrid stroke="#ccc" />
+                        <XAxis text interval={0} fontSize={'0.5rem'} className='text-xs'  />
+                        <YAxis domain={[Number.parseInt(config.min), Number.parseInt(config.max)]} />
+                        <Tooltip />
+                        <Legend />
 
 
+                        {config.data.map(bar => {
 
-            </BarChart>
-        </ResponsiveContainer>
+                            return <Bar dataKey={bar.bardata} fill={bar.color} >
+
+
+
+                                <LabelList fill='#fffff'  enableBackground={true} color='white' fontSize={'0.5rem'} dataKey={config.bardata} position="insideTop" />
+
+                                <LabelList fontSize={'0.4rem'} dataKey={config.datakey} position="top" />
+                            </Bar>
+                        })}
+
+
+
+                    </BarChart>
+
+                </ResponsiveContainer>)}
+        </>
     )
 }
