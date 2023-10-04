@@ -1,102 +1,223 @@
-import { config } from '@fortawesome/fontawesome-svg-core';
-import React, { useEffect, useState } from 'react';
+import { config } from "@fortawesome/fontawesome-svg-core";
+import React, { useEffect, useState } from "react";
 //General imports
-import { ResponsiveContainer, CartesianGrid, Legend, Tooltip, LabelList } from 'recharts';
+import {
+    ResponsiveContainer,
+    CartesianGrid,
+    Legend,
+    Tooltip,
+    LabelList,
+} from "recharts";
 //Radial bar imports
-import { RadialBarChart, RadialBar } from 'recharts'
-import { BarChart, Bar, XAxis, YAxis } from 'recharts'
+import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
+import { BarChart, Bar, XAxis, YAxis } from "recharts";
+import { generateRandomColor, roundTo } from "../../../../../utils/Utils";
+
+const parseData = (data, callback) => {
+
+    let newData = [];
+    data.forEach((d) => {
+        let newD = d;
+        for (let i = 0; i < Object.keys(d).length; i++) {
+            const key = Object.keys(d)[i];
 
 
-const example = [
-
-    { name: 'data 1', x: 9, fill: 'red' },
-    { name: 'data 2', x: 9, fill: 'green' },
-    { name: 'data 3', x: 2, fill: 'blue' },
-];
-
-export function ChartRadial({ data }) {
+            callback(key, newD)
 
 
-
-    useEffect(() => {
-
-
-    }, [data])
-
-    return (
-
-        <ResponsiveContainer width={'100%'} height={'100%'} >
-            <RadialBarChart
-
-                width={730}
-
-                innerRadius="40%"
-                outerRadius="50%"
-                data={example}
-
-                startAngle={360}
-                endAngle={0}>
-                <RadialBar cx="50%" cy="50%" minAngle={20} label={{ fill: '#666', position: 'insideTop' }} background clockWise={true} dataKey='x' />
-
-                <Legend iconSize={10} width={120} height={140} layout='vertical' verticalAlign='middle' align="right" />
-                <Tooltip />
-            </RadialBarChart>
-        </ResponsiveContainer>
-    )
-}
-export function ChartBar({ data, barConfig }) {
-
-    const [config, setConfig] = useState(null)
-
-
-    useEffect(() => {
-        console.log(data);
-    }, [data])
-    useEffect(() => {
-
-        if (!barConfig) {
-
-            setConfig(null)
-            return
         }
-        setConfig(JSON.parse(barConfig))
-    }, [barConfig])
+        newData.push(newD);
+    });
+    return newData;
+
+};
+
+
+export function ChartRadial({ data, radialConfig }) {
+    const [_data, setData] = useState(null);
+    const [config, setConfig] = useState(null);
+    const [colors, setColors] = useState([])
+
+
+    const handleSetColors = () => {
+
+        const color = generateRandomColor();
+
+        if (!colors.includes(color)) {
+            setColors(prev => [...prev, color])
+            return color
+        }
+        return handleSetColors();
+
+    }
     useEffect(() => {
 
+        if (!radialConfig) {
+            setConfig(null);
+            return;
+        }
+        setConfig(JSON.parse(radialConfig));
+    }, [radialConfig]);
 
-    }, [config])
+    useEffect(() => {
+        if (!config || !data) return;
+        let newData = parseData(data, (key, d) => {
+
+            d.fill = handleSetColors();
+
+            if (config.bardata === key) d[key] = roundTo(d[key], 2);
+
+
+            if (config.datakey === key) {
+
+                d['name'] = d[key];
+
+            }
+
+
+
+
+
+        });
+        console.log(config)
+        newData.push({
+
+            [config.bardata]: config.objetivo,
+            name: config.nombre,
+            fill: 'green'
+
+        })
+        setData(newData)
+
+
+    }, [config]);
+
+    useEffect(() => {
+
+        console.log(_data)
+    }, [_data])
 
     return (
         <>
-            {config &&
-                (<ResponsiveContainer width={'100%'} height={'100%'} >
-                    <BarChart width={500}
+
+            {_data && config && < ResponsiveContainer width={"100%"} height={"100%"}>
+                <RadialBarChart
+                    width={143}
+                    height={143}
+                    barGap={'0.5rem'}
+                    data={_data}
+                    label={{ fill: "#666", position: "insideStart" }}
+                    innerRadius={"10%"}
+                    outerRadius={"80%"}
+                    barSize={30}
+                    startAngle={0}
+                    endAngle={180}
+                >
+                    <RadialBar
+
+                        minAngle={180}
+                        spacing={10}
+                        background
+                        dataKey={config.bardata}
+                        label={{ fill: "white", position: "insideStart", fontSize: "1.2rem" }}
+                    />
+                    <Legend
+                        iconSize={10}
+                        width={120}
+
+                        fontSize={'0.6rem'}
+                        layout="horizontal" 
+                        verticalAlign="top"
+                         align="center"
+                    />
+                    <Tooltip />
+                </RadialBarChart>
+            </ResponsiveContainer >}
+        </>
+    );
+}
+export function ChartBar({ data, barConfig }) {
+    const [_data, setData] = useState(null);
+    const [config, setConfig] = useState(null);
+
+    useEffect(() => { }, [data]);
+    useEffect(() => {
+        if (!barConfig) {
+            setConfig(null);
+            return;
+        }
+        setConfig(JSON.parse(barConfig));
+    }, [barConfig]);
+    useEffect(() => {
+        if (!config) return;
+
+        setData(parseData(data, (key, d) => {
+
+            for (let j = 0; j < config.data.length; j++) {
+                const e = config.data[j];
+
+
+                if (e.bardata !== key) continue
+
+                d[key] = roundTo(d[key], 2);
+
+
+
+
+            }
+
+
+        }));
+    }, [config]);
+
+    return (
+        <>
+            {config && _data && (
+                <ResponsiveContainer width={"100%"} height={"100%"}>
+                    <BarChart
+                        width={500}
                         margin={{ top: 1, right: 30, left: 20, bottom: 1 }}
-                         data={data}>
+                        data={_data}
+                    >
                         <CartesianGrid stroke="#ccc" />
-                        <XAxis text interval={0} fontSize={'0.5rem'} className='text-xs'  />
-                        <YAxis domain={[Number.parseInt(config.min), Number.parseInt(config.max)]} />
+                        <XAxis
+                            hide={true}
+                            interval={0}
+                            fontSize={"0.5rem"}
+                            dataKey={config.datakey}
+                            className="text-xs"
+                        />
+                        <YAxis
+                            domain={[
+                                Number.parseInt(config.min),
+                                Number.parseInt(config.max),
+                            ]}
+                        />
                         <Tooltip />
                         <Legend />
 
-
-                        {config.data.map(bar => {
-
-                            return <Bar dataKey={bar.bardata} fill={bar.color} >
-
-
-
-                                <LabelList fill='#fffff'  enableBackground={true} color='white' fontSize={'0.5rem'} dataKey={config.bardata} position="insideTop" />
-
-                                <LabelList fontSize={'0.4rem'} dataKey={config.datakey} position="top" />
-                            </Bar>
+                        {config.data.map((bar) => {
+                            return (
+                                <Bar dataKey={bar.bardata} fill={bar.color}>
+                                    <LabelList
+                                        fill="#fffff"
+                                        enableBackground={true}
+                                        color="white"
+                                        fontSize={"0.8rem"}
+                                        dataKey={config.bardata}
+                                        position="insideTop"
+                                    />
+                                    <LabelList
+                                        fontSize={"0.8rem"}
+                                        dataKey={config.datakey}
+                                        position="top"
+                                    />
+                                </Bar>
+                            );
                         })}
-
-
-
                     </BarChart>
-
-                </ResponsiveContainer>)}
+                </ResponsiveContainer>
+            )}
         </>
-    )
+    );
 }

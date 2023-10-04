@@ -115,18 +115,18 @@ export default function Graficos() {
                 {charts.map(chart => {
 
                     let chartsToRender = [];
-                    if (!chart.config) {
+                    if (!chart.config ) {
 
                         chartsToRender.push(<div className='w-full h-full items-center flex justify-center mb-10'><button onClick={() => {
 
                             document.querySelector(`#config-chart-${chart.id} .container`).classList.add('show')
 
-                        }} className='bg-arzumaBlack p-2 text-white rounded-md font-bold text-xl '> click para configurar gráfico tipo barra</button></div>)
+                        }} className='bg-arzumaBlack p-2 text-white rounded-md font-bold text-xl '> click para configurar gráfico tipo {chart.type}</button></div>)
                     }
                     else {
                         switch (chart.type) {
                             case "radial":
-                                chartsToRender.push(<ChartRadial data={chart.data} />)
+                                chartsToRender.push(<ChartRadial radialConfig={chart.config} data={chart.data} />)
                                 break;
                             case "bar":
                                 chartsToRender.push(<ChartBar barConfig={chart.config} data={chart.data} />)

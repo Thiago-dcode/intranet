@@ -2,7 +2,7 @@ import React, { Children, useEffect, useState } from 'react'
 import Dropdown from '../../../dropdown/Dropdown'
 import GraficosForm from '../GraficosForm'
 import Icon from '../../../icon/Icon'
-import BarChartForm from '../BarChartForm'
+import ConfigWrapper from './config/ConfigWrapper'
 import useAjax from '../../../../../hooks/useAjax'
 export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, title, children }) {
 
@@ -24,7 +24,6 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
   useEffect(() => {
 
     if (chartEdited) {
-      console.log(chartEdited)
       handleEdit(chartEdited.data)
       setCurrentChart(chartEdited.data)
       setCurrentChart(chartEdited.data)
@@ -67,8 +66,9 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
                 </Dropdown>
                 <Dropdown classNameDrop='-left-60  px-2 w-60 j flex flex-col bg-black/70 rounded-md' id={`config-chart-${chart.id}`} Element={<Icon className={'self-end '} icon={'Wrench'} />} arrow={false} title={"config"} classNameBtn='z-10 self-end' >
 
-                  {currentChart.type === 'bar' && <BarChartForm isPending={isPendingChartEdited} setForm={setConfigForm} setConfig={setConfigChartEdited} chart={currentChart} />}
 
+
+                  <ConfigWrapper chart={chart} setConfig={setConfigChartEdited} isPending={isPendingChartEdited} />
 
 
                 </Dropdown>
