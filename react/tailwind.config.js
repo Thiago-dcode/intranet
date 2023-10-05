@@ -25,6 +25,14 @@ export default {
       mono: ["ui-monospace", "SFMono-Regular"],
     },
     extend: {
+      width:{
+        barChart: '500px',
+        radialChart: '300px',
+      },
+      height:{
+        barChart: '300px',
+        radialChart: '300px',
+      },
       colors: {
         arzumaBlack: "#222222",
         arzumaOrange: "#F68230",

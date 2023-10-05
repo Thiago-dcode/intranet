@@ -1,5 +1,5 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 //General imports
 import {
     ResponsiveContainer,
@@ -7,11 +7,13 @@ import {
     Legend,
     Tooltip,
     LabelList,
+    Text
 } from "recharts";
 //Radial bar imports
-import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
-import { BarChart, Bar, XAxis, YAxis } from "recharts";
-import { generateRandomColor, roundTo } from "../../../../../utils/Utils";
+import { RadialBarChart, RadialBar } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Cell } from "recharts";
+import { capitalize, generateRandomColor, maxWords, roundTo } from "../../../../../utils/Utils";
+import { data } from "autoprefixer";
 
 const parseData = (data, callback) => {
 
@@ -33,10 +35,10 @@ const parseData = (data, callback) => {
 };
 
 
-export function ChartRadial({ data, radialConfig }) {
+export function ChartRadial({ chart }) {
     const [_data, setData] = useState(null);
     const [config, setConfig] = useState(null);
-    const [colors, setColors] = useState([])
+    const [colors, setColors] = useState(['#0CD967'])
 
 
     const handleSetColors = () => {
@@ -52,41 +54,39 @@ export function ChartRadial({ data, radialConfig }) {
     }
     useEffect(() => {
 
-        if (!radialConfig) {
+        if (!chart.config) {
             setConfig(null);
             return;
         }
-        setConfig(JSON.parse(radialConfig));
-    }, [radialConfig]);
+        setConfig(JSON.parse(chart.config));
+    }, [chart.config]);
 
     useEffect(() => {
-        if (!config || !data) return;
-        let newData = parseData(data, (key, d) => {
-
-            d.fill = handleSetColors();
-
-            if (config.bardata === key) d[key] = roundTo(d[key], 2);
 
 
-            if (config.datakey === key) {
+        if (!config || !chart.data) return;
 
-                d['name'] = d[key];
+        let data = { ...chart.data[0] }
+        data[config.datakey] = roundTo(data[config.datakey], 2)
+
+
+        let newData = [
+            {
+                ...data,
+
+                name: config.comparar
+            },
+
+            {
+
+                [config.datakey]: config.objetivo,
+                name: config.nombre,
+                fill: '#0CD967'
 
             }
-
-
-
-
-
-        });
+        ]
         console.log(config)
-        newData.push({
 
-            [config.bardata]: config.objetivo,
-            name: config.nombre,
-            fill: 'green'
-
-        })
         setData(newData)
 
 
@@ -101,34 +101,42 @@ export function ChartRadial({ data, radialConfig }) {
         <>
 
             {_data && config && < ResponsiveContainer width={"100%"} height={"100%"}>
+
                 <RadialBarChart
-                    width={143}
-                    height={143}
+                    cx='50%'
+                    cy='50%'
+                    width={100}
+                    height={100}
                     barGap={'0.5rem'}
                     data={_data}
                     label={{ fill: "#666", position: "insideStart" }}
-                    innerRadius={"10%"}
+                    innerRadius={"50%"}
                     outerRadius={"80%"}
                     barSize={30}
-                    startAngle={0}
-                    endAngle={180}
+
+                    startAngle={180}
+                    endAngle={0}
                 >
                     <RadialBar
 
-                        minAngle={180}
+                        endAngle={180}
+                        startAngle={0}
+                        minAngle={0}
                         spacing={10}
                         background
-                        dataKey={config.bardata}
-                        label={{ fill: "white", position: "insideStart", fontSize: "1.2rem" }}
+                        dataKey={config.datakey}
+                        label={{ fill: "white", position: "insideStart", fontSize: "0.8rem" }}
                     />
                     <Legend
-                        iconSize={10}
-                        width={120}
 
+
+                        iconSize={10}
+                        width={'100%'}
+                        fontSizeAdjust={"0.8rem"}
                         fontSize={'0.6rem'}
-                        layout="horizontal" 
+                        layout="horizontal"
                         verticalAlign="top"
-                         align="center"
+                        align="center"
                     />
                     <Tooltip />
                 </RadialBarChart>
@@ -136,24 +144,41 @@ export function ChartRadial({ data, radialConfig }) {
         </>
     );
 }
-export function ChartBar({ data, barConfig }) {
+const YAxisLeftTick = ({ y, payload: { value } }) => {
+    return (
+        <Text x={0} y={y} fontSize={'0.5rem'} textAnchor="start" verticalAnchor="middle" >
+            {maxWords(value, 2)}
+        </Text>
+    );
+};
+let ctx;
+export const measureText14HelveticaNeue = text => {
+    if (!ctx) {
+        ctx = document.createElement("canvas").getContext("2d");
+        ctx.font = "8px 'Helvetica Neue";
+    }
+
+    return ctx.measureText(text).width;
+};
+
+const BAR_AXIS_SPACE = 10;
+export function ChartBar({ chart }) {
     const [_data, setData] = useState(null);
     const [config, setConfig] = useState(null);
 
-    useEffect(() => { }, [data]);
     useEffect(() => {
-        if (!barConfig) {
+        if (!chart.config) {
             setConfig(null);
             return;
         }
-        setConfig(JSON.parse(barConfig));
-    }, [barConfig]);
+        setConfig(JSON.parse(chart.config));
+    }, [chart]);
     useEffect(() => {
         if (!config) return;
+        console.log(config)
+        setData(parseData(chart.data, (key, d) => {
 
-        setData(parseData(data, (key, d) => {
-
-            for (let j = 0; j < config.data.length; j++) {
+            for (let j = 0; j < config?.data?.length; j++) {
                 const e = config.data[j];
 
 
@@ -169,49 +194,71 @@ export function ChartBar({ data, barConfig }) {
 
         }));
     }, [config]);
+    useEffect(() => { console.log(_data) }, [_data])
 
     return (
         <>
             {config && _data && (
-                <ResponsiveContainer width={"100%"} height={"100%"}>
+                <ResponsiveContainer width={"100%"} height={'100%'}  >
                     <BarChart
+                        layout="vertical"
                         width={500}
-                        margin={{ top: 1, right: 30, left: 20, bottom: 1 }}
+
+                        margin={{ right: 1, left: 40, bottom: 1 }}
                         data={_data}
+
                     >
+
                         <CartesianGrid stroke="#ccc" />
                         <XAxis
-                            hide={true}
-                            interval={0}
-                            fontSize={"0.5rem"}
-                            dataKey={config.datakey}
-                            className="text-xs"
-                        />
-                        <YAxis
+
+                            hide
+                            type="number"
+                            axisLine={false}
+                            tickLine={false}
                             domain={[
                                 Number.parseInt(config.min),
                                 Number.parseInt(config.max),
                             ]}
+
+                        />
+                        <YAxis
+                            yAxisId={0}
+                            dataKey={config.datakey}
+                            type="category"
+                            fill="black"
+                            fontSize={'0.5rem'}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={YAxisLeftTick}
+                        />
+                        <YAxis
+                            orientation="right"
+                            yAxisId={1}
+                            fill="black"
+                            fontSize={'0.8rem'}
+                            dataKey={config.data[0].bardata}
+                            type="category"
+                            axisLine={false}
+                            tickLine={false}
+                            tickFormatter={value => value.toLocaleString()}
+                            mirror
+
+                            tick={{
+                                transform: `translate(${-5 + BAR_AXIS_SPACE}, 0)`
+                            }}
+
                         />
                         <Tooltip />
                         <Legend />
 
                         {config.data.map((bar) => {
                             return (
-                                <Bar dataKey={bar.bardata} fill={bar.color}>
-                                    <LabelList
-                                        fill="#fffff"
-                                        enableBackground={true}
-                                        color="white"
-                                        fontSize={"0.8rem"}
-                                        dataKey={config.bardata}
-                                        position="insideTop"
-                                    />
-                                    <LabelList
-                                        fontSize={"0.8rem"}
-                                        dataKey={config.datakey}
-                                        position="top"
-                                    />
+                                <Bar dataKey={bar.bardata} minPointSize={2} >
+
+                                    {_data.map((d, idx) => {
+                                        return <Cell key={d[bar.bardata]} fill={generateRandomColor()} />;
+                                    })}
                                 </Bar>
                             );
                         })}

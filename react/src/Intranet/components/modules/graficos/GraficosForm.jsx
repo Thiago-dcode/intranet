@@ -107,7 +107,7 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
                     {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>{titleBtn}</button> : <p className=' px-1 border-white bg-arzumaRed w-20 rounded-md text-white '>Submitting...</p>}
 
                     <div>  {error &&
-                        error.data.map(err => {
+                        error.map(err => {
 
                             return <p className='text-white'>{err}</p>
                         })

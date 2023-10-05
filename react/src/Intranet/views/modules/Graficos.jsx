@@ -24,7 +24,7 @@ export default function Graficos() {
             setCharts(userCharts.data)
         }
         if (userChartsError) {
-            console.log(userChartsError)
+
         }
 
 
@@ -102,7 +102,7 @@ export default function Graficos() {
     }, [chart])
     return (
 
-        <div className='overflow-auto mt-5 px-5 flex flex-col items-center justify-between w-full  h-full mb-20 gap-4'>
+        <div className='overflow-auto mt-5 px-5 flex flex-col   w-full  h-full mb-20 gap-4'>
 
             <div className='w-full max-w-3xl self-baseline'>
                 <Dropdown arrow={false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
@@ -110,12 +110,16 @@ export default function Graficos() {
                 </Dropdown>
 
             </div>
-            {charts !== null && charts.length > 0 ? <div className=' items-center justify-between  w-full h-full  flex-wrap flex gap-4'>
+         
+
+    
+            {charts !== null && charts.length > 0 ? <div className=' justify-center  gap-2  flex-wrap flex '>
 
                 {charts.map(chart => {
 
                     let chartsToRender = [];
-                    if (!chart.config ) {
+
+                    if (!chart.config) {
 
                         chartsToRender.push(<div className='w-full h-full items-center flex justify-center mb-10'><button onClick={() => {
 
@@ -126,10 +130,10 @@ export default function Graficos() {
                     else {
                         switch (chart.type) {
                             case "radial":
-                                chartsToRender.push(<ChartRadial radialConfig={chart.config} data={chart.data} />)
+                                chartsToRender.push(<ChartRadial chart={chart} />)
                                 break;
                             case "bar":
-                                chartsToRender.push(<ChartBar barConfig={chart.config} data={chart.data} />)
+                                chartsToRender.push(<ChartBar chart={chart} />)
                                 break;
 
                             default:
@@ -143,6 +147,7 @@ export default function Graficos() {
 
 
             </div> : null}
+           
             {isPendingUserCharts && !userChartsError && <p className='flex gap-4  w-full h-full'>cargando...</p>}
             {!isPendingUserCharts && !userChartsError && Array.isArray(charts) && charts.length === 0 && <div className='text-black flex gap-4  justify-self-center w-full h-full'>No tienes ningún gráfico, empiezar creando uno.</div>}
         </div>

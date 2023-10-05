@@ -3,7 +3,7 @@ import useAjax from "../../../hooks/useAjax";
 import '../../assets/css/modules/eans.css'
 import ls from 'localstorage-slim'
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import EanError from "../../components/modules/eans/eanError";
+import PopUp from "../../components/modules/eans/PopUp";
 import EanSuccess from "../../components/modules/eans/EanSuccess";
 import EanSearch from "../../components/modules/eans/EanSearch";
 export default function Eans() {
@@ -132,7 +132,7 @@ export default function Eans() {
 
   useEffect(() => {
     if (update) {
-      console.log(update)
+     
       setEanSuccess(update.data);
     }
     if (errorUpdate) {
@@ -193,7 +193,7 @@ export default function Eans() {
     flex-col gap-3 p-4"
         >
 
-          {eanError ? <EanError error={eanError} handleEanError={handleEanError} /> : <EanSearch
+          {eanError ? <PopUp confirmMessage={'Actualizando...'} isPending={isPendingUpdate} message={eanError.message} handleSubmit={handleEanError} /> : <EanSearch
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}

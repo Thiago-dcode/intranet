@@ -24,9 +24,9 @@ export default function ConfigWrapper({ chart, isPending, setConfig }) {
 
         switch (chartType) {
             case 'bar':
-                return <BarChartForm chart={chart} chartConfig={chartConfig} setForm={setForm} form={form} />
+                return <BarChartForm chart={chart} setForm={setForm}  />
             case 'radial':
-                return <RadialChartForm chart={chart} chartConfig={chartConfig} setForm={setForm} form={form} />
+                return <RadialChartForm chart={chart} setForm={setForm}  />
             default:
 
         }
@@ -54,7 +54,7 @@ export default function ConfigWrapper({ chart, isPending, setConfig }) {
                     {renderChartConfig(chart.type)}
 
 
-                    {!isPending ? (<button className='bg-arzumaRed self-center px-2 text-white rounded-md'>Configurar</button>) : <p className='bg-arzumaRed self-center px-2 text-white rounded-md'> Submitting...</p>}
+                    {!isPending ? (<button className='bg-arzumaRed self-center px-2 text-white rounded-md'>Guardar</button>) : <p className='bg-arzumaRed self-center px-2 text-white rounded-md'> Guardando...</p>}
                 </form>}
         </>
     )

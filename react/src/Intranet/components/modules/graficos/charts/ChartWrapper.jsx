@@ -4,21 +4,64 @@ import GraficosForm from '../GraficosForm'
 import Icon from '../../../icon/Icon'
 import ConfigWrapper from './config/ConfigWrapper'
 import useAjax from '../../../../../hooks/useAjax'
+import PopUp from '../../eans/PopUp'
 export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, title, children }) {
 
   const [chartEdited, errorChartEdited, isPendingChartEdited, setConfigChartEdited] = useAjax();
+  const [style, setStyle] = useState({})
   const [chartDelete, error, isPending, setConfig] = useAjax();
-  const [configForm, setConfigForm] = useState(null);
+  const [showPoPUp, setShowPopUp] = useState(false);
   const [currentChart, setCurrentChart] = useState(chart);
+
 
   const handleDelete = e => {
     e.preventDefault()
+    const btn = e.nativeEvent.submitter;
+
+
+    if (btn.name === 'cancelar') {
+      setShowPopUp(false)
+      return
+    }
 
     setConfig('/api/modules/graficos/' + currentChart.id, {}, 'DELETE');
+    if (chartDelete && !error && !isPending) {
+      setShowPopUp(false)
+    }
 
   }
+  useEffect(() => {
+    const configEl = document.querySelector(`#config-chart-${chart.id} .container`)
+    if (!configEl.classList.contains('show')) return
+    if (chartEdited && !errorChartEdited && !isPendingChartEdited) {
+
+      configEl.classList.remove('show')
+    }
 
 
+  }, [chartEdited, errorChartEdited, isPendingChartEdited])
+
+  const handleStyle = (type) => {
+
+
+    switch (type) {
+      case 'bar':
+        setStyle({
+          height: '250px',
+          width: '400px'
+        })
+        break;
+      case 'radial':
+        setStyle({
+          height: '250px',
+          width: '250px'
+        })
+        break;
+
+      default:
+        break;
+    }
+  }
 
 
   useEffect(() => {
@@ -47,12 +90,27 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
     setCurrentChart(chart)
 
+    handleStyle(chart.type)
+
   }, [chart])
+  useEffect(() => {
+
+  }, [isPending])
+  useEffect(() => {
+
+    if (!showPoPUp) {
+
+      document.getElementById(`chart-popup-${chart.id}`).style.display = 'none'
+      return
+    }
+    document.getElementById(`chart-popup-${chart.id}`).style.display = 'flex'
+
+  }, [showPoPUp])
 
   return (
 
-    <div id={`chartwrapper-${id}`} className='flex items-center flex-col bg-white border-4  rounded-md w-full h-2/3 lg:w-[49%]'>
-      <div className='w-full flex flex-row items-center justify-center px-3'>
+    <div style={style} id={`chartwrapper-${id}`} className={`text-xs flex flex-col bg-white border-4  rounded-md p-2`}>
+      <div className='w-full flex flex-row items-center justify-center px-2'>
         <h2 className='w-full'>{title}</h2>
         <div >
           <>
@@ -72,12 +130,19 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
 
                 </Dropdown>
-                <form onSubmit={(e) => {
-                  handleDelete(e)
-                }} className='flex items-center' action="">
+                <div className='flex items-center' action="">
 
-                  <button type='submit'><Icon icon={'Trash'} /></button>
-                </form>
+                  <button onClick={() => {
+
+                    setShowPopUp(!showPoPUp);
+
+                  }} type='button'><Icon icon={'Trash'} /></button>
+
+
+                </div>
+                <PopUp id={`chart-popup-${chart.id}`} isPending={isPending} confirmMessage={'Procesando...'} message={`Realmente deseas borrar el gráfico ${chart.title}?`} handleSubmit={handleDelete} />
+
+
               </div>
             }
           </>
