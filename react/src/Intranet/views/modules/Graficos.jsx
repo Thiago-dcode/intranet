@@ -102,17 +102,17 @@ export default function Graficos() {
     }, [chart])
     return (
 
-        <div className='overflow-auto mt-5 px-5 flex flex-col   w-full  h-full mb-20 gap-4'>
+        <div className='overflow-auto mt-5 px-5 flex flex-col  w-full  h-full mb-20 gap-4'>
 
-            <div className='w-full max-w-3xl self-baseline'>
+            <div className='w-full max-w-3xl flex items-center justify-center'>
                 <Dropdown arrow={false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
                     <GraficosForm id={'chart-view'} result={newChart} isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError} />
                 </Dropdown>
 
             </div>
-         
 
-    
+
+
             {charts !== null && charts.length > 0 ? <div className=' justify-center  gap-2  flex-wrap flex '>
 
                 {charts.map(chart => {
@@ -147,7 +147,7 @@ export default function Graficos() {
 
 
             </div> : null}
-           
+
             {isPendingUserCharts && !userChartsError && <p className='flex gap-4  w-full h-full'>cargando...</p>}
             {!isPendingUserCharts && !userChartsError && Array.isArray(charts) && charts.length === 0 && <div className='text-black flex gap-4  justify-self-center w-full h-full'>No tienes ningún gráfico, empiezar creando uno.</div>}
         </div>

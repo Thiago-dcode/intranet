@@ -11,8 +11,8 @@ export default function Eans() {
 
   const [url, setUrl] = useState(null)
   const [query, setQuery] = useState('');
-  const [codarticulo, setCodArticulo] = useState(null);
-  const [proveedor, setProveedor] = useState(null);
+  const [codarticulo, setCodArticulo] = useState('');
+  const [proveedor, setProveedor] = useState('');
   const [searchParams] = useSearchParams();
   const [data, error, isPending, setConfig] = useAjax();
   const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
@@ -21,50 +21,22 @@ export default function Eans() {
   const [eans, setEans] = useState(null);
   const [eanError, setEanError] = useState(null)
   const [eanSuccess, setEanSuccess] = useState(null)
+  const [showPopUp, setShowPopUp] = useState(false)
 
   const handleSearch = (e) => {
     e.preventDefault()
 
 
-    const codarticuloParam = searchParams.get('codarticulo');
-    const proveedorParam = searchParams.get('proveedor');
-    if (codarticuloParam !== codarticulo && proveedorParam !== proveedor) {
-      setEans([])
-      setEanError(null)
-    }
-    if (!proveedor & !codarticulo) {
-      setQuery('')
-      return
-    }
+    const newUrl= `/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`
+
+    if(url === newUrl ) return
 
 
-    setQuery(`?limit=${50}&codarticulo=${codarticulo ? codarticulo : ''}&proveedor=${proveedor ? proveedor : ''}`);
+    setUrl(newUrl);
 
 
   }
-  const handleEanError = (e) => {
 
-    e.preventDefault()
-    const btn = e.nativeEvent.submitter;
-
-    if (btn.name === 'cancelar') {
-      setEanError(null)
-      const codBarrasElements = document.querySelectorAll('.cod-barra-nuevo input')
-      codBarrasElements.forEach(element => {
-        element.readOnly = false;
-      });
-      return
-    }
-
-    const newForm = form.map(obj => {
-
-      return { update: true, ...obj };
-
-    })
-
-    setForm(newForm);
-
-  }
   const handleUpdate = (e) => {
     e.preventDefault()
 
@@ -108,15 +80,14 @@ export default function Eans() {
 
   }
   useEffect(() => {
-
+    if (!eanError) return
     eanError?.data.forEach(ean => {
       const codBarraNuevoTd = document.getElementById(`${ean['num']}-CODBARRANUEVO`)
       if (codBarraNuevoTd) codBarraNuevoTd.classList.add('ean-error')
 
 
-
-
     });
+    setShowPopUp(true)
 
   }, [eanError])
 
@@ -132,7 +103,7 @@ export default function Eans() {
 
   useEffect(() => {
     if (update) {
-     
+
       setEanSuccess(update.data);
     }
     if (errorUpdate) {
@@ -152,25 +123,17 @@ export default function Eans() {
   }, [data, error]);
 
   useEffect(() => {
-
-    const limit = searchParams.get('limit') ? searchParams.get('limit') : '';
-    const codarticulo = searchParams.get('codarticulo') ? searchParams.get('codarticulo') : '';
-    const proveedor = searchParams.get('proveedor') ? searchParams.get('proveedor') : '';
-
-    setUrl("/modules/eans?limit=" + limit + "&codarticulo=" + codarticulo + '&proveedor=' + proveedor)
+    console.log('hello')
+    setUrl(`/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
   }, [])
   useEffect(() => {
+    console.log(url)
+    if (!url) return
     setConfig('/api' + url)
   }, [url])
 
-  useEffect(() => {
 
-
-    navigate(`${query}`)
-
-
-  }, [query])
 
   useEffect(() => {
 
@@ -193,7 +156,22 @@ export default function Eans() {
     flex-col gap-3 p-4"
         >
 
-          {eanError ? <PopUp confirmMessage={'Actualizando...'} isPending={isPendingUpdate} message={eanError.message} handleSubmit={handleEanError} /> : <EanSearch
+          {eanError ? <PopUp show={showPopUp} setShow={setShowPopUp} confirmMessage={'Actualizando...'} isPending={isPendingUpdate} message={eanError.message} handleConfirm={() => {
+            const newForm = form.map(obj => {
+
+              return { update: true, ...obj };
+
+            })
+
+            setForm(newForm);
+
+          }} handleCancel={() => {
+            setEanError(null)
+            const codBarrasElements = document.querySelectorAll('.cod-barra-nuevo input')
+            codBarrasElements.forEach(element => {
+              element.readOnly = false;
+            });
+          }} /> : <EanSearch
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}
@@ -228,12 +206,12 @@ export default function Eans() {
                           <td className=" border border-slate-300  text-xs  text-center w-2">{i + 1}</td>
                           {Object.entries(ean).map((value) => {
                             return (
-                              <td className="border border-slate-300  text-center overflow-scroll">
-                                <input name={`${i}-${value[0]}`} className="overflow-auto text-xs" type="text" value={value[1]} />
+                              <td className="border border-slate-300  text-center ">
+                                <input name={`${i}-${value[0]}`} className=" text-xs" type="text" value={value[1]} />
                               </td>
                             );
                           })}
-                          <td id={`${i}-CODBARRANUEVO`} className=" overflow-auto text-center cod-barra-nuevo border border-slate-300 ">
+                          <td id={`${i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
                             <input onChange={(e) => {
 
                               document.getElementById(`${i}-CODBARRANUEVO`).classList.remove('ean-error')

@@ -25,13 +25,19 @@ export default {
       mono: ["ui-monospace", "SFMono-Regular"],
     },
     extend: {
-      width:{
-        barChart: '500px',
-        radialChart: '300px',
+      keyframes: {
+        appear: {
+          "0%": { transform: "transformX(-3deg)" },
+          "100%": { transform: "rotate(3deg)" },
+        },
       },
-      height:{
-        barChart: '300px',
-        radialChart: '300px',
+      width: {
+        barChart: "500px",
+        radialChart: "300px",
+      },
+      height: {
+        barChart: "300px",
+        radialChart: "300px",
       },
       colors: {
         arzumaBlack: "#222222",

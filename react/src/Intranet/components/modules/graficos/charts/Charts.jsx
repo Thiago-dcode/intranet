@@ -13,7 +13,8 @@ import {
 import { RadialBarChart, RadialBar } from "recharts";
 import { BarChart, Bar, XAxis, YAxis, Cell } from "recharts";
 import { capitalize, generateRandomColor, maxWords, roundTo } from "../../../../../utils/Utils";
-import { data } from "autoprefixer";
+import useCheckDevice from "../../../../../hooks/useCheckDevice";
+
 
 const parseData = (data, callback) => {
 
@@ -165,6 +166,8 @@ const BAR_AXIS_SPACE = 10;
 export function ChartBar({ chart }) {
     const [_data, setData] = useState(null);
     const [config, setConfig] = useState(null);
+    const [max,setMax] = useState()
+    const device = useCheckDevice()
 
     useEffect(() => {
         if (!chart.config) {
@@ -177,6 +180,8 @@ export function ChartBar({ chart }) {
         if (!config) return;
         console.log(config)
         setData(parseData(chart.data, (key, d) => {
+
+
 
             for (let j = 0; j < config?.data?.length; j++) {
                 const e = config.data[j];
@@ -194,7 +199,14 @@ export function ChartBar({ chart }) {
 
         }));
     }, [config]);
-    useEffect(() => { console.log(_data) }, [_data])
+    useEffect(() => { 
+
+            if(!_data) return
+
+                const max = Math.max(..._data.map(d=>Number.parseFloat(d[config.data[0].bardata])))
+                setMax( device.isPhone?max * 1.7: max *1.5);
+
+     }, [_data])
 
     return (
         <>
@@ -209,7 +221,7 @@ export function ChartBar({ chart }) {
 
                     >
 
-                        <CartesianGrid stroke="#ccc" />
+
                         <XAxis
 
                             hide
@@ -218,7 +230,7 @@ export function ChartBar({ chart }) {
                             tickLine={false}
                             domain={[
                                 Number.parseInt(config.min),
-                                Number.parseInt(config.max),
+                                max,
                             ]}
 
                         />

@@ -12,7 +12,7 @@ export default function GuestLayout() {
 
   useEffect(() => {
     if (token) {
-      navigate("/middle");
+      navigate("/bienvenido");
       return;
     }
     setIsGuest(true);

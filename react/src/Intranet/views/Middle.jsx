@@ -47,6 +47,16 @@ export default function Middle() {
     navigate("/" + companyActive);
   }, [companyActive]);
 
+  useEffect(() => {
+
+    if (!(user && !error && !isPending)) return
+
+    if (!user.companies.length === 1) return;
+
+    setCompany(user.companies[0].name)
+
+  }, [user, error])
+
   return (
     <>
       <Header>
@@ -62,7 +72,7 @@ export default function Middle() {
         {!isPending && user ? (
           <div className="mt-14 flex items-center flex-col gap-2">
             <h1 className="text-lg">Hola {user.name}!</h1>
-            <form
+            {user?.companies?.length > 1 && <form
               onSubmit={(e) => {
                 handleSubmit(e);
               }}
@@ -84,7 +94,9 @@ export default function Middle() {
                   </button>
                 );
               })}
-            </form>
+            </form>}
+
+            {user?.companies?.length === 0 && <div>No tienes ninguna empresa activada.</div>}
           </div>
         ) : null}
       </Wrapper>

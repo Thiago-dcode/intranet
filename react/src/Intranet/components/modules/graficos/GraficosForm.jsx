@@ -44,7 +44,7 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
     useEffect(() => {
 
         if (!isPending && !error) {
-
+            
             document.querySelector(`#${id} .container`).classList.remove('show');
 
             if (!cleanField) return
@@ -77,7 +77,7 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
                         setTitle(e.target.value)
                     }} value={title} type="text" className='w-full p-2 rounded-md' placeholder=' Título del Gráfico' />
 
-                    <Dropdown errors={dropError} classNameDrop={classNameDrop + ' w-full'} id={idDrop} title={dropTitle}>
+                    <Dropdown errors={dropError} classNameDrop={classNameDrop + ' w-96'} id={idDrop} title={dropTitle}>
 
                         {chartTypes.data?.map(chartType => {
 

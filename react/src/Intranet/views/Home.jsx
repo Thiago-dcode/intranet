@@ -5,7 +5,13 @@ useParams;
 export default function Home() {
   const [company, error, isPending] = useAjax("/api/company");
   useEffect(() => {
-    console.log(company);
   }, [company, error]);
-  return <>{company && <h1 >{"Bienvenido a " + company.name}</h1>}</>;
+  return <>{company && <div className="border-4 w-full h-full flex  justify-center
+  ">
+    <h1 className="mt-20 text-xl" >Bienvenido a <span className="text-white px-2 rounded-md" style={
+      {
+        backgroundColor: company.color
+      }
+    }>{company.name}</span></h1>
+  </div>}</>;
 }

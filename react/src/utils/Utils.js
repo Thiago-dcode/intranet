@@ -20,12 +20,11 @@ export function capitalize(str) {
 
 export function maxWords(str, num) {
   const sliptedStr = str.split(" ");
-  let _str = ''
+  let _str = "";
   for (let i = 0; i < sliptedStr.length; i++) {
-    
-    _str += capitalize(sliptedStr[i]) + ' ';
-    if(i + 1 === num) break;
-    
+    _str += capitalize(sliptedStr[i]) + " ";
+    if (i + 1 === num) break;
   }
   return _str + "...";
 }
+

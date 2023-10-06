@@ -17,11 +17,11 @@ export default function EanSearch({ handleSearch, setCodArticulo, setProveedor, 
                     <select  className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor'  onChange={(e) => {
                         setProveedor(e.target.value.trim().toUpperCase())
                     }} name="codProveedor" placeholder="Proveedor">
-                        <option selected="selected" value="">
+                        <option defaultValue="selected" value="">
                             Proveedor
                         </option>
-                        {proveedores && <>{proveedores.map(proveedor => {
-                            if (proveedor.NOMBRECOMERCIAL) { return <option value={proveedor.CODIGO}>{proveedor.NOMBRECOMERCIAL}</option> }
+                        {proveedores && <>{proveedores.map((proveedor,i) => {
+                            if (proveedor.NOMBRECOMERCIAL) { return <option id={`proveedor-option-${i}`} value={proveedor.CODIGO}>{proveedor.NOMBRECOMERCIAL}</option> }
                         })}</>}
 
                     </select>
