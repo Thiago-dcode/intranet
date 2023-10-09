@@ -80,7 +80,7 @@ use App\Intranet\Utils\Utils;';
             $import .= "\r\nuse App\Http\Controllers\Intranet\Modules". "\\$moduleNameCapitalize" . 'Controller;';
             $switchConditional .= "
             case '$moduleName':
-           Route::get( '$route',[App\Http\Controllers\Intranet\Modules" . "\\$moduleNameCapitalize"."Controller::class,'index']);
+           Route::get( '{company:name}$route',[App\Http\Controllers\Intranet\Modules" . "\\$moduleNameCapitalize"."Controller::class,'index']);
                  break;\r\n";
         }
 
@@ -107,6 +107,13 @@ use App\Intranet\Utils\Utils;';
 
     public static function generateController($module)
     {
+        $name = '$name';
+        $request = ', Request $request';
+        $args = $name . $request;
+        $conditional = 'if($request->user()->company_active !== $name){
+
+                                return response("",401);
+                        }';
         $module = Utils::objectToArray($module);
         $moduleName =  ucfirst($module['name']);
         $path =  Path::ROOT."api/app/Http/Controllers/Intranet/Modules/$moduleName" . "Controller.php";
@@ -123,13 +130,15 @@ use App\Intranet\Utils\Utils;';
             
                use HttpResponses;\r\n
                \r\n
-               public function index(){\r\n
-       
+               public function index($args){\r\n
+                
+                
+                    $conditional
 
-                return response('$moduleName module created successfully.');
-                //start your logic here
-       
-               }\r\n
+                    return response(\"$moduleName module for campany $name created successfully.\");
+                    //start your logic here
+        
+                }\r\n
        }";
         return file_put_contents($path,$content);
     }

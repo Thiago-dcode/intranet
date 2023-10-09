@@ -7,10 +7,12 @@ import Nav from "../components/nav/AsideWrapper";
 import HeaderNav from "../components/nav/HeaderNav";
 import Header from "../../components/header/Header";
 import '../assets/css/main.css'
+import '../assets/css/nav.css'
+import useCheckDevice from "../../hooks/useCheckDevice";
 export default function IntranetLayout() {
   const navigate = useNavigate();
   const param = useParams();
-
+const device = useCheckDevice()
   const [dataUser, errorUser, isPendingUser] = useAjax("/api/me");
   const [userModules, errorUserModules, isPendingUserModules] =
     useAjax("/api/modules");
@@ -46,7 +48,12 @@ export default function IntranetLayout() {
             <Header>
               <HeaderNav>
                 {company && (
-                  <Link to={"/" + company.name}>
+                  <Link style={{
+                    position: 'relative',
+                    left: device.isPhone || device.isTablet? '27px': 0,
+
+                    
+                  }} to={"/" + company.name}>
                     {" "}
                     <img
                       width={"60px"}
@@ -59,7 +66,7 @@ export default function IntranetLayout() {
             </Header>
             <div className=" h-full flex items-center justify-between w-full">
               <Nav company={dataUser?.company_active} modules={modules} />
-              <main id="intranet-main" className="xl:w-[calc(100%-10rem)] lg:w-[calc(100%-8.5rem)] w-full mt-10 lg:mt-0 xl:mt-0 relative xl:ml-40  lg:ml-36 flex flex-col items-center h-full">
+              <main id="intranet-main" className="xl:w-[calc(100%-10rem)] lg:w-[calc(100%-8.5rem)] w-full mt-10 lg:mt-0 xl:mt-0 relative xl:ml-40  lg:ml-40 flex flex-col items-center h-full">
                 <Outlet />
               </main>
             </div>

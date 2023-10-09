@@ -47,7 +47,7 @@ export default function RadialChartForm({ chart, setForm }) {
     useEffect(() => {
 
         if (!chart.config) return
-        
+
         const config = JSON.parse(chart.config)
         setFormRadial({
 
@@ -59,10 +59,10 @@ export default function RadialChartForm({ chart, setForm }) {
 
 
         })
-      
+
 
     }, [chart])
-   
+
 
     return (
 

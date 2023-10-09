@@ -1,7 +1,6 @@
 <?php
 
-
-       namespace App\Http\Controllers\Intranet\Modules;
+                    namespace App\Http\Controllers\Intranet\Modules;
 
        
        use Illuminate\Http\Request;
@@ -20,13 +19,18 @@
 
                
 
-               public function index(){
+               public function index($name, Request $request){
 
-       
+                
+                
+                    if($request->user()->company_active !== $name){
 
-                return response('Clientes module created successfully.');
-                //start your logic here
-       
-               }
+                                return response("",401);
+                        }
+
+                    return response("Clientes module for campany $name created successfully.");
+                    //start your logic here
+        
+                }
 
        }

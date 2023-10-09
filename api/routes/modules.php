@@ -14,23 +14,23 @@ use App\Http\Controllers\Intranet\Modules\EmailController;
                
              switch ( $module["name"]) {
             case 'clientes':
-           Route::get( '/modules/clientes',[App\Http\Controllers\Intranet\Modules\ClientesController::class,'index']);
+           Route::get( '{company:name}/modules/clientes',[App\Http\Controllers\Intranet\Modules\ClientesController::class,'index']);
                  break;
 
             case 'eans':
-           Route::get( '/modules/eans',[App\Http\Controllers\Intranet\Modules\EansController::class,'index']);
+           Route::get( '{company:name}/modules/eans',[App\Http\Controllers\Intranet\Modules\EansController::class,'index']);
                  break;
 
             case 'articulos':
-           Route::get( '/modules/articulos',[App\Http\Controllers\Intranet\Modules\ArticulosController::class,'index']);
+           Route::get( '{company:name}/modules/articulos',[App\Http\Controllers\Intranet\Modules\ArticulosController::class,'index']);
                  break;
 
             case 'graficos':
-           Route::get( '/modules/graficos',[App\Http\Controllers\Intranet\Modules\GraficosController::class,'index']);
+           Route::get( '{company:name}/modules/graficos',[App\Http\Controllers\Intranet\Modules\GraficosController::class,'index']);
                  break;
 
             case 'email':
-           Route::get( '/modules/email',[App\Http\Controllers\Intranet\Modules\EmailController::class,'index']);
+           Route::get( '{company:name}/modules/email',[App\Http\Controllers\Intranet\Modules\EmailController::class,'index']);
                  break;
 
             default:

@@ -1,20 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/css/modules/graficos.css'
+import { useNavigate } from 'react-router-dom';
 import useAjax from '../../../hooks/useAjax';
 import Dropdown from '../../components/dropdown/Dropdown';
 import { ChartBar, ChartRadial } from '../../components/modules/graficos/charts/Charts';
 import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
-
+import { useCompany } from "../../../Context/ContextProvider";
 export default function Graficos() {
-
-
-    const [userCharts, userChartsError, isPendingUserCharts] = useAjax('/api/modules/graficos');
+    const navigate = useNavigate();
+    const company = useCompany();
+    const [userCharts, userChartsError, isPendingUserCharts] = useAjax(`/api/${company}/modules/graficos`);
     const [charts, setCharts] = useState(null);
     const [chart, setChart] = useState();
     const [newChart, newChartError, isPendingNewChart, setConfigNewChart] = useAjax();
 
 
+    const handleEdit = (chartEdited) => {
+
+        let chartsUpdated = charts.map(chart => {
+
+            if (chart.id === chartEdited.id) {
+                return chartEdited
+            }
+            return chart
+
+        })
+
+        setCharts(chartsUpdated);
+
+    }
+    const handleDelete = (chartToDelete) => {
+
+        let chartsUpdated = charts.filter(chart => chart.id !== chartToDelete.id)
+
+        setCharts(chartsUpdated);
+
+    }
+
+    useEffect(() => {
+
+        if (!company) {
+
+            navigate('/bienvenido')
+        }
+
+    }, [company])
 
     useEffect(() => {
 
@@ -68,27 +99,7 @@ export default function Graficos() {
 
     }, [newChart, newChartError])
 
-    const handleEdit = (chartEdited) => {
 
-        let chartsUpdated = charts.map(chart => {
-
-            if (chart.id === chartEdited.id) {
-                return chartEdited
-            }
-            return chart
-
-        })
-
-        setCharts(chartsUpdated);
-
-    }
-    const handleDelete = (chartToDelete) => {
-
-        let chartsUpdated = charts.filter(chart => chart.id !== chartToDelete.id)
-
-        setCharts(chartsUpdated);
-
-    }
     useEffect(() => {
 
     }, [charts])
@@ -106,7 +117,7 @@ export default function Graficos() {
 
             <div className='w-full max-w-3xl flex items-center justify-center'>
                 <Dropdown arrow={false} classNameBtn='flex items-center gap-5 text-white bg-arzumaRed px-2 rounded-md' id={'chart-view'} title='+'>
-                    <GraficosForm id={'chart-view'} result={newChart} isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError} />
+                    <GraficosForm id={'chart-view'} result={newChart} isPending={isPendingNewChart} setConfig={setConfigNewChart} error={newChartError?.data} />
                 </Dropdown>
 
             </div>

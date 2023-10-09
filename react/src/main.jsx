@@ -1,18 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
-import { MyContext } from "./Context/ContextProvider";
+import { CompanyProvider } from "./Context/ContextProvider";
 import "./index.css";
 import router from "./router.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <MyContext.Provider
-      value={{
-        text: "hello",
-      }}
-    >
+    <CompanyProvider>
       <RouterProvider router={router} />
-    </MyContext.Provider>
+    </CompanyProvider>
   </React.StrictMode>
 );

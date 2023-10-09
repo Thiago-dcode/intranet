@@ -38,16 +38,16 @@ export default function useAjax(
         const response = await Api.get("/sanctum/csrf-cookie");
 
       }
-     
+
 
       // if (_method === 'PATCH') {
       //   const { data } = await Api.patch(_url, form, {...headers}, { signal ,...config})
       //   setData(data)
       // }
       const { data } = await Api({
-        method: _method==='PATCH'? 'POST':_method,
+        method: _method === 'PATCH' ? 'POST' : _method,
         url: _url,
-        data: _method==='PATCH'? {...form,  _method: "patch"}:form,
+        data: _method === 'PATCH' ? { ...form, _method: "patch" } : form,
         headers: { ...headers },
         params: { signal, ...config },
       });
@@ -57,7 +57,7 @@ export default function useAjax(
       console.log("useAjax.jsx:", error);
       switch (error.response?.data?.status) {
         case 401:
-          ls.clear();
+        
           break;
 
         default:

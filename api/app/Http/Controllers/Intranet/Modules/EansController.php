@@ -19,9 +19,13 @@ class EansController extends Controller
 
 
 
-        public function index(Request $request)
+        public function index($name,Request $request)
         {
 
+                if($request->user()->company_active !== $name){
+
+                        return response("",401);
+                }
 
                 $limit = isset($request['limit']) ? $request['limit'] : 50;
                 $cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';

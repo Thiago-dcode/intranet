@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import useAjax from "../../../hooks/useAjax";
 import '../../assets/css/modules/eans.css'
-import ls from 'localstorage-slim'
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useCompany } from "../../../Context/ContextProvider";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import PopUp from "../../components/modules/eans/PopUp";
 import EanSuccess from "../../components/modules/eans/EanSuccess";
 import EanSearch from "../../components/modules/eans/EanSearch";
 export default function Eans() {
   const navigate = useNavigate()
-
+  const company = useCompany();
   const [url, setUrl] = useState(null)
   const [query, setQuery] = useState('');
   const [codarticulo, setCodArticulo] = useState('');
@@ -27,9 +27,9 @@ export default function Eans() {
     e.preventDefault()
 
 
-    const newUrl= `/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`
+    const newUrl = `${company}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`
 
-    if(url === newUrl ) return
+    if (url === newUrl) return
 
 
     setUrl(newUrl);
@@ -123,14 +123,17 @@ export default function Eans() {
   }, [data, error]);
 
   useEffect(() => {
-    console.log('hello')
-    setUrl(`/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
+    if (!company) {
+      navigate('/bienvenido')
+      return
+    }
+    setUrl(`${company}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
-  }, [])
+  }, [company])
   useEffect(() => {
-    console.log(url)
+
     if (!url) return
-    setConfig('/api' + url)
+    setConfig('/api/' + url)
   }, [url])
 
 
@@ -192,7 +195,7 @@ export default function Eans() {
                       <th></th>
 
                       {Object.keys(eans[0]).map((key, i) => {
-                        return <th id={i} className="">{key}</th>;
+                        return <th id={'th-' + i} className="">{key}</th>;
                       })}
 
                       <th>CODBARRAS NUEVO</th>
@@ -200,24 +203,24 @@ export default function Eans() {
                   </thead>
                   <tbody>
 
-                    {eans.map((ean, i) => {
+                    {eans.map((ean, _i) => {
                       return (
-                        <tr id={i} className="even:bg- odd:bg-white">
-                          <td className=" border border-slate-300  text-xs  text-center w-2">{i + 1}</td>
-                          {Object.entries(ean).map((value) => {
+                        <tr id={'tr' - +_i} className="even:bg- odd:bg-white">
+                          <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
+                          {Object.entries(ean).map((value, i) => {
                             return (
-                              <td className="border border-slate-300  text-center ">
+                              <td id={"td-2-" + i} className="border border-slate-300  text-center ">
                                 <input name={`${i}-${value[0]}`} className=" text-xs" type="text" value={value[1]} />
                               </td>
                             );
                           })}
-                          <td id={`${i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
+                          <td id={`${_i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
                             <input onChange={(e) => {
 
-                              document.getElementById(`${i}-CODBARRANUEVO`).classList.remove('ean-error')
+                              document.getElementById(`${_i}-CODBARRANUEVO`).classList.remove('ean-error')
 
 
-                            }} name={`${i}-CODBARRANUEVO`} type="text w-full" placeholder="cod barra nuevo" />
+                            }} name={`${_i}-CODBARRANUEVO`} type="text w-full" placeholder="cod barra nuevo" />
                           </td>
                         </tr>
                       );

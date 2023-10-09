@@ -86,7 +86,7 @@ export function ChartRadial({ chart }) {
 
             }
         ]
-        console.log(config)
+      
 
         setData(newData)
 
@@ -95,7 +95,6 @@ export function ChartRadial({ chart }) {
 
     useEffect(() => {
 
-        console.log(_data)
     }, [_data])
 
     return (
@@ -123,7 +122,7 @@ export function ChartRadial({ chart }) {
                         endAngle={180}
                         startAngle={0}
                         minAngle={0}
-                        spacing={10}
+                        spacing={20}
                         background
                         dataKey={config.datakey}
                         label={{ fill: "white", position: "insideStart", fontSize: "0.8rem" }}
@@ -147,7 +146,7 @@ export function ChartRadial({ chart }) {
 }
 const YAxisLeftTick = ({ y, payload: { value } }) => {
     return (
-        <Text x={0} y={y} fontSize={'0.5rem'} textAnchor="start" verticalAnchor="middle" >
+        <Text x={0} y={y} fontSize={'0.6rem'} textAnchor="start" verticalAnchor="middle" >
             {maxWords(value, 2)}
         </Text>
     );
@@ -166,7 +165,7 @@ const BAR_AXIS_SPACE = 10;
 export function ChartBar({ chart }) {
     const [_data, setData] = useState(null);
     const [config, setConfig] = useState(null);
-    const [max,setMax] = useState()
+    const [max, setMax] = useState()
     const device = useCheckDevice()
 
     useEffect(() => {
@@ -186,7 +185,7 @@ export function ChartBar({ chart }) {
             for (let j = 0; j < config?.data?.length; j++) {
                 const e = config.data[j];
 
-
+                if (!d['color']) { d['color'] = generateRandomColor(); }
                 if (e.bardata !== key) continue
 
                 d[key] = roundTo(d[key], 2);
@@ -199,14 +198,14 @@ export function ChartBar({ chart }) {
 
         }));
     }, [config]);
-    useEffect(() => { 
+    useEffect(() => {
 
-            if(!_data) return
+        if (!_data) return
 
-                const max = Math.max(..._data.map(d=>Number.parseFloat(d[config.data[0].bardata])))
-                setMax( device.isPhone?max * 1.7: max *1.5);
+        const max = Math.max(..._data.map(d => Number.parseFloat(d[config.data[0].bardata])))
+        setMax(device.isPhone ? max * 1.7 : max * 1.5);
 
-     }, [_data])
+    }, [_data])
 
     return (
         <>
@@ -238,8 +237,8 @@ export function ChartBar({ chart }) {
                             yAxisId={0}
                             dataKey={config.datakey}
                             type="category"
-                            fill="black"
-                            fontSize={'0.5rem'}
+
+
                             axisLine={false}
                             tickLine={false}
                             tick={YAxisLeftTick}
@@ -262,14 +261,14 @@ export function ChartBar({ chart }) {
 
                         />
                         <Tooltip />
-                        <Legend />
+                       
 
                         {config.data.map((bar) => {
                             return (
-                                <Bar dataKey={bar.bardata} minPointSize={2} >
+                                <Bar dataKey={bar.bardata}  >
 
                                     {_data.map((d, idx) => {
-                                        return <Cell key={d[bar.bardata]} fill={generateRandomColor()} />;
+                                        return <Cell key={d[bar.bardata]} fill={d['color']} />;
                                     })}
                                 </Bar>
                             );

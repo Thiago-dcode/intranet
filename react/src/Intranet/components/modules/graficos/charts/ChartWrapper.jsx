@@ -18,10 +18,7 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
   const handleDelete = e => {
 
     setConfig('/api/modules/graficos/' + currentChart.id, {}, 'DELETE');
-    if (chartDelete && !error && !isPending) {
-
-    }
-
+  
   }
   useEffect(() => {
     const configEl = document.querySelector(`#config-chart-${chart.id} .container`)
@@ -75,6 +72,7 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
     if (chartDelete && !error && !isPending) {
       _handleDelete(currentChart)
+      setShowPopUp(false)
     }
 
   }, [chartDelete, error])
@@ -128,7 +126,9 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
 
                 </div>
-                <PopUp setShow={setShowPopUp} show={showPopUp} id={`chart-popup-${chart.id}`} isPending={isPending} confirmMessage={'Procesando...'} message={`Realmente deseas borrar el gráfico ${chart.title}?`} handleFunction={handleDelete} />
+                <PopUp setShow={setShowPopUp} show={showPopUp} id={`chart-popup-${chart.id}`} isPending={isPending} confirmMessage={'Procesando...'} message={`Realmente deseas borrar el gráfico ${chart.title}?`} handleCancel={()=>{
+                  setShowPopUp(false)
+                }}  handleConfirm={handleDelete} />
 
 
               </div>

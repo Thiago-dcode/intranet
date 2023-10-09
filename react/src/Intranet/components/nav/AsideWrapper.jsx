@@ -24,7 +24,7 @@ export default function IntraNav({ modules, company }) {
 
   return (
     <>
-   
+
       {company && modules &&
         <>
           {device.isDesktop && <AsideNav setModule={setUserModule} company={company} modules={modules} />}

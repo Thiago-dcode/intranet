@@ -6,13 +6,15 @@ import Wrapper from "../../container/Wrapper";
 import Header from "../../components/header/Header";
 import Nav from "../../components/header/Nav";
 import LogOutBtn from "../../components/button/LogOutBtn";
+import { useUpdateCompany } from "../../Context/ContextProvider";
 export default function Middle() {
+  const setCompanyGlobally = useUpdateCompany();
   const navigate = useNavigate();
   const [user, error, isPending] = useAjax("/api/me");
   const [
     userCompanyActive,
     errorUserCompanyActive,
-    isPendingUserCompanyActive,
+    isPendingCompanyActive,
     setConfig,
   ] = useAjax();
   const [companyActive, setCompanyActive] = useState(null);
@@ -43,7 +45,7 @@ export default function Middle() {
 
   useEffect(() => {
     if (!companyActive) return;
-
+    setCompanyGlobally(companyActive)
     navigate("/" + companyActive);
   }, [companyActive]);
 
@@ -51,7 +53,7 @@ export default function Middle() {
 
     if (!(user && !error && !isPending)) return
 
-    if (!user.companies.length === 1) return;
+    if (user.companies.length !== 1) return;
 
     setCompany(user.companies[0].name)
 

@@ -7,8 +7,25 @@ export default function AsideNavPhone({ company, modules, setModule }) {
 
 
     useEffect(() => {
+
+        const aside = document.querySelector('.aside-nav')
+        const layoutBtn = document.getElementById('phone-button')
         const main = document.getElementById('intranet-main')
-        const mainW = main.style.width;
+        main.classList.remove('in', 'out')
+
+        if (display) {
+
+            layoutBtn.style.display = 'flex'
+            aside.classList.add('in')
+            aside.classList.remove('out')
+
+            return
+
+        }
+
+        layoutBtn.style.display = 'none'
+        aside.classList.add('out')
+        aside.classList.remove('in')
         // if (display) {
 
         //     main.style.marginLeft = '5rem'
@@ -23,22 +40,28 @@ export default function AsideNavPhone({ company, modules, setModule }) {
 
     return (
         <>
-            <div className="lg:hidden xl:hidden z-50 absolute top-0  mt-14 left-1 btn-mobile">
+            <div className="lg:hidden xl:hidden  bg-none  z-50 absolute -top-10  mt-[3.3rem] left-1 btn-mobile">
 
                 <button onClick={() => {
 
                     setDisplay(!display)
 
-                }} className="btn-mobile bg-white px-1  border border-black/70 hover:cursor-pointer  rounded-sm"><Icon className={'btn-mobile'} color='black' icon={display ? 'ArrowLeft' : 'ArrowRight'} /></button>
+                }} className="btn-mobile px-1  hover:cursor-pointer  rounded-sm"><Icon className={'btn-mobile w-6 h-6'} color='black' icon={'Bars'} /></button>
             </div>
-            {display && <aside className=" z-[99] mt-[5.5rem] text-xs top-0 text-nav fixed  h-screen flex  flex-col items-center justify-between border-r-slate-400 bg-white shadow-md ">
-                <nav className="overflow-auto  w-full mt-4 h-full flex flex-col gap-5 px-3">
+            <button onClick={() => {
+                console.log('hello')
+                setDisplay(false)
+
+            }} id='phone-button' className='flex z-[98] absolute w-screen h-screen bg-black/80 cursor-pointer   flex-col items-center justify-start'><p className='text-white  relative  top-20 text-lg'>x</p></button>
+            <aside className="aside-nav z-[99] mt-[3.3rem] w-40 text-xs top-0 text-nav fixed  h-screen   flex-col items-center justify-between border-r-slate-400 bg-white shadow-md ">
+                <nav className="  w-full  mt-4 h-full flex flex-col gap-2 px-3">
                     {modules.map((module) => {
                         return (
                             <NavLink to={`/${company}/${module.route}`}>
                                 <Icon icon={module.logo} />
                                 <button
                                     onClick={(e) => {
+                                        setDisplay(false)
                                         setModule(module.name);
                                     }}
                                     className=" text-center"
@@ -53,7 +76,7 @@ export default function AsideNavPhone({ company, modules, setModule }) {
                 <div className=" hidden border-t border-t-slate-400 w-full lg:flex  xl:flex  items-center justify-center">
                     <button className="">expand</button>
                 </div>
-            </aside>}
+            </aside>
         </>
     )
 }
