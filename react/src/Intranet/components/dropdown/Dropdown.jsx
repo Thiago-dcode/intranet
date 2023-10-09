@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Dropdown({ hideable=true, Element = null, errors, classNameDrop = 'bg-black/70  rounded-md gap-2 p-2 w-full border-white', classNameBtn = 'bg-white flex items-center gap-2 px-2 rounded-md', id, title, children, arrow = true }) {
+export default function Dropdown({ hideable = true, Element = null, errors, classNameDrop = 'bg-black/70  rounded-md gap-2 p-2 w-full border-white', classNameBtn = 'bg-white flex items-center gap-2 px-2 rounded-md', id, title, children, arrow = true }) {
 
     const handleDropDown = () => {
         const element = document.querySelector(`#${id} .container`)
@@ -13,19 +13,19 @@ export default function Dropdown({ hideable=true, Element = null, errors, classN
 
             console.log(element)
             classList.add('show');
-            if(element.classList.contains(`hideable`))
-           { for (let i = 0; i < elements.length; i++) {
-                const el = elements[i];
-               
+            if (element.classList.contains(`hideable`)) {
+                for (let i = 0; i < elements.length; i++) {
+                    const el = elements[i];
 
-                if (el.classList.contains(`class-${id}`)) {
 
-                    continue
+                    if (el.classList.contains(`class-${id}`)) {
+
+                        continue
+                    }
+                    el.classList.remove('show')
                 }
-                el.classList.remove('show')
             }
-          }
-          return;
+            return;
         }
         classList.remove('show')
 
@@ -37,7 +37,7 @@ export default function Dropdown({ hideable=true, Element = null, errors, classN
                 handleDropDown();
             }} type='button' className={`${classNameBtn}`}>{!Element ? (<span>{title}</span>) : Element}{arrow && <i class="arrow down"></i>}</button>
             <div className='flex flex-col'>
-                <div className={`${classNameDrop} ${hideable? 'hideable': ''} class-${id} z-[95] items-start container absolute top-10 flex flex-col`}>{children}</div>
+                <div className={`${classNameDrop} ${hideable ? 'hideable' : ''} class-${id} z-[95] items-start container absolute top-10 flex flex-col`}>{children}</div>
                 <div>
                     {errors && errors.map((error, i) => {
                         return <p id={`dropdown-error-${i}`} className='text-white'>{error}</p>
