@@ -12,10 +12,10 @@ import useCheckDevice from "../../hooks/useCheckDevice";
 export default function IntranetLayout() {
   const navigate = useNavigate();
   const param = useParams();
-const device = useCheckDevice()
+  const device = useCheckDevice()
   const [dataUser, errorUser, isPendingUser] = useAjax("/api/me");
-  const [userModules, errorUserModules, isPendingUserModules] =
-    useAjax("/api/modules");
+  const [userModules, errorUserModules, isPendingUserModules, setConfigUserModules] =
+    useAjax();
   const [modules, setModules] = useState(null);
   const [allowed, setAllowed] = useState(false);
   const [company, setCompany] = useState(null);
@@ -31,15 +31,22 @@ const device = useCheckDevice()
       setCompany(dataUser.companies[i]);
       break;
     }
+   
     setAllowed(true);
   }, [dataUser, errorUser]);
 
   useEffect(() => {
+   
     if (userModules && !errorUserModules) {
+
       setModules(userModules.data.modules);
     }
   }, [userModules]);
-  useEffect(() => { }, [company]);
+  useEffect(() => {
+    if(!allowed) return
+    setConfigUserModules('/api/modules')
+
+  }, [allowed]);
   return (
     <>
       {allowed && modules ? (
@@ -50,9 +57,9 @@ const device = useCheckDevice()
                 {company && (
                   <Link style={{
                     position: 'relative',
-                    left: device.isPhone || device.isTablet? '27px': 0,
+                    left: device.isPhone || device.isTablet ? '27px' : 0,
 
-                    
+
                   }} to={"/" + company.name}>
                     {" "}
                     <img

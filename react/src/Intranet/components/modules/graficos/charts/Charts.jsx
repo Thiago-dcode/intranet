@@ -12,7 +12,7 @@ import {
 //Radial bar imports
 import { RadialBarChart, RadialBar } from "recharts";
 import { BarChart, Bar, XAxis, YAxis, Cell } from "recharts";
-import { capitalize, generateRandomColor, maxWords, roundTo } from "../../../../../utils/Utils";
+import { capitalize, generateRandomColor, maxWords, parseMillions, roundTo } from "../../../../../utils/Utils";
 import useCheckDevice from "../../../../../hooks/useCheckDevice";
 
 
@@ -75,7 +75,8 @@ export function ChartRadial({ chart }) {
             {
                 ...data,
 
-                name: config.comparar
+                name: config.comparar,
+                fill: 'red'
             },
 
             {
@@ -86,7 +87,7 @@ export function ChartRadial({ chart }) {
 
             }
         ]
-      
+
 
         setData(newData)
 
@@ -125,7 +126,7 @@ export function ChartRadial({ chart }) {
                         spacing={20}
                         background
                         dataKey={config.datakey}
-                        label={{ fill: "white", position: "insideStart", fontSize: "0.8rem" }}
+                        label={{ fill: "black", position: "insideStart", fontSize: "0.8rem" }}
                     />
                     <Legend
 
@@ -137,7 +138,37 @@ export function ChartRadial({ chart }) {
                         layout="horizontal"
                         verticalAlign="top"
                         align="center"
+
                     />
+                         <text
+                                fontSize={'1rem'}
+                                x={115}
+                                y={110}
+                               fill={config?.percentage >=100? 'green': 'black' }
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="progress-label"
+                            >
+                                {`${parseMillions(config?.percentage)}%`}
+                            </text>
+
+                    {_data.map((d, i) => {
+
+                        return (
+                            <text
+                                fontSize={'1rem'}
+                                x={110}
+                                y={180 + i * 20}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="progress-label"
+                            >
+                                {`${d.name}: ${parseMillions(d[config.datakey])}`}
+                            </text>
+
+                        )
+
+                    })}
                     <Tooltip />
                 </RadialBarChart>
             </ResponsiveContainer >}
@@ -146,7 +177,7 @@ export function ChartRadial({ chart }) {
 }
 const YAxisLeftTick = ({ y, payload: { value } }) => {
     return (
-        <Text x={0} y={y} fontSize={'0.6rem'} textAnchor="start" verticalAnchor="middle" >
+        <Text color="black" x={0} y={y} fontSize={'0.6rem'} textAnchor="start" verticalAnchor="middle" >
             {maxWords(value, 2)}
         </Text>
     );
@@ -177,7 +208,7 @@ export function ChartBar({ chart }) {
     }, [chart]);
     useEffect(() => {
         if (!config) return;
-        console.log(config)
+
         setData(parseData(chart.data, (key, d) => {
 
 
@@ -252,7 +283,7 @@ export function ChartBar({ chart }) {
                             type="category"
                             axisLine={false}
                             tickLine={false}
-                            tickFormatter={value => value.toLocaleString()}
+                            tickFormatter={value => parseMillions(value)}
                             mirror
 
                             tick={{
@@ -261,7 +292,7 @@ export function ChartBar({ chart }) {
 
                         />
                         <Tooltip />
-                       
+
 
                         {config.data.map((bar) => {
                             return (

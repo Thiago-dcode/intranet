@@ -3,10 +3,12 @@ import '../../assets/css/modules/graficos.css'
 import { useNavigate } from 'react-router-dom';
 import useAjax from '../../../hooks/useAjax';
 import Dropdown from '../../components/dropdown/Dropdown';
-import { ChartBar, ChartRadial } from '../../components/modules/graficos/charts/Charts';
+
 import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
 import { useCompany } from "../../../Context/ContextProvider";
+import { parseMillions } from '../../../utils/Utils';
+
 export default function Graficos() {
     const navigate = useNavigate();
     const company = useCompany();
@@ -101,7 +103,7 @@ export default function Graficos() {
 
 
     useEffect(() => {
-
+        
     }, [charts])
     useEffect(() => {
 
@@ -126,35 +128,7 @@ export default function Graficos() {
 
             {charts !== null && charts.length > 0 ? <div className=' justify-center  gap-2  flex-wrap flex '>
 
-                {charts.map(chart => {
-
-                    let chartsToRender = [];
-
-                    if (!chart.config) {
-
-                        chartsToRender.push(<div className='w-full h-full items-center flex justify-center mb-10'><button onClick={() => {
-
-                            document.querySelector(`#config-chart-${chart.id} .container`).classList.add('show')
-
-                        }} className='bg-arzumaBlack p-2 text-white rounded-md font-bold text-xl '> click para configurar gráfico tipo {chart.type}</button></div>)
-                    }
-                    else {
-                        switch (chart.type) {
-                            case "radial":
-                                chartsToRender.push(<ChartRadial chart={chart} />)
-                                break;
-                            case "bar":
-                                chartsToRender.push(<ChartBar chart={chart} />)
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    return chartsToRender.map(element => <ChartWrapper _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title}>{element}</ChartWrapper>)
-
-
-                })}
+                {charts.map(chart => <ChartWrapper _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title} />)}
 
 
             </div> : null}

@@ -53,6 +53,36 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 
        
     }
+    public static function getTotalEans($company,$codArticulo = '', $proveedor = '')
+    {
+
+        $filter = '';
+
+
+        if ($codArticulo) {
+
+            $filter .= "AND cb.codarticulo = " . "'" . $codArticulo . "'";
+        }
+        if ($proveedor) {
+
+            $filter .= "AND a.PROVEEDDEFECTO = " . (int)$proveedor;
+        }
+
+                $sql = "SELECT COUNT(*) AS total_rows
+        FROM codbarra cb
+        LEFT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
+        JOIN articulo a ON cb.codarticulo = a.codigo
+        JOIN proveed p ON a.PROVEEDDEFECTO = p.codigo
+
+        WHERE cb.codbarras LIKE '20000%'
+        $filter
+        AND ce.stock1 > 0
+        and ce.codalmacen = 2";
+                $stmt = PymeConnection::start(Constants::get($company))->prepare($sql);
+                $stmt->execute();
+                return  $stmt->fetchColumn();
+    }
+
     public static function getProveedores($company){
         
         $sql = 'select nombrecomercial, codigo from proveed order by nombrecomercial';
@@ -102,7 +132,8 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 
     }
     public static function updateCodeBar($company,$data)
-    {
+    {   
+       
         $result1 = false;
         $result2 = false;
         //update doclin
@@ -112,16 +143,16 @@ ORDER BY cb.codarticulo, cb.valorcaract;
                 AND codbarras = :codbarras";
         try {
             $stmt =  PymeConnection::start(Constants::get($company))->prepare($sql);
-
+            
             $params = [
                 ':cod_barra_nuevo' => $data['CODBARRANUEVO'],
                 ':codarticulo' => $data['CODARTICULO'],
                 ':codbarras' => $data['CODBARRAS'],
 
             ];
-
+           
            $result1 = $stmt->execute($params);
-
+           
 
             //update codbarra
 
@@ -142,9 +173,11 @@ ORDER BY cb.codarticulo, cb.valorcaract;
 
             $result2 = $stmt->execute($params);
         } catch (\Throwable $th) {
-            dump($th);
+           
             throw new PDOException();
-        } finally {
+        } 
+        
+        finally {
 
             return $result1 && $result2;
         }

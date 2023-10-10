@@ -19,19 +19,19 @@ class EansController extends Controller
 
 
 
-        public function index($name,Request $request)
+        public function index($name, Request $request)
         {
 
-                if($request->user()->company_active !== $name){
+                if ($request->user()->company_active !== $name) {
 
-                        return response("",401);
+                        return $this->error([], '', 401);
                 }
 
                 $limit = isset($request['limit']) ? $request['limit'] : 50;
                 $cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
                 $id_proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
 
-                $eans = Eans::getAll($request->user()->company_active,$limit, $cod_articulo, $id_proveedor);
+                $eans = Eans::getAll($request->user()->company_active, $limit, $cod_articulo, $id_proveedor);
                 if (count($eans) > 0) {
                         return \response($eans);
                 }
@@ -43,13 +43,19 @@ class EansController extends Controller
 
                 return \response(Eans::getProveedores($request->user()->company_active));
         }
+        public function total(Request $request)
+        {
+                $cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
+                $id_proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
+                return \response(Eans::getTotalEans($request->user()->company_active, $cod_articulo, $id_proveedor));
+        }
 
         public function update(Request $request)
         {
 
                 $eansError = [];
                 $eansWithoutNum = [];
-
+                
                 foreach ($request->toArray() as $article) {
 
                         $eanWithoutNum = [];
@@ -77,13 +83,15 @@ class EansController extends Controller
                         return $this->error($eansError, "Algunos de los códigos de barras no cumple con EAN13.", 422);
                 }
                 $eanSucess = [];
+                
                 foreach ($eansWithoutNum as $ean) {
-
-                        if (!Eans::updateCodeBar($request->user()->company_active,$ean)) {
+                     
+                        if (!Eans::updateCodeBar($request->user()->company_active, $ean)) {
                                 return $this->error($ean, "Algo fue mal con ese ean.", 422);
                         };
                         array_push($eanSucess, $ean);
                 }
+             
                 return $this->success($eanSucess, 'Los códigos de barras han sido actualizados correctamente');
         }
 }

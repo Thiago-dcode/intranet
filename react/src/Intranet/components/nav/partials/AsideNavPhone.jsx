@@ -55,11 +55,11 @@ export default function AsideNavPhone({ company, modules, setModule }) {
             }} id='phone-button' className='flex z-[98] absolute w-screen h-screen bg-black/80 cursor-pointer   flex-col items-center justify-start'><p className='text-white  relative  top-20 text-lg'>x</p></button>
             <aside className="aside-nav z-[99] mt-[3.3rem] w-40 text-xs top-0 text-nav fixed  h-screen   flex-col items-center justify-between border-r-slate-400 bg-white shadow-md ">
                 <nav className="  w-full  mt-4 h-full flex flex-col gap-2 px-3">
-                    {modules.map((module) => {
+                    {modules.map((module, i) => {
                         return (
-                            <NavLink to={`/${company}/${module.route}`}>
+                            <NavLink id={'module-link-phone-'+i}  to={`/${company}/${module.route}`}>
                                 <Icon icon={module.logo} />
-                                <button
+                                <button id={'module-button-phone-'+i}
                                     onClick={(e) => {
                                         setDisplay(false)
                                         setModule(module.name);

@@ -28,3 +28,30 @@ export function maxWords(str, num) {
   return _str + "...";
 }
 
+export function parseMillions(num) {
+  if(isNaN(Number.parseInt(num))){
+    return num
+  }
+  let numSplited = num.toString().split(".");
+  let numReversedWithoutFloat = numSplited[0].split("").reverse().join("");
+  if (numReversedWithoutFloat.length < 4) {
+    return numSplited.join(",");
+  }
+  let str =  ''
+  for (let i = 0; i < numReversedWithoutFloat.length; i++) {
+
+        str += numReversedWithoutFloat[i]
+        if( i===0 || 2-i % 3 !==0) continue
+        if(i === numReversedWithoutFloat.length -1) continue
+        str += '.'
+       
+
+  }
+  str = str.split('').reverse('').join("")
+  
+ if(numSplited.length === 1){
+  return str
+ }
+
+ return str + ','+ numSplited[1]
+}

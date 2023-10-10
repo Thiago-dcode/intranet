@@ -23,7 +23,10 @@ Api.interceptors.response.use(
   },
   (error) => {
     const { response } = error;
-    console.log(response)
+
+    if (import.meta.env.DEV) {
+      console.log(response)
+    }
     if (response && response.status === 401) {
       ls.clear();
     }

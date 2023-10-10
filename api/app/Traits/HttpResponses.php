@@ -26,15 +26,15 @@ trait httpResponses{
 
         ],$status);
 
-}
+    }
 
-protected function errorIfUserCompanyNotActive($user){
+        protected function companyError(){
 
-     if(!$user->company_active){
-        return $this->error([],'User must has a company activated',401);
-    
-   
-}
-return false;
-}
+            
+                return $this->error([],'User must has a company activated',401);
+            
+        
+
+
+        }
 }

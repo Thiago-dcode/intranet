@@ -24,9 +24,9 @@ export default function ConfigWrapper({ chart, isPending, setConfig }) {
 
         switch (chartType) {
             case 'bar':
-                return <BarChartForm chart={chart} setForm={setForm}  />
+                return <BarChartForm chart={chart} setForm={setForm} />
             case 'radial':
-                return <RadialChartForm chart={chart} setForm={setForm}  />
+                return <RadialChartForm chart={chart} setForm={setForm} />
             default:
 
         }

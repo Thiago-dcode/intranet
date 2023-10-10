@@ -16,7 +16,7 @@ export function useLogin() {
 
     useEffect(() => {
         if (data && !error) {
-            ls.config.ttl = 60 * 60 * 3;
+          
             ls.config.encrypt = true;
             ls.set("USER", data.data.user.id);
             ls.set("ACCESS_TOKEN", data.data.token);
@@ -46,6 +46,7 @@ export function useLogout() {
             ls.remove("USER");
             ls.remove("ACCESS_TOKEN");
             navigate("/login");
+            return
         }
     }, [data, error]);
 

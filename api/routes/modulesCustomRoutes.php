@@ -21,9 +21,9 @@ function customModulesRoutes($moduleName){
     
             break;
         case 'eans':
-    
-            Route::get('/modules/eans/proveedores',[ App\Http\Controllers\Intranet\Modules\EansController::class,'proveedores']);
-            Route::post('/modules/eans/update',[ App\Http\Controllers\Intranet\Modules\EansController::class,'update']);
+            Route::get('{company:name}/modules/eans/total',[ App\Http\Controllers\Intranet\Modules\EansController::class,'total']);
+            Route::get('{company:name}/modules/eans/proveedores',[ App\Http\Controllers\Intranet\Modules\EansController::class,'proveedores']);
+            Route::post('{company:name}/modules/eans/update',[ App\Http\Controllers\Intranet\Modules\EansController::class,'update']);
             break;
             case 'graficos':
                 Route::get('/modules/graficos/types',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'types']);

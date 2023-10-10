@@ -1,4 +1,5 @@
 import React, { Children, useEffect, useState } from 'react'
+import RenderChart from './RenderChart'
 import Dropdown from '../../../dropdown/Dropdown'
 import GraficosForm from '../GraficosForm'
 import Icon from '../../../icon/Icon'
@@ -6,7 +7,7 @@ import ConfigWrapper from './config/ConfigWrapper'
 import useAjax from '../../../../../hooks/useAjax'
 import PopUp from '../../eans/PopUp'
 import useCheckDevice from '../../../../../hooks/useCheckDevice'
-export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, title, children }) {
+export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, title }) {
 
   const [chartEdited, errorChartEdited, isPendingChartEdited, setConfigChartEdited] = useAjax();
   const [style, setStyle] = useState({})
@@ -18,7 +19,7 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
   const handleDelete = e => {
 
     setConfig('/api/modules/graficos/' + currentChart.id, {}, 'DELETE');
-  
+
   }
   useEffect(() => {
     const configEl = document.querySelector(`#config-chart-${chart.id} .container`)
@@ -126,9 +127,9 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
 
                 </div>
-                <PopUp setShow={setShowPopUp} show={showPopUp} id={`chart-popup-${chart.id}`} isPending={isPending} confirmMessage={'Procesando...'} message={`Realmente deseas borrar el gráfico ${chart.title}?`} handleCancel={()=>{
+                <PopUp setShow={setShowPopUp} show={showPopUp} id={`chart-popup-${chart.id}`} isPending={isPending} confirmMessage={'Procesando...'} message={`Realmente deseas borrar el gráfico ${chart.title}?`} handleCancel={() => {
                   setShowPopUp(false)
-                }}  handleConfirm={handleDelete} />
+                }} handleConfirm={handleDelete} />
 
 
               </div>
@@ -136,7 +137,7 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
           </>
         </div>
       </div>
-      {children}</div>
+      <RenderChart chart={chart} /></div>
 
   )
 }

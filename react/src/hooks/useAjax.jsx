@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import Api from "../api/Api";
+import { useNavigate } from "react-router-dom";
 
 export default function useAjax(
   url = "",
@@ -9,6 +10,8 @@ export default function useAjax(
   config = {},
   headers = {},
 ) {
+
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
 
   const [error, setError] = useState(null);
@@ -20,7 +23,7 @@ export default function useAjax(
 
 
 
-  const setConfig = (__url = '', form = null, method = '') => {
+  const setConfig = (__url = '', form = null, method = 'GET') => {
 
     if (__url) _setUrl(__url);
     if (form) setForm(form);
@@ -54,10 +57,15 @@ export default function useAjax(
       setData(data);
     } catch (error) {
       setError(error.response?.data);
-      console.log("useAjax.jsx:", error);
+     
+      if (import.meta.env.DEV) {
+     
+        console.log(error);
+      }
+
       switch (error.response?.data?.status) {
         case 401:
-        
+
           break;
 
         default:
@@ -86,7 +94,9 @@ export default function useAjax(
   useEffect(() => {
     if (!data && error) {
       if (error.status === 401) {
-        console.log(error);
+        ls.clear()
+        navigate('/login')
+        return
 
       }
     }

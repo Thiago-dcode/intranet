@@ -13,11 +13,11 @@ export default function Eans() {
   const [query, setQuery] = useState('');
   const [codarticulo, setCodArticulo] = useState('');
   const [proveedor, setProveedor] = useState('');
-  const [searchParams] = useSearchParams();
   const [data, error, isPending, setConfig] = useAjax();
   const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
   const [form, setForm] = useState(null);
-  const [proveedores] = useAjax('/api/modules/eans/proveedores');
+  const [proveedores, errorProveedores, isPendingProveedores, setConfigProveedores] = useAjax();
+  const [totalEans, errorTotalEans, isPendingTotalEans, setConfigTotalEans] = useAjax();
   const [eans, setEans] = useState(null);
   const [eanError, setEanError] = useState(null)
   const [eanSuccess, setEanSuccess] = useState(null)
@@ -98,7 +98,7 @@ export default function Eans() {
     codBarrasElements.forEach(element => {
       element.readOnly = true;
     });
-    setConfigUpdate('/api/modules/eans/update', form, 'POST');
+    setConfigUpdate(`/api/${company}/modules/eans/update`, form, 'POST');
   }, [form])
 
   useEffect(() => {
@@ -127,6 +127,8 @@ export default function Eans() {
       navigate('/bienvenido')
       return
     }
+    setConfigProveedores(`/api/${company}/modules/eans/proveedores`)
+    setConfigTotalEans(`/api/${company}/modules/eans/total`)
     setUrl(`${company}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
   }, [company])
@@ -138,14 +140,6 @@ export default function Eans() {
 
 
 
-  useEffect(() => {
-
-    if (eanSuccess) return
-
-    navigate(`${query}`)
-
-
-  }, [eanSuccess])
 
 
   return (
@@ -165,7 +159,7 @@ export default function Eans() {
               return { update: true, ...obj };
 
             })
-
+            console.log(newForm)
             setForm(newForm);
 
           }} handleCancel={() => {
@@ -183,7 +177,7 @@ export default function Eans() {
 
           />
           }
-
+          {totalEans && !isPending && <div className="self-start ml-2 bg-arzumaBlack text-white rounded-md px-1">Por actualizar: {totalEans}</div>}
           {!error && Array.isArray(eans) && eans.length > 0 && !isPending ? (
             <form onSubmit={(e) => {
               handleUpdate(e)
@@ -210,7 +204,7 @@ export default function Eans() {
                           {Object.entries(ean).map((value, i) => {
                             return (
                               <td id={"td-2-" + i} className="border border-slate-300  text-center ">
-                                <input name={`${i}-${value[0]}`} className=" text-xs" type="text" value={value[1]} />
+                                <input name={`${_i}-${value[0]}`} className=" text-xs" type="text" value={value[1]} />
                               </td>
                             );
                           })}

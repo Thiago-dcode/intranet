@@ -33,7 +33,12 @@ class AuthController extends Controller
             return $this->error('', 'Credenciales errónea', 422);
         }
         $user = Auth::user();
-        User::find($user->id)->update(['company_active' => null,'module_active' => null]);
+     
+        DB::table('users')
+        ->where('id', $user->id)
+        ->update(['company_active' => null,"module_active"=> null]);
+
+   
 
         return $this->success([
 
@@ -48,7 +53,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
 
-        $user = User::find($request->user()->id)->update(['company_active' => null,'module_active' => null]);
+        $user = User::find($request->user()->id)->update(['company_active' => '','module_active' => '']);
 
         Auth::guard('web')->logout();
 
@@ -124,7 +129,7 @@ class AuthController extends Controller
     
         if(!$request->user()->company_active){
 
-            return $this->error([],"User don't has a active company",401);
+            return $this->error([],"From modules",401);
         }
         
         $modules = User::allModulesByCompany($request->user()->id,$request->user()->company_active);

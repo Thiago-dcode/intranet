@@ -28,6 +28,7 @@ export default function Middle() {
     if (userCompanyActive === null) return;
 
     if (userCompanyActive && !errorUserCompanyActive) {
+
       // if (!userCompanyActive.data.user?.company_active) return;
       setCompanyActive(userCompanyActive.data.user.company_active);
       return;
@@ -36,7 +37,6 @@ export default function Middle() {
 
   useEffect(() => {
     if (!company) return;
-
     setConfig("/api/active-company", {
       user_id: user.id,
       company,
@@ -46,14 +46,18 @@ export default function Middle() {
   useEffect(() => {
     if (!companyActive) return;
     setCompanyGlobally(companyActive)
+
     navigate("/" + companyActive);
   }, [companyActive]);
 
   useEffect(() => {
 
-    if (!(user && !error && !isPending)) return
+    if (!user || error || isPending) return
 
-    if (user.companies.length !== 1) return;
+    if (user?.companies?.length !== 1) {
+      return
+
+    };
 
     setCompany(user.companies[0].name)
 

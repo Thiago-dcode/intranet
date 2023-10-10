@@ -1,26 +1,28 @@
 import React from 'react'
 
 export default function EanSearch({ handleSearch, setCodArticulo, setProveedor, proveedores }) {
+
+
     return (
         <form onSubmit={(e) => {
             handleSearch(e)
         }} method="GET" action="">
-            <div className="flex items-center gap-2">
+            <div className="flex lg:flex-row xl:flex-row flex-col items-center gap-2">
                 <div className='text-black border rounded-md border-black'>
-               
+
                     <input className=' rounded-md outline-none text-center' id='codArticulo' onChange={(e) => {
                         setCodArticulo(e.target.value.trim().toUpperCase())
                     }} type="text" placeholder="CodArticulo" name="codArticulo" />
                 </div>
-                <div  className=' bg-white text-black border rounded-md border-black'>
-               
-                    <select  className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor'  onChange={(e) => {
+                <div className=' bg-white text-black border rounded-md border-black'>
+
+                    <select className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor' onChange={(e) => {
                         setProveedor(e.target.value.trim().toUpperCase())
                     }} name="codProveedor" placeholder="Proveedor">
                         <option defaultValue="selected" value="">
                             Proveedor
                         </option>
-                        {proveedores && <>{proveedores.map((proveedor,i) => {
+                        {proveedores && <>{proveedores.map((proveedor, i) => {
                             if (proveedor.NOMBRECOMERCIAL) { return <option id={`proveedor-option-${i}`} value={proveedor.CODIGO}>{proveedor.NOMBRECOMERCIAL}</option> }
                         })}</>}
 
