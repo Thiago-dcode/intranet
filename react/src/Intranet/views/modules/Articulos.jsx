@@ -1,4 +1,4 @@
-import React from "react";
-export default function Articulos() {
-  return <div className="border-2 border-black">Articulos</div>;
-}
+import React from 'react';
+import Icon from '../../components/icon/Icon';
+export default  function Articulos(){
+return <div className='text-2xl mt-20 flex items-center gap-2'><span>{`Próximamente `}</span><Icon icon={'Wrench'}/> </div>;}

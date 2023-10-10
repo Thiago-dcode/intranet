@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Intranet\Utils;
+
 use App\Intranet\Utils\Path;
 use App\Intranet\Utils\Utils;
 use App\Models\Module;
@@ -14,7 +15,7 @@ class ModuleBuilder
     {
 
 
-        $path = Path::ROOT.'react/src/moduleRegister.jsx';
+        $path = Path::ROOT . 'react/src/moduleRegister.jsx';
         $openArr = "\r\n export const modules = [\r\n";
         $closeArr = "];\r\n";
         $import = '';
@@ -37,13 +38,13 @@ class ModuleBuilder
     {
 
 
-        $path = Path::ROOT.'api/routes/modules.php';
+        $path = Path::ROOT . 'api/routes/modules.php';
         $open = '<?php
 use App\Intranet\Utils\Utils;';
-             
+
         $import = '';
 
-       $middle = '
+        $middle = '
        
        function moduleRoutes($modules){
         
@@ -53,7 +54,7 @@ use App\Intranet\Utils\Utils;';
                
              switch ( $module["name"]) {';
 
-        
+
         $close = '
             default:
              # code...
@@ -70,21 +71,21 @@ use App\Intranet\Utils\Utils;';
 }';
         $switchConditional = '';
         $moduleObject = '';
-       
+
         foreach ($modules as $key => $module) {
 
             $module = Utils::objectToArray($module);
             $moduleName = $module['name'];
-            $moduleNameCapitalize = ucfirst( $moduleName);
-            $route = "/modules/".  $moduleName;
-            $import .= "\r\nuse App\Http\Controllers\Intranet\Modules". "\\$moduleNameCapitalize" . 'Controller;';
+            $moduleNameCapitalize = ucfirst($moduleName);
+            $route = "/modules/" .  $moduleName;
+            $import .= "\r\nuse App\Http\Controllers\Intranet\Modules" . "\\$moduleNameCapitalize" . 'Controller;';
             $switchConditional .= "
             case '$moduleName':
-           Route::get( '{company:name}$route',[App\Http\Controllers\Intranet\Modules" . "\\$moduleNameCapitalize"."Controller::class,'index']);
+           Route::get( '{company:name}$route',[App\Http\Controllers\Intranet\Modules" . "\\$moduleNameCapitalize" . "Controller::class,'index']);
                  break;\r\n";
         }
 
-        $content = $open .$import . $middle .$switchConditional. $close;
+        $content = $open . $import . $middle . $switchConditional . $close;
 
 
 
@@ -92,14 +93,14 @@ use App\Intranet\Utils\Utils;';
     }
 
     public static function generateView($module)
-    {   
+    {
         $module = Utils::objectToArray($module);
         $moduleName =  ucfirst($module['name']);
-        $path = Path::ROOT ."react/src/Intranet/views/modules/$moduleName.jsx";
-        return $path;
+        $path = Path::ROOT . "react/src/Intranet/views/modules/$moduleName.jsx";
+
         if (file_exists($path)) return;
 
-        $content = "import React from 'react';\r\nexport default  function $moduleName(){\r\nreturn <div>$moduleName</div>;\r\n};";
+        $content = "import React from 'react';\r\nimport Icon from '../../components/icon/Icon';\r\nexport default  function $moduleName(){\r\nreturn <div className='text-2xl mt-20 flex items-center gap-2'><span>{`Próximamente `}</span><Icon icon={'Wrench'}/> </div>;}";
 
 
         return  file_put_contents($path, $content);
@@ -116,9 +117,9 @@ use App\Intranet\Utils\Utils;';
                         }';
         $module = Utils::objectToArray($module);
         $moduleName =  ucfirst($module['name']);
-        $path =  Path::ROOT."api/app/Http/Controllers/Intranet/Modules/$moduleName" . "Controller.php";
+        $path =  Path::ROOT . "api/app/Http/Controllers/Intranet/Modules/$moduleName" . "Controller.php";
         if (file_exists($path)) return;
-       $content = "<?php\r\n
+        $content = "<?php\r\n
                     namespace App\Http\Controllers\Intranet\Modules;\r\n
        
        use Illuminate\Http\Request;\r\n
@@ -140,8 +141,6 @@ use App\Intranet\Utils\Utils;';
         
                 }\r\n
        }";
-        return file_put_contents($path,$content);
+        return file_put_contents($path, $content);
     }
-
-  
 }
