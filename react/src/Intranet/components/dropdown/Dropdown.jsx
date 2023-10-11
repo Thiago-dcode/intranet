@@ -1,4 +1,5 @@
 import React from 'react'
+import Error from '../../../components/error/Error';
 
 export default function Dropdown({ hideable = true, Element = null, errors, classNameDrop = 'bg-black/70  rounded-md gap-2 p-2 w-full border-white', classNameBtn = 'bg-white flex items-center gap-2 px-2 rounded-md', id, title, children, arrow = true }) {
 
@@ -40,7 +41,8 @@ export default function Dropdown({ hideable = true, Element = null, errors, clas
                 <div className={`${classNameDrop} ${hideable ? 'hideable' : ''} class-${id} z-[95] items-start container absolute top-10 flex flex-col`}>{children}</div>
                 <div>
                     {errors && errors.map((error, i) => {
-                        return <p id={`dropdown-error-${i}`} className='text-white'>{error}</p>
+                        console.log(error)
+                        return <Error message={error} id={`dropdown-error-${i}`} /> 
                     })}
                 </div>
 

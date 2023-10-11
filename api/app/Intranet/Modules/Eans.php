@@ -31,7 +31,7 @@ class Eans
 
         $sql = "SELECT  cb.codarticulo, a.nombre, p.nombrecomercial as Proveedor, cb.valorcaract, cb.codbarras, ce.stock1
 FROM codbarra cb
-LEFT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
+RIGHT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
 JOIN articulo a ON cb.codarticulo = a.codigo
 JOIN proveed p ON a.PROVEEDDEFECTO = p.codigo
 
@@ -72,7 +72,7 @@ ROWS $limit-49 to $limit ;
 
                 $sql = "SELECT COUNT(*) AS total_rows
         FROM codbarra cb
-        LEFT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
+        RIGHT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
         JOIN articulo a ON cb.codarticulo = a.codigo
         JOIN proveed p ON a.PROVEEDDEFECTO = p.codigo
 

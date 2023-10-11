@@ -10,6 +10,7 @@ import EanSearch from "../../components/modules/eans/EanSearch";
 import { roundTo } from "../../../utils/Utils";
 import Button from "../../components/button/Button";
 import IsPending from "../../../components/pending/IsPending";
+import Error from "../../../components/error/Error";
 export default function Eans() {
   const navigate = useNavigate()
   const company = useCompany();
@@ -46,7 +47,7 @@ export default function Eans() {
     e.preventDefault()
 
 
-   
+
   }
   const handleUpdate = (e) => {
     e.preventDefault()
@@ -132,7 +133,7 @@ export default function Eans() {
         setEans(data)
         return;
       };
-    
+
       setEans(prev => [...prev, ...data])
 
 
@@ -144,7 +145,7 @@ export default function Eans() {
   }, [data, error]);
 
   useEffect(() => {
-  if (!company) {
+    if (!company) {
       navigate('/bienvenido')
       return
     }
@@ -181,7 +182,7 @@ export default function Eans() {
               return { update: true, ...obj };
 
             })
-        
+
             setForm(newForm);
 
           }} handleCancel={() => {
@@ -202,17 +203,17 @@ export default function Eans() {
 
           />
           }
-         {  <div className="flex flex-row w-full items-center justify-between px-4">
-            {totalEans &&   <div className=" bg-arzumaBlack text-white rounded-md px-1">Por actualizar: {totalEans}</div>}
-            {!eanError && data?.length === 50 && <form onSubmit={(e) => {
+          {<div className="flex flex-row w-full items-center justify-between px-4">
+            {totalEans && <div className=" bg-arzumaBlack text-white rounded-md px-1">Por actualizar: {totalEans}</div>}
+            {!eanError && data?.length === 50 && (!error || (error.data.isNotFound && !isSearchBtn)) && <form onSubmit={(e) => {
               handleSearch(e)
             }} className="">
 
-              {!isPending  ? <Button name="more" handleBtn={() => {
+              {!isPending ? <Button name="more" handleBtn={() => {
                 setLimit(limit + 50)
               }} content="Más" type="submit" >
                 <Icon icon={'ArrowDown'} />
-              </Button> : <IsPending size="25" color={company.color}/>}
+              </Button> : <IsPending size="25" color={company.color} />}
             </form>}
           </div>}
 
@@ -268,8 +269,8 @@ export default function Eans() {
               </form>
 
             </>
-          ) : (<div>{error?.message}</div>)}
-          {isPending ? <div className=' flex  flex-row  items-start justify-start'><IsPending  color={company.color}/></div> : null}
+          ) : (<Error message={error?.message} />)}
+          {isPending ? <div className=' flex  flex-row  items-start justify-start'><IsPending color={company.color} /></div> : null}
           {isPendingUpdate ? <div>Actualizando...</div> : null}
 
         </div>) : <EanSuccess handleSucess={setEanSuccess} num={eanSuccess.length} />}
