@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import useAjax from "../../../hooks/useAjax";
 import '../../assets/css/modules/eans.css'
+import Icon from '../../components/icon/Icon'
 import { useCompany } from "../../../Context/ContextProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PopUp from "../../components/modules/eans/PopUp";
 import EanSuccess from "../../components/modules/eans/EanSuccess";
 import EanSearch from "../../components/modules/eans/EanSearch";
+import { roundTo } from "../../../utils/Utils";
+import Button from "../../components/button/Button";
+import IsPending from "../../../components/pending/IsPending";
 export default function Eans() {
   const navigate = useNavigate()
   const company = useCompany();
@@ -13,9 +17,11 @@ export default function Eans() {
   const [query, setQuery] = useState('');
   const [codarticulo, setCodArticulo] = useState('');
   const [proveedor, setProveedor] = useState('');
+  const [limit, setLimit] = useState(50);
   const [data, error, isPending, setConfig] = useAjax();
   const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
   const [form, setForm] = useState(null);
+  const [isSearchBtn, setIsSearchBtn] = useState(true);
   const [proveedores, errorProveedores, isPendingProveedores, setConfigProveedores] = useAjax();
   const [totalEans, errorTotalEans, isPendingTotalEans, setConfigTotalEans] = useAjax();
   const [eans, setEans] = useState(null);
@@ -25,18 +31,23 @@ export default function Eans() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-
-
-    const newUrl = `${company}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`
+    const btn = e.nativeEvent.submitter.name;
+    const newUrl = `${company.name}/modules/eans?limit=${limit}&codarticulo=${codarticulo}&proveedor=${proveedor}`
 
     if (url === newUrl) return
 
-
+    if (btn === 'search') setIsSearchBtn(true)
+    else setIsSearchBtn(false)
     setUrl(newUrl);
 
 
   }
+  const handleMore = (e) => {
+    e.preventDefault()
 
+
+   
+  }
   const handleUpdate = (e) => {
     e.preventDefault()
 
@@ -98,7 +109,7 @@ export default function Eans() {
     codBarrasElements.forEach(element => {
       element.readOnly = true;
     });
-    setConfigUpdate(`/api/${company}/modules/eans/update`, form, 'POST');
+    setConfigUpdate(`/api/${company.name}/modules/eans/update`, form, 'POST');
   }, [form])
 
   useEffect(() => {
@@ -115,21 +126,32 @@ export default function Eans() {
   useEffect(() => {
 
     if (data && !error) {
-      setEans(data);
-      return;
+
+      if (isSearchBtn) {
+
+        setEans(data)
+        return;
+      };
+    
+      setEans(prev => [...prev, ...data])
+
+
+
+
     }
 
 
   }, [data, error]);
 
   useEffect(() => {
-    if (!company) {
+  if (!company) {
       navigate('/bienvenido')
       return
     }
-    setConfigProveedores(`/api/${company}/modules/eans/proveedores`)
-    setConfigTotalEans(`/api/${company}/modules/eans/total`)
-    setUrl(`${company}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
+    setIsSearchBtn(true)
+    setConfigProveedores(`/api/${company.name}/modules/eans/proveedores`)
+    setConfigTotalEans(`/api/${company.name}/modules/eans/total`)
+    setUrl(`${company.name}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
   }, [company])
   useEffect(() => {
@@ -159,7 +181,7 @@ export default function Eans() {
               return { update: true, ...obj };
 
             })
-            console.log(newForm)
+        
             setForm(newForm);
 
           }} handleCancel={() => {
@@ -169,6 +191,9 @@ export default function Eans() {
               element.readOnly = false;
             });
           }} /> : <EanSearch
+            handleBtn={() => {
+              setLimit(50)
+            }}
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}
@@ -177,61 +202,74 @@ export default function Eans() {
 
           />
           }
-          {totalEans && !isPending && <div className="self-start ml-2 bg-arzumaBlack text-white rounded-md px-1">Por actualizar: {totalEans}</div>}
-          {!error && Array.isArray(eans) && eans.length > 0 && !isPending ? (
-            <form onSubmit={(e) => {
-              handleUpdate(e)
-            }} className=" flex flex-col  h-3/4 items-center gap-3  z-10 w-full " >
-              <div className="w-full  px-2  relative  overflow-auto gap-4">
-                <table className="font-sans w-full text-sm rounded-lg border-collapse border border-slate-400">
-                  <thead className=" py-2 sticky top-0 bg-bera-textil text-xs capitalize m-auto text-white">
-                    <tr>
-                      <th></th>
+         {  <div className="flex flex-row w-full items-center justify-between px-4">
+            {totalEans &&   <div className=" bg-arzumaBlack text-white rounded-md px-1">Por actualizar: {totalEans}</div>}
+            {!eanError && data?.length === 50 && <form onSubmit={(e) => {
+              handleSearch(e)
+            }} className="">
 
-                      {Object.keys(eans[0]).map((key, i) => {
-                        return <th id={'th-' + i} className="">{key}</th>;
+              {!isPending  ? <Button name="more" handleBtn={() => {
+                setLimit(limit + 50)
+              }} content="Más" type="submit" >
+                <Icon icon={'ArrowDown'} />
+              </Button> : <IsPending size="25" color={company.color}/>}
+            </form>}
+          </div>}
+
+          {(!error || (error.data.isNotFound && !isSearchBtn)) && Array.isArray(eans) && eans.length > 0 && (!isSearchBtn || !isPending) ? (
+            <>
+              <form onSubmit={(e) => {
+                handleUpdate(e)
+              }} className=" flex flex-col  h-3/4 items-center gap-3  z-10 w-full " >
+                <div className="w-full  px-2  relative  overflow-auto gap-4">
+                  <table className="font-sans w-full text-sm rounded-lg border-collapse border border-slate-400">
+                    <thead className=" py-2 sticky top-0 bg-bera-textil text-xs capitalize m-auto text-white">
+                      <tr>
+                        <th></th>
+
+                        {Object.keys(eans[0]).map((key, i) => {
+                          return <th id={'th-' + i} className="">{key}</th>;
+                        })}
+
+                        <th>CODBARRAS NUEVO</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      {eans.map((ean, _i) => {
+                        return (
+                          <tr id={'tr' - +_i} className="even:bg- odd:bg-white">
+                            <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
+                            {Object.entries(ean).map(([key, value], i) => {
+                              return (
+                                <td id={"td-2-" + i} className="border border-slate-300  text-center ">
+                                  <input name={`${_i}-${key}`} className=" text-xs" type="text" value={key === 'STOCK1' ? roundTo(value, 0) : value} />
+                                </td>
+                              );
+                            })}
+                            <td id={`${_i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
+                              <input onChange={(e) => {
+
+                                document.getElementById(`${_i}-CODBARRANUEVO`).classList.remove('ean-error')
+
+
+                              }} name={`${_i}-CODBARRANUEVO`} type="text w-full" placeholder="cod barra nuevo" />
+                            </td>
+                          </tr>
+                        );
                       })}
 
-                      <th>CODBARRAS NUEVO</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                    </tbody>
 
-                    {eans.map((ean, _i) => {
-                      return (
-                        <tr id={'tr' - +_i} className="even:bg- odd:bg-white">
-                          <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
-                          {Object.entries(ean).map((value, i) => {
-                            return (
-                              <td id={"td-2-" + i} className="border border-slate-300  text-center ">
-                                <input name={`${_i}-${value[0]}`} className=" text-xs" type="text" value={value[1]} />
-                              </td>
-                            );
-                          })}
-                          <td id={`${_i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
-                            <input onChange={(e) => {
+                  </table>
 
-                              document.getElementById(`${_i}-CODBARRANUEVO`).classList.remove('ean-error')
+                </div>
+                {!eanError && <Button type="submit" content="Actualizar" />}
+              </form>
 
-
-                            }} name={`${_i}-CODBARRANUEVO`} type="text w-full" placeholder="cod barra nuevo" />
-                          </td>
-                        </tr>
-                      );
-                    })}
-
-                  </tbody>
-
-                </table>
-
-              </div>
-              {!eanError && <button type="submit " className="sticky bottom-0 bg-black text-white px-2">Actualizar</button>}
-
-
-            </form>
-
+            </>
           ) : (<div>{error?.message}</div>)}
-          {isPending ? <div>Cargando</div> : null}
+          {isPending ? <div className=' flex  flex-row  items-start justify-start'><IsPending  color={company.color}/></div> : null}
           {isPendingUpdate ? <div>Actualizando...</div> : null}
 
         </div>) : <EanSuccess handleSucess={setEanSuccess} num={eanSuccess.length} />}

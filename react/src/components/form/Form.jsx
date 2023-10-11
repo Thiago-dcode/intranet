@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import IsPending from "../pending/IsPending";
 
 const Form = ({
   title = "",
@@ -21,14 +22,17 @@ const Form = ({
           return <div id={"div-input-" + i}>{element}</div>;
         })}
       </div>
-      {error && <div>{error}</div>}
-
-      <button
-        className="flex items-center justify-center h-12 px-6 w-64 bg-blue-600 mt-8 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700"
+      
+        <div  className="flex items-center justify-center h-12  w-64  mt-8">
+        {!isPending?<button
+        className=" h-full  w-full px-6 bg-blue-600 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700"
         type="submit"
       >
-        {isPending ? "Submitting..." : buttonText}
-      </button>
+        { buttonText}
+      </button>:   <IsPending color="rgb(37 99 235)"/>}
+        </div>
+        {error && <div className="mt-4">{error}</div>}
+     
     </form>
   );
 };

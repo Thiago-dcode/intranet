@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import BarChartForm from './BarChartForm'
 import RadialChartForm from './RadialConfigForm'
+import IsPending from '../../../../../../components/pending/IsPending'
 export default function ConfigWrapper({ chart, isPending, setConfig }) {
     const [chartConfig, setChartConfig] = useState(null)
     const [form, setForm] = useState(null)
@@ -54,7 +55,7 @@ export default function ConfigWrapper({ chart, isPending, setConfig }) {
                     {renderChartConfig(chart.type)}
 
 
-                    {!isPending ? (<button className='bg-arzumaRed self-center px-2 text-white rounded-md'>Guardar</button>) : <p className='bg-arzumaRed self-center px-2 text-white rounded-md'> Guardando...</p>}
+                    {!isPending ? (<button className='bg-arzumaRed self-center px-2 text-white rounded-md'>Guardar</button>) : <IsPending size='25' color={'#DC0146'} />}
                 </form>}
         </>
     )

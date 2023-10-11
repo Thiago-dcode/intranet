@@ -26,9 +26,10 @@ class Eans
 
             $filter .= "AND a.PROVEEDDEFECTO = " . (int)$proveedor;
         }
+      
 
 
-        $sql = "SELECT FIRST 50 cb.codarticulo, a.nombre, p.nombrecomercial as Proveedor, cb.valorcaract, cb.codbarras, ce.stock1
+        $sql = "SELECT  cb.codarticulo, a.nombre, p.nombrecomercial as Proveedor, cb.valorcaract, cb.codbarras, ce.stock1
 FROM codbarra cb
 LEFT JOIN carexist ce ON cb.codarticulo = ce.codarticulo AND cb.valorcaract = ce.valor
 JOIN articulo a ON cb.codarticulo = a.codigo
@@ -38,7 +39,8 @@ WHERE cb.codbarras LIKE '20000%'
         $filter
   AND ce.stock1 > 0
   and ce.codalmacen = 2
-ORDER BY cb.codarticulo, cb.valorcaract;
+ORDER BY cb.codarticulo, cb.valorcaract
+ROWS $limit-49 to $limit ;
               ";
 			  
 	;

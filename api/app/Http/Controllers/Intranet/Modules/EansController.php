@@ -35,7 +35,10 @@ class EansController extends Controller
                 if (count($eans) > 0) {
                         return \response($eans);
                 }
-                return $this->error([], 'No se ha encontrado ningún artículo', 404);
+                return $this->error([
+                        'isNotFound'=> true
+
+                ], 'No se ha encontrado ningún artículo', 404);
         }
         public function proveedores(Request $request)
         {
@@ -55,7 +58,7 @@ class EansController extends Controller
 
                 $eansError = [];
                 $eansWithoutNum = [];
-                
+
                 foreach ($request->toArray() as $article) {
 
                         $eanWithoutNum = [];
@@ -83,15 +86,15 @@ class EansController extends Controller
                         return $this->error($eansError, "Algunos de los códigos de barras no cumple con EAN13.", 422);
                 }
                 $eanSucess = [];
-                
+
                 foreach ($eansWithoutNum as $ean) {
-                     
+
                         if (!Eans::updateCodeBar($request->user()->company_active, $ean)) {
                                 return $this->error($ean, "Algo fue mal con ese ean.", 422);
                         };
                         array_push($eanSucess, $ean);
                 }
-             
+
                 return $this->success($eanSucess, 'Los códigos de barras han sido actualizados correctamente');
         }
 }

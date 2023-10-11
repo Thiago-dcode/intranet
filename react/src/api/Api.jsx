@@ -25,7 +25,7 @@ Api.interceptors.response.use(
     const { response } = error;
 
     if (import.meta.env.DEV) {
-      console.log(response)
+      console.error('Api.jsx error:',response)
     }
     if (response && response.status === 401) {
       ls.clear();

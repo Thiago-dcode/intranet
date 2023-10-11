@@ -52,7 +52,7 @@
 }
 @keyframes slideLeftDesk {
   from {
-    width: 5rem; /* Start position outside the viewport */
+    width: 3.5rem; /* Start position outside the viewport */
   }
   to {
     width: 10rem; /* End position with a left offset of 0 */

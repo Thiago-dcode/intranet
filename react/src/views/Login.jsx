@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Form from "../components/form/Form";
 import Input from "../components/form/Input";
-import {useLogin} from "../hooks/useAuth";
+import { useLogin } from "../hooks/useAuth";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

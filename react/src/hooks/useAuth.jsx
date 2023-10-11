@@ -23,7 +23,7 @@ export function useLogin() {
             navigate("/middle");
         }
         if (error) {
-            console.log(error);
+           
         }
     }, [data, error]);
 

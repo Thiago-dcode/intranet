@@ -9,7 +9,6 @@ import HomeIntranet from "./Intranet/views/Home.jsx";
 import Middle from "./Intranet/views/Middle";
 
 import { modules } from "./moduleRegister";
-console.log("access");
 const router = createBrowserRouter([
   {
     path: "/",

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useAjax from '../../../../hooks/useAjax';
 import Icon from '../../icon/Icon';
 import Dropdown from '../../dropdown/Dropdown';
+import IsPending from '../../../../components/pending/IsPending';
 export default function GraficosForm({ cleanField = true, url = '/api/modules/graficos/new', method = 'POST', titleVal = '', sqlVal = '', id, idDrop = 'chart-type-create', titleForm = 'Crea tu propio gráfico.', titleDrop, titleBtn = 'Crear', result, isPending, setConfig, error, classNameDrop = ' top-8 bg-white rounded-md gap-2 p-2 w-full border border-black', }) {
     const [chartTypes, chartTypesError, isPendingChartTypes] = useAjax('/api/modules/graficos/types');
     const [title, setTitle] = useState('');
@@ -104,7 +105,7 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
                         }} value={sql} className='p-5 rounded-md' placeholder="Escribe tu SQL" name="sql" id="sql" cols="5" rows="5"></textarea>
                     </div>
 
-                    {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>{titleBtn}</button> : <p className=' px-1 border-white bg-arzumaRed w-20 rounded-md text-white '>Submitting...</p>}
+                    {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>{titleBtn}</button> : <IsPending size='25' color="#DC0146"/>}
 
                     <div>  {error &&
                         error.map(err => {

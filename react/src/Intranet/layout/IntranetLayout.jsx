@@ -6,10 +6,12 @@ import { Outlet } from "react-router-dom";
 import Nav from "../components/nav/AsideWrapper";
 import HeaderNav from "../components/nav/HeaderNav";
 import Header from "../../components/header/Header";
+import { useUpdateCompany } from "../../Context/ContextProvider";
 import '../assets/css/main.css'
 import '../assets/css/nav.css'
 import useCheckDevice from "../../hooks/useCheckDevice";
 export default function IntranetLayout() {
+  const setCompanyGlobally = useUpdateCompany();
   const navigate = useNavigate();
   const param = useParams();
   const device = useCheckDevice()
@@ -28,6 +30,7 @@ export default function IntranetLayout() {
     }
     for (let i = 0; i < dataUser.companies.length; i++) {
       if (dataUser.companies[i].name !== dataUser?.company_active) continue;
+      setCompanyGlobally(dataUser.companies[i])
       setCompany(dataUser.companies[i]);
       break;
     }
@@ -73,7 +76,7 @@ export default function IntranetLayout() {
             </Header>
             <div className=" h-full flex items-center justify-between w-full">
               <Nav company={dataUser?.company_active} modules={modules} />
-              <main id="intranet-main" className="xl:w-[calc(100%-10rem)] lg:w-[calc(100%-8.5rem)] w-full mt-10 lg:mt-0 xl:mt-0 relative xl:ml-40  lg:ml-40 flex flex-col items-center h-full">
+              <main id="intranet-main" className="xl:w-[calc(100%)] lg:w-[calc(100%)] w-full mt-10 lg:mt-0 xl:mt-0 relative xl:ml-30  lg:ml-30  flex flex-col items-center h-full">
                 <Outlet />
               </main>
             </div>

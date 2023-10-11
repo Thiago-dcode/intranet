@@ -3,7 +3,7 @@ import '../../assets/css/modules/graficos.css'
 import { useNavigate } from 'react-router-dom';
 import useAjax from '../../../hooks/useAjax';
 import Dropdown from '../../components/dropdown/Dropdown';
-
+import IsPending from '../../../components/pending/IsPending';
 import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
 import { useCompany } from "../../../Context/ContextProvider";
@@ -12,7 +12,7 @@ import { parseMillions } from '../../../utils/Utils';
 export default function Graficos() {
     const navigate = useNavigate();
     const company = useCompany();
-    const [userCharts, userChartsError, isPendingUserCharts] = useAjax(`/api/${company}/modules/graficos`);
+    const [userCharts, userChartsError, isPendingUserCharts] = useAjax(`/api/${company.name}/modules/graficos`);
     const [charts, setCharts] = useState(null);
     const [chart, setChart] = useState();
     const [newChart, newChartError, isPendingNewChart, setConfigNewChart] = useAjax();
@@ -103,7 +103,7 @@ export default function Graficos() {
 
 
     useEffect(() => {
-        
+
     }, [charts])
     useEffect(() => {
 
@@ -133,8 +133,8 @@ export default function Graficos() {
 
             </div> : null}
 
-            {isPendingUserCharts && !userChartsError && <p className='flex gap-4  w-full h-full'>cargando...</p>}
-            {!isPendingUserCharts && !userChartsError && Array.isArray(charts) && charts.length === 0 && <div className='text-black flex gap-4  justify-self-center w-full h-full'>No tienes ningún gráfico, empiezar creando uno.</div>}
+            {isPendingUserCharts && !userChartsError && <div className=' flex  flex-row  items-start justify-start'><IsPending  color={company.color}/></div>}
+            {!isPendingUserCharts && !userChartsError && Array.isArray(charts) && charts.length === 0 && <div className='text-black flex gap-4  justify-self-center w-full h-full '>No tienes ningún gráfico, empiezar creando uno.</div>}
         </div>
     )
 }

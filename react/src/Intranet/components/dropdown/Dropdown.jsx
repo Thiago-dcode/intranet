@@ -33,7 +33,7 @@ export default function Dropdown({ hideable = true, Element = null, errors, clas
 
     return (
         <div id={id} className={`relative flex flex-col w-full  items-start dropdown  z-[97]`}>
-            <button onClick={(e) => {
+            < button onClick={(e) => {
                 handleDropDown();
             }} type='button' className={`${classNameBtn}`}>{!Element ? (<span>{title}</span>) : Element}{arrow && <i class="arrow down"></i>}</button>
             <div className='flex flex-col'>

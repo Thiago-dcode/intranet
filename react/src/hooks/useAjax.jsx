@@ -12,7 +12,7 @@ export default function useAjax(
 ) {
 
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const [_data, setData] = useState(null);
 
   const [error, setError] = useState(null);
 
@@ -24,7 +24,7 @@ export default function useAjax(
 
 
   const setConfig = (__url = '', form = null, method = 'GET') => {
-
+   
     if (__url) _setUrl(__url);
     if (form) setForm(form);
     if (method) setMethod(method);
@@ -36,17 +36,13 @@ export default function useAjax(
     setError("");
     setIsPending(true);
     try {
-
+    
       if (_url === "/api/login") {
+
         const response = await Api.get("/sanctum/csrf-cookie");
 
       }
 
-
-      // if (_method === 'PATCH') {
-      //   const { data } = await Api.patch(_url, form, {...headers}, { signal ,...config})
-      //   setData(data)
-      // }
       const { data } = await Api({
         method: _method === 'PATCH' ? 'POST' : _method,
         url: _url,
@@ -54,23 +50,18 @@ export default function useAjax(
         headers: { ...headers },
         params: { signal, ...config },
       });
+    
       setData(data);
+      
     } catch (error) {
       setError(error.response?.data);
-     
+
       if (import.meta.env.DEV) {
-     
-        console.log(error);
+
+        console.error("UseAjax.jsx Error:", error);
       }
 
-      switch (error.response?.data?.status) {
-        case 401:
 
-          break;
-
-        default:
-          break;
-      }
     } finally {
       setIsPending(false);
     }
@@ -92,7 +83,7 @@ export default function useAjax(
   }, [_url, form, _method]);
 
   useEffect(() => {
-    if (!data && error) {
+    if (!_data && error) {
       if (error.status === 401) {
         ls.clear()
         navigate('/login')
@@ -100,7 +91,7 @@ export default function useAjax(
 
       }
     }
-  }, [data, error]);
+  }, [_data, error]);
 
-  return [data, error, isPending, setConfig];
+  return [_data, error, isPending, setConfig];
 }
