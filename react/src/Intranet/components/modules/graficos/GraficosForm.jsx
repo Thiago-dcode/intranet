@@ -67,6 +67,7 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
 
 
     }, [titleVal, sqlVal])
+ 
 
     return (
         <>
@@ -81,10 +82,10 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
 
                     <Dropdown hideable={false} errors={dropError} classNameDrop={classNameDrop + ' w-96'} id={idDrop} title={dropTitle}>
 
-                        {chartTypes.data?.map(chartType => {
+                        {chartTypes.data?.map((chartType, i) => {
 
                             return (
-                                <button type='button' onClick={(e) => {
+                                <button key={'button-dropdown-chart-type-' + i} id={'button-dropdown-chart-type-' + i} type='button' onClick={(e) => {
 
                                     handleType(chartType.type)
 
@@ -108,10 +109,10 @@ export default function GraficosForm({ cleanField = true, url = '/api/modules/gr
 
                     {!isPending ? <button type='submit' className=' border-white bg-arzumaRed w-20 rounded-md text-white'>{titleBtn}</button> : <IsPending size='25' color="#DC0146" />}
 
-                    <div>  {error &&
-                        error.map(err => {
+                    <div>  {error && 
+                        error.map((err, i) => {
 
-                            return <Error className='text-white' message={err} />
+                            return <Error key={'error-chart-form-' + i} id={'error-chart-form-' + i} className='text-white' message={err} />
                         })
                     }</div>
                 </form>) : <div>Loading</div>}

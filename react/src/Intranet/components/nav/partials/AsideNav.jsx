@@ -34,7 +34,7 @@ export const AsideNav = ({ company, modules, setModule }) => {
             <nav className="  w-full  mt-4 h-full flex flex-col gap-2 px-3">
                 {modules.map((module) => {
                     return (
-                        <NavLink to={`/${company}/${module.route}`}>
+                        <NavLink key={`link-${module.name}`} to={`/${company}/${module.route}`}>
                             <Icon icon={module.logo} />
                             <button id='btn-nav-desk'
                                 onClick={(e) => {

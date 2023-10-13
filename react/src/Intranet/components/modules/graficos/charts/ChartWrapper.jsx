@@ -106,7 +106,7 @@ export default function ChartWrapper({ id, handleEdit, _handleDelete, chart, tit
 
 
                 <Dropdown classNameDrop='  px-2 -left-52 w-52 flex flex-col bg-black/70 rounded-md' id={`edit-chart-${currentChart.id}`} Element={<Icon className={'self-end'} icon={'PenToSquare'} />} arrow={false} title={"edit"} classNameBtn='z-50 self-end' >
-                  <GraficosForm cleanField={false} id={`edit-chart-${currentChart.id}`} isPending={isPendingChartEdited} error={errorChartEdited} setConfig={setConfigChartEdited} url={`/api/modules/graficos/${currentChart.id}`} method='PATCH' titleBtn='Editar' titleVal={currentChart.title} sqlVal={currentChart.sql} titleForm={`Edita gráfico ${currentChart.title}`} idDrop={`chart-type-edit-${currentChart.id}`} classNameDrop='top-8 bg-white  rounded-md gap-2 p-2 w-full border border-black' />
+                  <GraficosForm cleanField={false} id={`edit-chart-${currentChart.id}`} isPending={isPendingChartEdited} error={errorChartEdited?.data} setConfig={setConfigChartEdited} url={`/api/modules/graficos/${currentChart.id}`} method='PATCH' titleBtn='Editar' titleVal={currentChart.title} sqlVal={currentChart.sql} titleForm={`Edita gráfico ${currentChart.title}`} idDrop={`chart-type-edit-${currentChart.id}`} classNameDrop='top-8 bg-white  rounded-md gap-2 p-2 w-full border border-black' />
                 </Dropdown>
                 <Dropdown classNameDrop='-left-60  px-2 w-60 j flex flex-col bg-black/70 rounded-md' id={`config-chart-${chart.id}`} Element={<Icon className={'self-end '} icon={'Wrench'} />} arrow={false} title={"config"} classNameBtn='z-10 self-end' >
 

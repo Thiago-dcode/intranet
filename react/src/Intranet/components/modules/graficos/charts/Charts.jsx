@@ -12,7 +12,7 @@ import {
 //Radial bar imports
 import { RadialBarChart, RadialBar } from "recharts";
 import { BarChart, Bar, XAxis, YAxis, Cell } from "recharts";
-import { capitalize, generateRandomColor, maxWords, parseMillions, roundTo } from "../../../../../utils/Utils";
+import { capitalize, formatNumberWithCommas, generateRandomColor, maxWords, roundTo } from "../../../../../utils/Utils";
 import useCheckDevice from "../../../../../hooks/useCheckDevice";
 
 
@@ -140,30 +140,30 @@ export function ChartRadial({ chart }) {
                         align="center"
 
                     />
-                         <text
-                                fontSize={'1rem'}
-                                x={115}
-                                y={110}
-                               fill={config?.percentage >=100? 'green': 'black' }
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                className="progress-label"
-                            >
-                                {`${parseMillions(config?.percentage)}%`}
-                            </text>
+                    <text
+                        fontSize={'1rem'}
+                        x={115}
+                        y={110}
+                        fill={config?.percentage >= 100 ? 'green' : 'black'}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="progress-label"
+                    >
+                        {`${formatNumberWithCommas(config?.percentage)}%`}
+                    </text>
 
                     {_data.map((d, i) => {
 
                         return (
-                            <text
+                            <text key={'text-radial-bar-'+i}
                                 fontSize={'1rem'}
                                 x={110}
-                                y={180 + i * 20}
+                                y={150 + i * 20}
                                 textAnchor="middle"
                                 dominantBaseline="middle"
                                 className="progress-label"
                             >
-                                {`${d.name}: ${parseMillions(d[config.datakey])}`}
+                                {`${d.name}: ${formatNumberWithCommas(d[config.datakey])}`}
                             </text>
 
                         )
@@ -178,7 +178,7 @@ export function ChartRadial({ chart }) {
 const YAxisLeftTick = ({ y, payload: { value } }) => {
     return (
         <Text color="black" x={0} y={y} fontSize={'0.6rem'} textAnchor="start" verticalAnchor="middle" >
-            {maxWords(value, 2)}
+            {maxWords(value, 2, "...", " ", true)}
         </Text>
     );
 };
@@ -234,7 +234,7 @@ export function ChartBar({ chart }) {
         if (!_data) return
 
         const max = Math.max(..._data.map(d => Number.parseFloat(d[config.data[0].bardata])))
-        setMax(device.isPhone ? max * 1.7 : max * 1.5);
+        setMax(device.isPhone ? max * 2 : max * 1.5);
 
     }, [_data])
 
@@ -283,7 +283,7 @@ export function ChartBar({ chart }) {
                             type="category"
                             axisLine={false}
                             tickLine={false}
-                            tickFormatter={value => parseMillions(value)}
+                            tickFormatter={value => formatNumberWithCommas(value)}
                             mirror
 
                             tick={{
@@ -296,7 +296,7 @@ export function ChartBar({ chart }) {
 
                         {config.data.map((bar) => {
                             return (
-                                <Bar dataKey={bar.bardata}  >
+                                <Bar key={bar.bardata} dataKey={bar.bardata}  >
 
                                     {_data.map((d, idx) => {
                                         return <Cell key={d[bar.bardata]} fill={d['color']} />;

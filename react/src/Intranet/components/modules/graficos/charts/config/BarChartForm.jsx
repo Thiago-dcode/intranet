@@ -85,7 +85,7 @@ export default function BarChartForm({ chart, setForm }) {
                     <select required onChange={handleBarForm} name="datakey" id=""> <option value="">-</option>{
                         Object.keys(chart?.data[0]).map(key => {
 
-                            return <option selected={formBar?.datakey === key ? true : false} value={key}>{key}</option>
+                            return <option key={'option-bar-form-datakey-' + key} defaultValue={formBar?.datakey === key ? true : false} value={key}>{key}</option>
                         })
                     }</select>
                 </div>
@@ -105,7 +105,7 @@ export default function BarChartForm({ chart, setForm }) {
                     <select required onChange={handleBarForm} name="bardata" id="">  <option value="">-</option>{
                         Object.keys(chart?.data[0]).map(key => {
 
-                            return <option selected={formBar?.data[0]?.bardata === key ? true : false} value={key}>{key}</option>
+                            return <option key={'option-bar-form-bardata-' + key} defaultValue={formBar?.data[0]?.bardata === key ? true : false} value={key}>{key}</option>
                         })
                     }</select>
 

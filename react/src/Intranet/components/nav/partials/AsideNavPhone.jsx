@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import Icon from '../../icon/Icon'
 import NavLink from '../NavLink';
 import { capitalize } from '../../../../utils/Utils';
+
+
+
 export default function AsideNavPhone({ company, modules, setModule }) {
     const [display, setDisplay] = useState(false);
 
 
     useEffect(() => {
-
         const aside = document.querySelector('.aside-nav')
         const layoutBtn = document.getElementById('phone-button')
         const main = document.getElementById('intranet-main')
@@ -26,15 +28,7 @@ export default function AsideNavPhone({ company, modules, setModule }) {
         layoutBtn.style.display = 'none'
         aside.classList.add('out')
         aside.classList.remove('in')
-        // if (display) {
-
-        //     main.style.marginLeft = '5rem'
-        //     main.style.width = '825px';
-        //     console.log(main.style.width)
-        //     return
-        // }
-        // main.style.marginLeft = '0'
-        // main.style.width = '100%'
+    
 
     }, [display])
 
@@ -57,13 +51,13 @@ export default function AsideNavPhone({ company, modules, setModule }) {
                 <nav className="  w-full  mt-4 h-full flex flex-col gap-2 px-3">
                     {modules.map((module, i) => {
                         return (
-                            <NavLink id={'module-link-phone-'+i}  to={`/${company}/${module.route}`}>
+                            <NavLink handleClick={(e) => {
+                                setDisplay(false)
+                                setModule(module.name);
+                            }} key={'module-link-phone-' + i} id={'module-link-phone-' + i} to={`/${company}/${module.route}`}>
                                 <Icon icon={module.logo} />
-                                <button id={'module-button-phone-'+i}
-                                    onClick={(e) => {
-                                        setDisplay(false)
-                                        setModule(module.name);
-                                    }}
+                                <button id={'module-button-phone-' + i}
+
                                     className=" text-center"
                                 >
                                     {capitalize(module.name)}

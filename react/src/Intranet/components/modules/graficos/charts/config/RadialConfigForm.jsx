@@ -31,7 +31,7 @@ export default function RadialChartForm({ chart, setForm }) {
             form.percentage = roundTo((chart.data[0][Object.keys(chart.data[0])[0]] / value) * 100, 2);
 
         }
-        console.log(form)
+      
 
 
 

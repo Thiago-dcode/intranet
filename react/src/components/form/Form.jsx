@@ -20,7 +20,7 @@ const Form = ({
       <h2 className="font-bold text-2xl">{title}</h2>
       <div className="flex flex-col items-center justify-center gap-3">
         {elements.map((element, i) => {
-          return <div id={"div-input-" + i}>{element}</div>;
+          return <div key={"div-input-" + i} id={"div-input-" + i}>{element}</div>;
         })}
       </div>
 

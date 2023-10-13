@@ -7,7 +7,7 @@ import IsPending from '../../../components/pending/IsPending';
 import ChartWrapper from '../../components/modules/graficos/charts/ChartWrapper';
 import GraficosForm from '../../components/modules/graficos/GraficosForm';
 import { useCompany } from "../../../Context/ContextProvider";
-import { parseMillions } from '../../../utils/Utils';
+
 
 export default function Graficos() {
     const navigate = useNavigate();
@@ -128,7 +128,7 @@ export default function Graficos() {
 
             {charts !== null && charts.length > 0 ? <div className=' justify-center  gap-2  flex-wrap flex '>
 
-                {charts.map(chart => <ChartWrapper _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title} />)}
+                {charts.map(chart => <ChartWrapper key={'chart-wrapper-'+chart.id} _handleDelete={handleDelete} handleEdit={handleEdit} chart={chart} title={chart.title} />)}
 
 
             </div> : null}

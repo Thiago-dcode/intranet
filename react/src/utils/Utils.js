@@ -1,9 +1,16 @@
+/**
+ * Rounds a number to a specified number of decimal places and returns it as a floating-point number.
+ *
+ * @param {number|string} n - The number to round. If provided as a string, it will be converted to a number.
+ * @param {number} place - The number of decimal places to round to.
+ * @returns {number} The rounded number as a floating-point number, or NaN if the input is not a valid number.
+ */
 export function roundTo(n, place) {
   const num = Number.parseFloat(n);
 
-  if (isNaN(num)) return n;
+  if (isNaN(num)) return num;
 
-  return num.toFixed(place);
+  return Number.parseFloat(num.toFixed(place));
 }
 export function generateRandomColor() {
   let maxVal = 0xffffff; // 16777215
@@ -14,44 +21,73 @@ export function generateRandomColor() {
   return `#${randColor.toUpperCase()}`;
 }
 
+/**
+ * Capitalizes the first letter of a string and converts the rest of the string to lowercase.
+ *
+ * @param {string} str - The input string to capitalize.
+ * @returns {string} The capitalized string.
+ */
 export function capitalize(str) {
   return str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1);
 }
 
-export function maxWords(str, num) {
-  const sliptedStr = str.split(" ");
-  let _str = "";
-  for (let i = 0; i < sliptedStr.length; i++) {
-    _str += capitalize(sliptedStr[i]) + " ";
-    if (i + 1 === num) break;
+/**
+ * Truncates a string by limiting the number of words and appends additional text.
+ *
+ * @param {string} str - The input string to process.
+ * @param {number} max - The maximum number of words to include in the result.
+ * @param {string} append - The text to append at the end (default is an empty string).
+ * @param {string} separator - The word separator (default is a space).
+ * @param {boolean} cap - Whether to capitalize the words (default is false).
+ * @returns {string} The processed string with truncated words and appended text.
+ * @throws {Error} Throws an error if 'max' is not a valid integer.
+ */
+export function maxWords(str, max, append = "", separator = " ", cap = false) {
+  if (isNaN(Number.parseInt(max))) {
+    throw new Error("'max' must be a valid integer.");
   }
-  return _str + "...";
+
+  const splitStr = str.toString().split(separator);
+
+  const wordsToInclude = [];
+
+  for (let i = 0; i < splitStr.length && i < Number.parseInt(max); i++) {
+    wordsToInclude.push(cap ? capitalize(splitStr[i]) : splitStr[i]);
+  }
+
+  return wordsToInclude.join(" ") + append;
 }
 
-export function parseMillions(num) {
-  if(isNaN(Number.parseInt(num))){
-    return num
-  }
-  let numSplited = num.toString().split(".");
-  let numReversedWithoutFloat = numSplited[0].split("").reverse().join("");
-  if (numReversedWithoutFloat.length < 4) {
-    return numSplited.join(",");
-  }
-  let str =  ''
-  for (let i = 0; i < numReversedWithoutFloat.length; i++) {
+/**
+ * Formats a number as a string with comma-separated thousands and optional decimal places.
+ *
+ * @param {number|string} num - The input number to format. If provided as a string, it will be parsed as a number.
+ * @returns {string} The formatted number as a string.
+ */
+export function formatNumberWithCommas(num) {
+  // Parse 'num' as a number, or return the original input if it's not a valid number.
+  const number = Number(num);
 
-        str += numReversedWithoutFloat[i]
-        if( i===0 || 2-i % 3 !==0) continue
-        if(i === numReversedWithoutFloat.length -1) continue
-        str += '.'
-       
-
+  if (isNaN(number)) {
+    return num;
   }
-  str = str.split('').reverse('').join("")
-  
- if(numSplited.length === 1){
-  return str
- }
 
- return str + ','+ numSplited[1]
+  // Split the number into integer and decimal parts.
+  const [integerPart, decimalPart] = number.toFixed(2).split(".");
+
+  // Format the integer part by inserting commas for thousands separation.
+  const formattedInteger = integerPart
+    .split("")
+    .reverse()
+    .reduce((acc, digit, index) => {
+      const separator = index > 0 && index % 3 === 0 ? "." : "";
+      return digit + separator + acc;
+    }, "");
+
+  // Combine the formatted integer part with the decimal part (if it exists).
+  const formattedNumber = decimalPart
+    ? `${formattedInteger},${decimalPart}`
+    : formattedInteger;
+
+  return formattedNumber;
 }

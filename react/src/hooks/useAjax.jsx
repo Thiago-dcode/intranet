@@ -24,7 +24,7 @@ export default function useAjax(
 
 
   const setConfig = (__url = '', form = null, method = 'GET') => {
-   
+
     if (__url) _setUrl(__url);
     if (form) setForm(form);
     if (method) setMethod(method);
@@ -36,7 +36,7 @@ export default function useAjax(
     setError("");
     setIsPending(true);
     try {
-    
+
       if (_url === "/api/login") {
 
         const response = await Api.get("/sanctum/csrf-cookie");
@@ -50,11 +50,11 @@ export default function useAjax(
         headers: { ...headers },
         params: { signal, ...config },
       });
-    
+
       setData(data);
-      
+
     } catch (error) {
-      setError(error.response?.data);
+      setError(error?.response?.data);
 
       if (import.meta.env.DEV) {
 

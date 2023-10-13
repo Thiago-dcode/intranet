@@ -23,7 +23,7 @@ export default function EanSearch({ handleBtn,handleSearch, setCodArticulo, setP
                             Proveedor
                         </option>
                         {proveedores && <>{proveedores.map((proveedor, i) => {
-                            if (proveedor.NOMBRECOMERCIAL) { return <option id={`proveedor-option-${i}`} value={proveedor.CODIGO}>{proveedor.NOMBRECOMERCIAL}</option> }
+                            if (proveedor.NOMBRECOMERCIAL) { return <option key={`proveedor-option-${i}`} id={`proveedor-option-${i}`} value={proveedor.CODIGO}>{proveedor.NOMBRECOMERCIAL}</option> }
                         })}</>}
 
                     </select>

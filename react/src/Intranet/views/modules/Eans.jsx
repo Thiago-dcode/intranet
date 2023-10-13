@@ -229,7 +229,7 @@ export default function Eans() {
                         <th></th>
 
                         {Object.keys(eans[0]).map((key, i) => {
-                          return <th id={'th-' + i} className="">{key}</th>;
+                          return <th key={'th-eans-' + key + '-' + i} id={'th-' + i} className="">{key}</th>;
                         })}
 
                         <th>CODBARRAS NUEVO</th>
@@ -239,17 +239,17 @@ export default function Eans() {
 
                       {eans.map((ean, _i) => {
                         return (
-                          <tr id={'tr' - +_i} className="even:bg- odd:bg-white">
+                          <tr key={'tr-eans-' + _i} id={'tr-'+_i} className="even:bg- odd:bg-white">
                             <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
                             {Object.entries(ean).map(([key, value], i) => {
                               return (
-                                <td id={"td-2-" + i} className="border border-slate-300  text-center ">
-                                  <input name={`${_i}-${key}`} className=" text-xs" type="text" value={key === 'STOCK1' ? roundTo(value, 0) : value} />
+                                <td key={'td-eans-' + key + '-' + i} id={"td-2-" + i} className="border border-slate-300  text-center ">
+                                  <input readOnly name={`${_i}-${key}`} className=" text-xs" type="text" defaultValue={key === 'STOCK1' ? roundTo(value, 0) : value} />
                                 </td>
                               );
                             })}
                             <td id={`${_i}-CODBARRANUEVO`} className="  text-center cod-barra-nuevo border border-slate-300 ">
-                              <input onChange={(e) => {
+                              <input defaultValue={""} onChange={(e) => {
 
                                 document.getElementById(`${_i}-CODBARRANUEVO`).classList.remove('ean-error')
 
@@ -265,13 +265,13 @@ export default function Eans() {
                   </table>
 
                 </div>
-                {!eanError && <Button type="submit" content="Actualizar" />}
+                {!eanError && !isPendingUpdate ? <Button type="submit" content="Actualizar" />:<div className=' flex  flex-row  items-start justify-start'><IsPending size="25" color={company.color} /></div>}
               </form>
 
             </>
           ) : (<Error message={error?.message} />)}
           {isPending ? <div className=' flex  flex-row  items-start justify-start'><IsPending color={company.color} /></div> : null}
-          {isPendingUpdate ? <div>Actualizando...</div> : null}
+          
 
         </div>) : <EanSuccess handleSucess={setEanSuccess} num={eanSuccess.length} />}
     </>

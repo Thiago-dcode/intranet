@@ -78,7 +78,7 @@ export default function Middle() {
         {!isPending && user ? (
           <div className="mt-14 flex items-center flex-col gap-2">
             <h1 className="text-lg">Hola {user.name}!</h1>
-            {user?.companies?.length > 1 && <form
+            {user?.companies?.length > 1 && <form 
               onSubmit={(e) => {
                 handleSubmit(e);
               }}
@@ -86,7 +86,7 @@ export default function Middle() {
             >
               {user.companies.map((company) => {
                 return (
-                  <button
+                  <button key={'company-btn-'+company.id}
                     type="submit"
                     style={{ background: company.color }}
                     className="p-1 text-white rounded-md"

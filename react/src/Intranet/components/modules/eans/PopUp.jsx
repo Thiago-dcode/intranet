@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import IsPending from "../../../../components/pending/IsPending";
 export default function PopUp({ show, setShow, id, isPending, message, handleCancel,handleConfirm, confirmMessage }) {
 
     const handleSubmit = (e) => {
@@ -32,7 +33,7 @@ export default function PopUp({ show, setShow, id, isPending, message, handleCan
                         <button className="bg-red-500 px-2 py-1  border rounded-md " name="cancelar" type="submit">Cancelar</button>
                         <button className="bg-bera-textil px-2 py-1  border rounded-md" name="confirmar" type="submit">Confirmar</button>
 
-                    </div> : <div className="flex items-center gap-10 mt-4"><p>{confirmMessage}</p></div>}
+                    </div> : <div className="flex items-center gap-10 mt-4"><IsPending size="25"/></div>}
 
 
 

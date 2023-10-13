@@ -7,18 +7,15 @@ import useAjax from "../../../hooks/useAjax";
 import { AsideNav } from "./partials/AsideNav";
 import AsideNavPhone from "./partials/AsideNavPhone";
 export default function IntraNav({ modules, company }) {
-  const [user, error, isPending, setConfig] = useAjax(
-    "/api/active-module",
-    "POST"
-  );
+  const [user, error, isPending, setConfig] = useAjax();
 
   const device = useCheckDevice();
 
   const setUserModule = (module) => {
-    setConfig({
+    setConfig("/api/active-module", {
       user_id: ls.get("USER", { decrypt: true }),
       module,
-    });
+    }, "POST");
   };
 
 
