@@ -165,14 +165,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        $modules = Module::all();
-        ModuleBuilder::generateFrontEndRoutes($modules);
-        ModuleBuilder::generateApiRoutes($modules);
-        foreach ($modules as $key => $module) {
-            ModuleBuilder::generateView($module);
-
-            ModuleBuilder::generateController($module);
-        }
+        ModuleBuilder::run();
 
 
         //Creating chart types

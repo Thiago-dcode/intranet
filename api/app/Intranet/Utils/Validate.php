@@ -1,6 +1,7 @@
 <?php
 namespace App\Intranet\Utils;
 
+use App\Models\Module;
 use App\Intranet\Utils\Path;
 use App\Intranet\Pyme\PymeConnection;
 
@@ -28,6 +29,16 @@ class Validate {
            
         }
    
+
+    }
+    public static function module($user,$moduleName,$companyName){
+
+
+        $module = Module::where("name", $moduleName)->first();
+        if(!$module) return false;
+		$hasCompany = $module->companies()->where("name", $companyName)->exists();
+      
+        return $user->company_active === $companyName && $hasCompany;
 
     }
 }

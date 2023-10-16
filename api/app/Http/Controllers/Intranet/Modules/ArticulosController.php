@@ -1,14 +1,10 @@
 <?php
 
-                    namespace App\Http\Controllers\Intranet\Modules;
-
-       
+    namespace App\Http\Controllers\Intranet\Modules;
+    
        use Illuminate\Http\Request;
-
        use App\Traits\HttpResponses;
-
        use App\Http\Controllers\Controller;
-
        
        class ArticulosController extends Controller
 

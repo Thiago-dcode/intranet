@@ -76,14 +76,15 @@ class User extends Authenticatable
 
         return  DB::table('modules')->whereIn('id', $modulesIds)->get();
     }
-    public static function findModule($userId, $companyName, $moduleName)
+    public static function findModule($userId, $companyName, $moduleId)
     {
-
+        $_module = null;
         foreach (static::allModulesByCompany($userId, $companyName) as $key => $module) {
             $module = Utils::objectToArray($module);
 
-            if ($module['name'] !== $moduleName) continue;
-            return $module;
+            if ($module['id'] !== $moduleId) continue;
+            $_module = $module;
         }
+        return $_module;
     }
 }

@@ -5,6 +5,8 @@ use App\Http\Controllers\Intranet\Modules\EansController;
 use App\Http\Controllers\Intranet\Modules\ArticulosController;
 use App\Http\Controllers\Intranet\Modules\GraficosController;
 use App\Http\Controllers\Intranet\Modules\EmailController;
+use App\Http\Controllers\Intranet\Modules\CustomModuleController;
+use App\Http\Controllers\Intranet\Modules\CombinacionesController;
        
        function moduleRoutes($modules){
         
@@ -31,6 +33,14 @@ use App\Http\Controllers\Intranet\Modules\EmailController;
 
             case 'email':
            Route::get( '{company:name}/modules/email',[App\Http\Controllers\Intranet\Modules\EmailController::class,'index']);
+                 break;
+
+            case 'customModule':
+           Route::get( '{company:name}/modules/customModule',[App\Http\Controllers\Intranet\Modules\CustomModuleController::class,'index']);
+                 break;
+
+            case 'combinaciones':
+           Route::get( '{company:name}/modules/combinaciones',[App\Http\Controllers\Intranet\Modules\CombinacionesController::class,'index']);
                  break;
 
             default:

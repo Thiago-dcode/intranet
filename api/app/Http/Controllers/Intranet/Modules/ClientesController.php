@@ -1,13 +1,13 @@
 <?php
 
-                    namespace App\Http\Controllers\Intranet\Modules;
+  namespace App\Http\Controllers\Intranet\Modules;
 
        
-       use Illuminate\Http\Request;
+ use Illuminate\Http\Request;
 
-       use App\Traits\HttpResponses;
+ use App\Traits\HttpResponses;
 
-       use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 
        
        class ClientesController extends Controller
