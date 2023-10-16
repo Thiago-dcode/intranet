@@ -32,18 +32,18 @@ export const AsideNav = ({ company, modules, setModule }) => {
     return (
         <aside id='aside-nav-desk' className="flex aside-nav in z-[20] mt-[3.3rem] w-40 text-xs top-0 text-nav fixed  h-screen   flex-col items-center justify-between border-r-slate-400 bg-white shadow-md ">
             <nav className="  w-full  mt-4 h-full flex flex-col gap-2 px-3">
-                {modules.map((module) => {
+                {modules.map((mod) => {
                     return (
-                        <NavLink key={`link-${module.name}`} to={`/${company}/${module.route}`}>
-                            <Icon icon={module.logo} />
+                        <NavLink key={`link-${mod.name}`} to={`/${company}/${mod.route}`}>
+                            <Icon icon={mod.logo} />
                             <button id='btn-nav-desk'
                                 onClick={(e) => {
 
-                                    setModule(module.name);
+                                    setModule(mod.id);
                                 }}
                                 className=" text-center"
                             >
-                                {capitalize(module.name)}
+                                {capitalize(mod.name)}
                             </button>
 
                         </NavLink>

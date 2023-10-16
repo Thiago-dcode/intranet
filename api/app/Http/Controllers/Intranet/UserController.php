@@ -26,7 +26,7 @@ class UserController extends Controller
             if(isset($request['company']) && isset($request['modules']) ){
 
                     foreach ($request['modules'] as $key => $module) {
-
+                       
                         if(User::findModule($id,$request['company'],$module )) continue;
                         
                         ModuleUser::firstOrCreate([
@@ -41,10 +41,10 @@ class UserController extends Controller
 
 
             }
-
+            
             return $this->success([
                 'user'=> $user,
-                'modules'=> User::allModules($id),
+                'modules'=> User::allModulesByCompany( $user->id,$request['company']),
             ]);
             
 

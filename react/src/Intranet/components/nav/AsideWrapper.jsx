@@ -12,6 +12,7 @@ export default function IntraNav({ modules, company }) {
   const device = useCheckDevice();
 
   const setUserModule = (module) => {
+
     setConfig("/api/active-module", {
       user_id: ls.get("USER", { decrypt: true }),
       module,

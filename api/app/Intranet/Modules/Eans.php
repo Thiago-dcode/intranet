@@ -76,7 +76,7 @@ ROWS $limit-49 to $limit ;
         JOIN articulo a ON cb.codarticulo = a.codigo
         JOIN proveed p ON a.PROVEEDDEFECTO = p.codigo
 
-        WHERE cb.codbarras LIKE '20000%'
+        WHERE cb.codbarras LIKE '20%'
         $filter
         AND ce.stock1 > 0
         and ce.codalmacen = 2";

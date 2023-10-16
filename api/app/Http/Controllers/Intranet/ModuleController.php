@@ -26,6 +26,7 @@ class ModuleController extends Controller
         }
 
         $modules = User::allModulesByCompany($request->user()->id, $request->user()->company_active);
+       
         return $this->success([
 
             'modules' => $modules,
@@ -80,7 +81,7 @@ class ModuleController extends Controller
             return $this->error($e->errors(), '', 422);
         }
         $module = Module::find($id);
-        
+
 
         $module->update($fields);
 

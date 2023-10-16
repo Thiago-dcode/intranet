@@ -74,6 +74,7 @@ class User extends Authenticatable
 
         $modulesIds = ModuleUser::where('user_id', $userId)->where('company', $companyName)->pluck('module_id')->toArray();
 
+
         return  DB::table('modules')->whereIn('id', $modulesIds)->get();
     }
     public static function findModule($userId, $companyName, $moduleId)
@@ -81,8 +82,8 @@ class User extends Authenticatable
         $_module = null;
         foreach (static::allModulesByCompany($userId, $companyName) as $key => $module) {
             $module = Utils::objectToArray($module);
-
-            if ($module['id'] !== $moduleId) continue;
+          
+            if ($module['id'] !== (int)$moduleId) continue;
             $_module = $module;
         }
         return $_module;

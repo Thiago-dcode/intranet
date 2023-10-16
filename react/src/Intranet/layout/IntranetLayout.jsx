@@ -41,7 +41,7 @@ export default function IntranetLayout() {
   useEffect(() => {
    
     if (userModules && !errorUserModules) {
-
+      
       setModules(userModules.data.modules);
     }
   }, [userModules]);

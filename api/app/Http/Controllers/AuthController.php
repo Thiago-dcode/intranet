@@ -102,8 +102,8 @@ class AuthController extends Controller
         }
 
    if(!User::findModule( $request->user()->id, $request->user()->company_active,$request['module'])){
-
-    return $this->error('', '', 401);
+    
+    return $this->error('', 'not allowed', 401);
    };
        
         User::where('id', $request->user()->id)->update(['module_active' => $request['module']]);
