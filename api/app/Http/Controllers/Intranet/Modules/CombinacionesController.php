@@ -1,24 +1,30 @@
 <?php
 namespace App\Http\Controllers\Intranet\Modules;
-use Illuminate\Http\Request;
 use App\Models\Module;
-use App\Intranet\Utils\Validate;
+use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use App\Intranet\Utils\Validate;
 use App\Http\Controllers\Controller;
+use App\Intranet\Modules\Combinaciones;
 
 class CombinacionesController extends Controller{
 
 	use HttpResponses;
 
-	public function index($name, Request $request){
+	public function index($companyName, Request $request){
 
-		if(!Validate::module($request->user(),"combinaciones",$name)){
+		if(!Validate::module($request->user(),"combinaciones",$companyName)){
 
-			return response("",401);
+			return response("You are not authorized to access to Combinaciones module",401);
 		}
+		$cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
+		$proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
+		
+		
+		$result= Combinaciones::get($companyName,$cod_articulo,$proveedor);
 
-		 //start your logic here
-		return response("Combinaciones module for campany $name created successfully.");
+
+		return $this->success($result,'Success');
 	}
 
 }

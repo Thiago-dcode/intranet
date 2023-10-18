@@ -20,7 +20,7 @@ class UserController extends Controller
 
     public function update($id, Request $request){
 
-
+        
         $user = User::find($id);
 
             if(isset($request['company']) && isset($request['modules']) ){
