@@ -91,7 +91,9 @@ flex-col gap-3 p-4"
               <th></th>
 
               {Object.keys(combinaciones[0]).map((key, i) => {
+                  if (key[0] !== '_') {
                 return <th key={'th-combinaciones-' + key + '-' + i} id={'th-' + i} className="">{key}</th>;
+                  }
               })}
 
 
@@ -104,11 +106,13 @@ flex-col gap-3 p-4"
                 <tr key={'tr-combinaciones-' + _i} id={'tr-' + _i} className="even:bg- odd:bg-white">
                   <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
                   {Object.entries(comb).map(([key, value], i) => {
-                    return (
-                      <td key={'td-combinaciones-' + key + '-' + i} id={"td-2-" + i} className="border border-slate-300  w-4 text-center ">
-                        <input readOnly name={`${_i}-${key}`} className=" text-xs w-full" type="text" defaultValue={key === 'STOCK1' ? roundTo(value, 0) : value} />
-                      </td>
-                    );
+                    if (key[0] !== '_') {
+                      return (
+                        <td key={'td-combinaciones-' + key + '-' + i} id={"td-2-" + i} className="border border-slate-300  w-4 text-center ">
+                          <input readOnly name={`${_i}-${key}`} className=" text-xs w-full" type="text" defaultValue={key === 'STOCK1' ? roundTo(value, 0) : value} />
+                        </td>
+                      );
+                    }
                   })}
 
                 </tr>

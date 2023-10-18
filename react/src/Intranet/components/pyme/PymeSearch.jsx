@@ -3,7 +3,7 @@ import useAjax from '../../../hooks/useAjax';
 import { useCompany } from '../../../Context/ContextProvider';
 import { useEffect } from 'react';
 import IsPending from '../../../components/pending/IsPending';
-export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodArticulo, setProveedor,codArticulo = '', proveedor = '' }) {
+export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodArticulo, setProveedor, codArticulo = '', proveedor = '' }) {
     const company = useCompany();
     const [proveedores, error, _isPending, setConfig] = useAjax();
 
@@ -26,15 +26,15 @@ export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodA
                     </div>
                     <div className=' bg-white text-black border rounded-md border-black'>
 
-                        <select className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor' onChange={(e) => {
-                           
+                        <select value={proveedor} className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor' onChange={(e) => {
+
                             setProveedor(e.target.value.trim().toUpperCase())
                         }} name="codProveedor" placeholder="Proveedor">
-                            <option selected={proveedor?false:true} value="">
+                            <option value={''} >
                                 Proveedor
                             </option>
                             {proveedores && <>{proveedores.map((_proveedor, i) => {
-                                if (_proveedor.NOMBRECOMERCIAL) { return <option selected ={proveedor ===_proveedor.CODIGO? true: false} key={`proveedor-option-${i}`} id={`proveedor-option-${i}`} value={_proveedor.CODIGO}>{_proveedor.NOMBRECOMERCIAL}</option> }
+                                if (_proveedor.NOMBRECOMERCIAL) { return <option selected={proveedor === _proveedor.CODIGO ? true : false} key={`proveedor-option-${i}`} id={`proveedor-option-${i}`} value={_proveedor.CODIGO}>{_proveedor.NOMBRECOMERCIAL}</option> }
                             })}</>}
 
                         </select>
@@ -42,7 +42,7 @@ export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodA
 
                     {!isPending ? <button onClick={(e) => {
                         handleBtn(e)
-                    }} name='search' className='bg-bera-textil px-2 rounded-md text-white ' type="submit">Buscar</button>: <IsPending size='24' color='bg-bera-textil' />}
+                    }} name='search' className='bg-bera-textil px-2 rounded-md text-white ' type="submit">Buscar</button> : <IsPending size='24' color='bg-bera-textil' />}
 
                 </div>
             </form></>

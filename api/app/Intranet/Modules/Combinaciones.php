@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Intranet\Modules;
+
 use PDO;
 use App\Intranet\Utils\Utils;
 use App\Intranet\Utils\Constants;
@@ -8,26 +9,28 @@ use App\Intranet\Pyme\PymeConnection;
 
 class Combinaciones
 {
-    
+
+    static $firebird = null;
 
 
-    
 
-    public static function get($company,$codArticulo,$proveedor){
+    public static function get($company, $codArticulo, $proveedor)
+    {
 
-        $firebird = PymeConnection::start(Constants::get($company));
+        static::$firebird = PymeConnection::start(Constants::get($company));
+        $firebird = static::$firebird;
 
-        $result =[];
+        $result = [];
 
-        if($proveedor){
-      
-        $sql = "SELECT first 10  codarticulo as codigo FROM compra WHERE codproveedor = :codproveedor";
-        $stmt = $firebird->prepare($sql);
-        $stmt->execute([':codproveedor' => $proveedor]);
-        $result = $stmt->fetchAll();
+        if ($proveedor) {
 
-        }elseif ($codArticulo) {
-            $sql = "SELECT first 10  codigo FROM articulo WHERE codigo LIKE :codarticulo";
+            $sql = "SELECT first 10 skip 1 codarticulo as codigo FROM compra WHERE codproveedor = :codproveedor";
+            $stmt = $firebird->prepare($sql);
+            $stmt->execute([':codproveedor' => $proveedor]);
+            $result = $stmt->fetchAll();
+        } elseif ($codArticulo) {
+            dd($codArticulo);
+            $sql = "SELECT first 10 skip 1 codigo FROM articulo WHERE codigo LIKE :codarticulo";
             $stmt = $firebird->prepare($sql);
             // to uppercase
             $stmt->execute([':codarticulo' => '%' . strtoupper($codArticulo) . '%']);
@@ -46,8 +49,8 @@ class Combinaciones
             $in .= ($in ? "," : "") . $key; // :id0,:id1,:id2
             $in_params[$key] = $item; // collecting values into a key-value array
         }
-       
-       
+
+
 
         $sql = "select articulo.codigo, articulo.nombre, articulo.preciocoste, articulo.precioventa, articulo.codmarca, articulo.codfamilia, articulo.proveeddefecto, articulo.metakeywords,
         carvalortemporada.valor as temporada, carvalorcoleccion.valor as coleccion, webgrupocategoriaarticulo.codgrupocategoria, webgrupocategoriaarticulo.codcategoriadefecto
@@ -119,70 +122,79 @@ class Combinaciones
             $data[$key]['CODBARRAS'] = $result;
         }
 
-
-        return self::parseData($company,$data);
-
-
-
+        
+        return self::parseData($data);
     }
-    public static function getMarca($company){
 
-         $firebird = PymeConnection::start(Constants::get($company));
-         $sql = 'SELECT NOMBRE, CODIGO FROM MARCA';
-         $stmt = $firebird->prepare($sql);
-         $stmt->execute();
-         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    private static function getMarca()
+    {
+        $sql = 'SELECT NOMBRE, CODIGO FROM MARCA';
+        $stmt = static::$firebird->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public static function getProveedor($company){
-
-        $firebird = PymeConnection::start(Constants::get($company));
+    private static function getProveedor()
+    {
         $sql = 'SELECT NOMBRECOMERCIAL CODIGO  FROM PROVEED';
-        $stmt = $firebird->prepare($sql);
+        $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-   }
-   public static function getTemporada($company){
-   
-   
-    $firebird = PymeConnection::start(Constants::get($company));
-    $sql = 'select VALOR from carvalid where codclase = 2 and codcaract = 1 and codobjeto is null';
-    $stmt = $firebird->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-}
-    public static function getColeccion($company){
-    
-        $firebird = PymeConnection::start(Constants::get($company));
+    }
+    private static function getTemporada()
+    {
+        $sql = 'select VALOR from carvalid where codclase = 2 and codcaract = 1 and codobjeto is null';
+        $stmt = static::$firebird->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    private static function getColeccion()
+    {
         $sql = ' select VALOR from carvalid where codclase = 2 and codcaract = 2 and codobjeto is null';
-        $stmt = $firebird->prepare($sql);
+        $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     }
-    public static function getCategoriaPadre($company){
-    
-        $firebird = PymeConnection::start(Constants::get($company));
-        $sql = ' select * from carvalid where codclase = 2 and codcaract = 2 and codobjeto is null';
-        $stmt = $firebird->prepare($sql);
+    private static function getWebGrupoCategoria()
+    {
+        $sql = 'SELECT * FROM WEBGRUPOCATEGORIA;';
+        $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     }
 
+    private static function getFamilia()
+    {
+        $sql = 'SELECT CODIGO, DESCRIPCION,PADRE, ORDEN FROM TIPO WHERE TIPO = 13 ORDER BY ORDEN;';
+        $stmt = static::$firebird->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public static function getWebCategoria($cod)
+    {
+        $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO, CODPADRE, NOMBRE FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = :cod;';
+        $stmt = static::$firebird->prepare($sql);
+        $stmt->execute(['cod' => $cod]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-    private  static function parseData($company,$data){
+    private  static function parseData($data)
+    {
 
-        $marca = self::getMarca($company);
-        
-        $proveedor = self::getProveedor($company);
-        
-        $temporada = self::getTemporada($company);
-      
-        $coleccion = self::getColeccion($company);
-     
+        $marca = self::getMarca();
+
+        $proveedor = self::getProveedor();
+
+        $temporada = self::getTemporada();
+
+        $coleccion = self::getColeccion();
+
+        $webGrupoCategoria = self::getWebGrupoCategoria();
+
+        $familia = self::getFamilia();
+       
+       
+
         $dataOfdataFormated = [];
 
         foreach ($data as  $d) {
@@ -190,51 +202,56 @@ class Combinaciones
             $dataFormated = [];
 
             foreach ($d as $key => $value) {
-               
-                switch ($key) {
-                  
-                    case 'CODMARCA':
-                          $dataFormated['marca'] =  $marca;
-                        break;
 
+                switch ($key) {
+                        //some values start with a underscore to easy identify them on frontend to avoid to printing them
+                        //They store important data that is necessary to identify some data.
+
+                    case 'CODMARCA':
+                        $dataFormated['_marca'] = $value;
+                        $dataFormated['marca'] =  $marca;
+                        break;
                     case 'PROVEEDDEFECTO':
+                        $dataFormated['_proveedor'] = $value;
                         $dataFormated['proveedor'] = $proveedor;
                         break;
                     case 'PRECIOCOSTE':
-                        $dataFormated['precio'] = Utils::roundTo($value,2);
+                        $dataFormated['precio'] = Utils::roundTo($value, 2);
                         $dataFormated['descuento'] = 0;
-                        $dataFormated['p.coste'] = Utils::roundTo($value,2);
-                        $dataFormated['margen'] = Utils::percentage($value,$d['PRECIOVENTA']);
+                        $dataFormated['p.coste'] = Utils::roundTo($value, 2);
+                        $dataFormated['margen'] = Utils::percentage($value, $d['PRECIOVENTA']);
                         break;
                     case 'PRECIOVENTA':
-                        $dataFormated['P.V.A'] = Utils::roundTo($value,2);
+                        $dataFormated['P.V.A'] = Utils::roundTo($value, 2);
                         break;
                     case 'TEMPORADA':
+                        $dataFormated['_temporada'] = $value;
                         $dataFormated['temporada'] = $temporada;
                         break;
                     case 'COLECCION':
+                        $dataFormated['_coleccion'] = $value;
                         $dataFormated['coleccion'] = $coleccion;
                         break;
-                    // case 'CODGRUPOCATEGORIA':
-                    //         $dataFormated['hombre/mujer'] = self::getCategoriaPadre($company);
+                    case 'CODGRUPOCATEGORIA':
+                        $dataFormated["_grupocategoria"] = $value;
+                        $dataFormated["hombre/mujer"] = $webGrupoCategoria;
+                        $dataFormated['cat. web'] = self::getWebCategoria($value);
+                        break;
+                    case "CODFAMILIA":
+                       
+                        $dataFormated['_familia'] = $value;
+                        $dataFormated['familia'] = $familia;
+                        break;
+
                     default:
                         $dataFormated[$key] = $value;
                         break;
-                }    
-             
+                }
             }
 
             array_push($dataOfdataFormated, $dataFormated);
-
         }
 
-                dd( $dataOfdataFormated);
-      
-       
-
-
+        return $dataOfdataFormated;
     }
-
-
-
 }
