@@ -91,3 +91,24 @@ export function formatNumberWithCommas(num) {
 
   return formattedNumber;
 }
+
+/**
+ * Calculates the percentage difference between two numbers.
+ *
+ * @param {number} number1 - The first number.
+ * @param {number} n2 - The second number.
+ * @param {number} [round=2] - The number of decimal places to round the result (default is 2).
+ * @returns {number|string} - The percentage difference as a number (rounded) or an error message as a string.
+ */
+
+function percentage(n1, n2, round = 2) {
+  try {
+    // Check if the input values are numbers
+    if (isNaN(parseFloat(n1)) || isNaN(parseFloat(n2))) {
+      throw new Error("Both input values must be numbers");
+    }
+    return roundTo(Math.abs((n1 - n2) / n1) * 100);
+  } catch (error) {
+    return error.message;
+  }
+}

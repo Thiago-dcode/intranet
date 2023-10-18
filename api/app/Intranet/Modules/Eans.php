@@ -2,9 +2,6 @@
 
 namespace App\Intranet\Modules;
 use PDO;
-use App\Models\Module;
-use App\Intranet\Utils\Path;
-use App\Intranet\Utils\Utils;
 use App\Intranet\Utils\Constants;
 use App\Intranet\Pyme\PymeConnection;
 

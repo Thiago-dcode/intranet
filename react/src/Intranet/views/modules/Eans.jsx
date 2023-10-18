@@ -6,7 +6,7 @@ import { useCompany } from "../../../Context/ContextProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PopUp from "../../components/modules/eans/PopUp";
 import EanSuccess from "../../components/modules/eans/EanSuccess";
-import EanSearch from "../../components/modules/eans/EanSearch";
+import PymeSearch from "../../components/pyme/PymeSearch";
 import { roundTo } from "../../../utils/Utils";
 import Button from "../../components/button/Button";
 import IsPending from "../../../components/pending/IsPending";
@@ -23,7 +23,7 @@ export default function Eans() {
   const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
   const [form, setForm] = useState(null);
   const [isSearchBtn, setIsSearchBtn] = useState(true);
-  const [proveedores, errorProveedores, isPendingProveedores, setConfigProveedores] = useAjax();
+
   const [totalEans, errorTotalEans, isPendingTotalEans, setConfigTotalEans] = useAjax();
   const [eans, setEans] = useState(null);
   const [eanError, setEanError] = useState(null)
@@ -37,18 +37,16 @@ export default function Eans() {
 
     if (url === newUrl) return
 
-    if (btn === 'search') setIsSearchBtn(true)
+    if (btn === 'search') {
+      setEans(null)
+      setIsSearchBtn(true)
+    }
     else setIsSearchBtn(false)
     setUrl(newUrl);
 
 
   }
-  const handleMore = (e) => {
-    e.preventDefault()
 
-
-
-  }
   const handleUpdate = (e) => {
     e.preventDefault()
 
@@ -129,11 +127,12 @@ export default function Eans() {
     if (data && !error) {
 
       if (isSearchBtn) {
-
+        
+       
         setEans(data)
         return;
-      };
-
+      }
+      
       setEans(prev => [...prev, ...data])
 
 
@@ -150,8 +149,7 @@ export default function Eans() {
       return
     }
     setIsSearchBtn(true)
-    setConfigProveedores(`/api/${company.name}/modules/eans/proveedores`)
-    setConfigTotalEans(`/api/${company.name}/modules/eans/total`)
+   setConfigTotalEans(`/api/${company.name}/modules/eans/total`)
     setUrl(`${company.name}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
   }, [company])
@@ -191,14 +189,14 @@ export default function Eans() {
             codBarrasElements.forEach(element => {
               element.readOnly = false;
             });
-          }} /> : <EanSearch
+          }} /> : <PymeSearch
             handleBtn={() => {
               setLimit(50)
             }}
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}
-            proveedores={proveedores}
+          
 
 
           />
@@ -238,8 +236,9 @@ export default function Eans() {
                     <tbody>
 
                       {eans.map((ean, _i) => {
+                      
                         return (
-                          <tr key={'tr-eans-' + _i} id={'tr-'+_i} className="even:bg- odd:bg-white">
+                          <tr key={'tr-eans-' + _i} id={'tr-' + _i} className="even:bg- odd:bg-white">
                             <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
                             {Object.entries(ean).map(([key, value], i) => {
                               return (
@@ -265,13 +264,13 @@ export default function Eans() {
                   </table>
 
                 </div>
-                {!eanError && !isPendingUpdate ? <Button type="submit" content="Actualizar" />:<div className=' flex  flex-row  items-start justify-start'><IsPending size="25" color={company.color} /></div>}
+                {!eanError && !isPendingUpdate ? <Button type="submit" content="Actualizar" /> : <div className=' flex  flex-row  items-start justify-start'><IsPending size="25" color={company.color} /></div>}
               </form>
 
             </>
           ) : (<Error message={error?.message} />)}
           {isPending ? <div className=' flex  flex-row  items-start justify-start'><IsPending color={company.color} /></div> : null}
-          
+
 
         </div>) : <EanSuccess handleSucess={setEanSuccess} num={eanSuccess.length} />}
     </>

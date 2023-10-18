@@ -38,8 +38,8 @@ class AuthController extends Controller
         ->where('id', $user->id)
         ->update(['company_active' => null,"module_active"=> null]);
 
-   
-
+   $user = User::find($user->id);
+        
         return $this->success([
 
             'user' => $user,

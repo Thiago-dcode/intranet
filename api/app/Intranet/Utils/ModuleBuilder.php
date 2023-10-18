@@ -109,10 +109,10 @@ use App\Intranet\Utils\Utils;';
         $module = Utils::objectToArray($module);
         if(!$module['is_active']) return;
         $moduleName =  ucfirst($module['name']);
-        $name = '$name';
+        $name = '$companyName';
         $request = ', Request $request';
         $args = $name . $request;
-        $conditional = 'if(!Validate::module($request->user(),"'.$module['name'].'",$name)){'."\n\n\t\t\t".'return response("",401);'."\n\t\t".'}';
+        $conditional = 'if(!Validate::module($request->user(),"'.$module['name'].'",$companyName)){'."\n\n\t\t\t".'return response("You are not authorized to access to '.$moduleName.' module",401);'."\n\t\t".'}';
       
       
         $path =  Path::ROOT . "api/app/Http/Controllers/Intranet/Modules/$moduleName" . "Controller.php";

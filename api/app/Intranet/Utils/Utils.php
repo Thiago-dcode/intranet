@@ -25,4 +25,25 @@ class Utils
 
         file_put_contents(Path::ROOT . 'api/.env', $newEnvFile);
     }
+
+    public static function roundTo($n, $place) {
+        $num = floatval($n);
+    
+        if (is_nan($num)) {
+            return $num;
+        }
+    
+        return floatval(number_format($num, $place, '.', ''));
+    }
+   public static  function percentage($number1, $number2, $round = 2) {
+        try {
+            // Check if the input values are numbers
+            if (!is_numeric((float)$number1) || !is_numeric((float)$number2)) {
+                throw new Exception("Both input values must be numbers");
+            }
+            return self::roundTo(abs(($number1 - $number2) / $number1) * 100, $round);
+        } catch (Exception $error) {
+            return $error->getMessage();
+        }
+    }
 }

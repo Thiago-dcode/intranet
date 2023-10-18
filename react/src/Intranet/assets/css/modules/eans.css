@@ -19,8 +19,8 @@
 #eans-module td,
 th {
 
-  font-size: 0.6rem;
-  width: 10px;
+  font-size: 0.5rem;
+  width:100%;
 }
 
 .ean-error {
