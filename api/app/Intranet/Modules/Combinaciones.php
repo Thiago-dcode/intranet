@@ -22,20 +22,44 @@ class Combinaciones
 
         $result = [];
 
-        if ($proveedor) {
 
-            $sql = "SELECT first 10 skip 1 codarticulo as codigo FROM compra WHERE codproveedor = :codproveedor";
+        $offset = 0;
+        $page = 1;
+
+
+        if ($proveedor) {
+            // $sql = "select count(*) as total from compra WHERE codproveedor = :codproveedor";
+            // $stmt = $firebird->prepare($sql);
+            // // to uppercase
+            // $stmt->execute([':codproveedor' => $proveedor]);
+            // $count = (int)$stmt->fetch(PDO::FETCH_ASSOC)['TOTAL'];
+            // if ($count == 0) {
+            //     return new JsonResponse(
+            //         [
+            //             'status' => 'success',
+            //             'data' => [],
+            //             'count' => $count,
+            //             'page' => $page,
+            //         ],
+            //         200,
+            //         ["Content-Type" => "application/json"]
+            //     );
+            // }
+
+            $sql = "SELECT first 10 skip :offset codarticulo as codigo FROM compra WHERE codproveedor = :codproveedor";
             $stmt = $firebird->prepare($sql);
-            $stmt->execute([':codproveedor' => $proveedor]);
+            $stmt->execute([':codproveedor' => $proveedor, ':offset' => $offset]);
             $result = $stmt->fetchAll();
         } elseif ($codArticulo) {
-            dd($codArticulo);
-            $sql = "SELECT first 10 skip 1 codigo FROM articulo WHERE codigo LIKE :codarticulo";
+
+
+            $sql = "SELECT first 10 skip :offset codigo FROM articulo WHERE codigo LIKE :codarticulo";
             $stmt = $firebird->prepare($sql);
             // to uppercase
-            $stmt->execute([':codarticulo' => '%' . strtoupper($codArticulo) . '%']);
+            $stmt->execute([':codarticulo' => '%' . strtoupper($codArticulo) . '%', ':offset' => $offset]);
             $result = $stmt->fetchAll();
         }
+
         $data = [];
 
         $articulos = array_map(function ($item) {
@@ -66,7 +90,6 @@ class Combinaciones
         $stmt->execute($in_params);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $data = $result;
-
 
         foreach ($data as $key => $articulo) {
             $sql = 'select carvalid.dimension, carvalid.orden, carvalid.valor, caract.nombre
@@ -122,7 +145,9 @@ class Combinaciones
             $data[$key]['CODBARRAS'] = $result;
         }
 
-        
+
+
+
         return self::parseData($data);
     }
 
@@ -172,10 +197,16 @@ class Combinaciones
     }
     public static function getWebCategoria($cod)
     {
-        $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO, CODPADRE, NOMBRE FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = :cod;';
-        $stmt = static::$firebird->prepare($sql);
-        $stmt->execute(['cod' => $cod]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        try {
+            $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO, CODPADRE, NOMBRE FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = ' . $cod;
+            $stmt = static::$firebird->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Handle the exception, e.g., log the error or display an error message
+            echo 'Error: ' . $e->getMessage();
+        }
     }
 
     private  static function parseData($data)
@@ -192,8 +223,8 @@ class Combinaciones
         $webGrupoCategoria = self::getWebGrupoCategoria();
 
         $familia = self::getFamilia();
-       
-       
+
+
 
         $dataOfdataFormated = [];
 
@@ -220,6 +251,7 @@ class Combinaciones
                         $dataFormated['descuento'] = 0;
                         $dataFormated['p.coste'] = Utils::roundTo($value, 2);
                         $dataFormated['margen'] = Utils::percentage($value, $d['PRECIOVENTA']);
+
                         break;
                     case 'PRECIOVENTA':
                         $dataFormated['P.V.A'] = Utils::roundTo($value, 2);
@@ -227,18 +259,22 @@ class Combinaciones
                     case 'TEMPORADA':
                         $dataFormated['_temporada'] = $value;
                         $dataFormated['temporada'] = $temporada;
+
                         break;
                     case 'COLECCION':
                         $dataFormated['_coleccion'] = $value;
                         $dataFormated['coleccion'] = $coleccion;
+
                         break;
                     case 'CODGRUPOCATEGORIA':
                         $dataFormated["_grupocategoria"] = $value;
                         $dataFormated["hombre/mujer"] = $webGrupoCategoria;
-                        $dataFormated['cat. web'] = self::getWebCategoria($value);
+
+                        $dataFormated['cat.web'] = self::getWebCategoria((int)$value);
+
                         break;
                     case "CODFAMILIA":
-                       
+
                         $dataFormated['_familia'] = $value;
                         $dataFormated['familia'] = $familia;
                         break;

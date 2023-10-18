@@ -20,13 +20,13 @@ export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodA
                 <div className="flex lg:flex-row xl:flex-row flex-col items-center gap-2">
                     <div className='text-black border rounded-md border-black'>
 
-                        <input value={codArticulo} className=' rounded-md outline-none text-center' id='codArticulo' onChange={(e) => {
+                        <input defaultValue={codArticulo} className=' rounded-md outline-none text-center' id='codArticulo' onChange={(e) => {
                             setCodArticulo(e.target.value.trim().toUpperCase())
                         }} type="text" placeholder="CodArticulo" name="codArticulo" />
                     </div>
                     <div className=' bg-white text-black border rounded-md border-black'>
 
-                        <select value={proveedor} className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor' onChange={(e) => {
+                        <select defaultValue={proveedor} className=' bg-white text-sm w-36 rounded-md outline-none text-center' id='proveedor' onChange={(e) => {
 
                             setProveedor(e.target.value.trim().toUpperCase())
                         }} name="codProveedor" placeholder="Proveedor">
@@ -34,7 +34,7 @@ export default function PymeSearch({ isPending, handleBtn, handleSearch, setCodA
                                 Proveedor
                             </option>
                             {proveedores && <>{proveedores.map((_proveedor, i) => {
-                                if (_proveedor.NOMBRECOMERCIAL) { return <option selected={proveedor === _proveedor.CODIGO ? true : false} key={`proveedor-option-${i}`} id={`proveedor-option-${i}`} value={_proveedor.CODIGO}>{_proveedor.NOMBRECOMERCIAL}</option> }
+                                if (_proveedor.NOMBRECOMERCIAL) { return <option key={`proveedor-option-${i}`} id={`proveedor-option-${i}`} value={_proveedor.CODIGO}>{_proveedor.NOMBRECOMERCIAL}</option> }
                             })}</>}
 
                         </select>

@@ -5,7 +5,6 @@ import { useCompany } from '../../../Context/ContextProvider';
 import { useEffect } from 'react';
 import useAjax from '../../../hooks/useAjax';
 import { roundTo } from '../../../utils/Utils';
-import IsPending from '../../../components/pending/IsPending';
 export default function Combinaciones() {
 
   const company = useCompany();
@@ -20,7 +19,7 @@ export default function Combinaciones() {
     e.preventDefault()
 
     const newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}`
-
+    console.log(newUrl);
     setUrl(newUrl);
 
 

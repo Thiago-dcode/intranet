@@ -60,7 +60,7 @@ export default function useAjax(
 
         console.error("UseAjax.jsx Error:", error);
       }
-
+      console.error("UseAjax.jsx Error:", error);
 
     } finally {
       setIsPending(false);

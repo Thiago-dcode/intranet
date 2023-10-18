@@ -3,8 +3,8 @@
 }
 
 #eans-module td {
-  padding: 0.2rem;
  
+
   margin: auto;
 }
 #eans-module td input {
@@ -18,9 +18,8 @@
 }
 #eans-module td,
 th {
-
   font-size: 0.5rem;
-  width:100%;
+ max-width: 150px;
 }
 
 .ean-error {
