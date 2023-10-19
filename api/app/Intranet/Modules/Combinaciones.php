@@ -5,6 +5,7 @@ namespace App\Intranet\Modules;
 use PDO;
 use App\Intranet\Utils\Utils;
 use App\Intranet\Utils\Constants;
+use App\Intranet\Utils\TreeBuilder;
 use App\Intranet\Pyme\PymeConnection;
 
 class Combinaciones
@@ -25,7 +26,7 @@ class Combinaciones
 
         $offset = 0;
         $page = 1;
-
+      
 
         if ($proveedor) {
             // $sql = "select count(*) as total from compra WHERE codproveedor = :codproveedor";
@@ -46,18 +47,24 @@ class Combinaciones
             //     );
             // }
 
-            $sql = "SELECT first 10 skip :offset codarticulo as codigo FROM compra WHERE codproveedor = :codproveedor";
+            $sql = "SELECT first 10 skip $offset codarticulo as codigo FROM compra WHERE codproveedor = $proveedor";
             $stmt = $firebird->prepare($sql);
-            $stmt->execute([':codproveedor' => $proveedor, ':offset' => $offset]);
+
+            $stmt->execute();
+
             $result = $stmt->fetchAll();
+             
         } elseif ($codArticulo) {
 
 
-            $sql = "SELECT first 10 skip :offset codigo FROM articulo WHERE codigo LIKE :codarticulo";
+            $codArticulo = strtoupper($codArticulo);
+
+            $sql = "SELECT first 10 skip $offset codigo FROM articulo WHERE codigo LIKE '%$codArticulo%'";
             $stmt = $firebird->prepare($sql);
             // to uppercase
-            $stmt->execute([':codarticulo' => '%' . strtoupper($codArticulo) . '%', ':offset' => $offset]);
+            $stmt->execute();
             $result = $stmt->fetchAll();
+          
         }
 
         $data = [];
@@ -146,7 +153,7 @@ class Combinaciones
         }
 
 
-
+        
 
         return self::parseData($data);
     }
@@ -154,28 +161,28 @@ class Combinaciones
 
     private static function getMarca()
     {
-        $sql = 'SELECT NOMBRE, CODIGO FROM MARCA';
+        $sql = 'SELECT NOMBRE as nombre, CODIGO as codigo FROM MARCA';
         $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     private static function getProveedor()
     {
-        $sql = 'SELECT NOMBRECOMERCIAL CODIGO  FROM PROVEED';
+        $sql = 'SELECT NOMBRECOMERCIAL as nombre, CODIGO as codigo  FROM PROVEED';
         $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     private static function getTemporada()
     {
-        $sql = 'select VALOR from carvalid where codclase = 2 and codcaract = 1 and codobjeto is null';
+        $sql = 'select VALOR as nombre from carvalid where codclase = 2 and codcaract = 1 and codobjeto is null';
         $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     private static function getColeccion()
     {
-        $sql = ' select VALOR from carvalid where codclase = 2 and codcaract = 2 and codobjeto is null';
+        $sql = ' select VALOR as nombre from carvalid where codclase = 2 and codcaract = 2 and codobjeto is null';
         $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -190,7 +197,7 @@ class Combinaciones
 
     private static function getFamilia()
     {
-        $sql = 'SELECT CODIGO, DESCRIPCION,PADRE, ORDEN FROM TIPO WHERE TIPO = 13 ORDER BY ORDEN;';
+        $sql = 'SELECT CODIGO as codigo, DESCRIPCION as nombre,PADRE, ORDEN FROM TIPO WHERE TIPO = 13 ORDER BY ORDEN;';
         $stmt = static::$firebird->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -199,7 +206,7 @@ class Combinaciones
     {
 
         try {
-            $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO, CODPADRE, NOMBRE FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = ' . $cod;
+            $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO as codigo, CODPADRE, NOMBRE as nombre, ORDEN FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = ' . $cod . 'ORDER BY ORDEN;';
             $stmt = static::$firebird->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -208,6 +215,8 @@ class Combinaciones
             echo 'Error: ' . $e->getMessage();
         }
     }
+
+
 
     private  static function parseData($data)
     {
@@ -222,8 +231,9 @@ class Combinaciones
 
         $webGrupoCategoria = self::getWebGrupoCategoria();
 
-        $familia = self::getFamilia();
+        $familia = TreeBuilder::build(self::getFamilia(), 'CODIGO', 'PADRE', 'NOMBRE', -1);
 
+       
 
 
         $dataOfdataFormated = [];
@@ -237,10 +247,17 @@ class Combinaciones
                 switch ($key) {
                         //some values start with a underscore to easy identify them on frontend to avoid to printing them
                         //They store important data that is necessary to identify some data.
+                    case 'CODIGO':
+                        $dataFormated['COD'] = $value;
 
+                        break;
+                    case 'descuento':
+                        $dataFormated['desc'] = $value;
+
+                        break;
                     case 'CODMARCA':
                         $dataFormated['_marca'] = $value;
-                        $dataFormated['marca'] =  $marca;
+                        $dataFormated['%marca'] =  $marca;
                         break;
                     case 'PROVEEDDEFECTO':
                         $dataFormated['_proveedor'] = $value;
@@ -258,29 +275,45 @@ class Combinaciones
                         break;
                     case 'TEMPORADA':
                         $dataFormated['_temporada'] = $value;
-                        $dataFormated['temporada'] = $temporada;
+                        $dataFormated['%temporada'] = $temporada;
 
                         break;
                     case 'COLECCION':
                         $dataFormated['_coleccion'] = $value;
-                        $dataFormated['coleccion'] = $coleccion;
+                        $dataFormated['%coleccion'] = $coleccion;
 
                         break;
                     case 'CODGRUPOCATEGORIA':
                         $dataFormated["_grupocategoria"] = $value;
-                        $dataFormated["hombre/mujer"] = $webGrupoCategoria;
+                        $dataFormated["%hombre/mujer"] = $webGrupoCategoria;
 
-                        $dataFormated['cat.web'] = self::getWebCategoria((int)$value);
+                        $dataFormated['#cat.web'] = TreeBuilder::build(self::getWebCategoria(((int)$value)), 'CODIGO', 'CODPADRE', 'NOMBRE');
 
                         break;
                     case "CODFAMILIA":
 
                         $dataFormated['_familia'] = $value;
-                        $dataFormated['familia'] = $familia;
+                        $dataFormated['#familia'] = $familia;
+                        break;
+                    case "CODCATEGORIADEFECTO":
+                        $dataFormated['_codcategoriadefecto'] = $value;
+                        break;
+                    case 'VENTA':
+                        $dataFormated['%venta'] = $value;
+
+                        break;
+                    case 'COMPRA':
+                        $dataFormated['%compra'] = $value;
+
+                        break;
+
+                    case 'CODBARRAS':
+                        $dataFormated['%codbar'] = $value;
+
                         break;
 
                     default:
-                        $dataFormated[$key] = $value;
+                        $dataFormated[strtolower($key)] = $value;
                         break;
                 }
             }

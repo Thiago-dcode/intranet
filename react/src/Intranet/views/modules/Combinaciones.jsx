@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Icon from '../../components/icon/Icon';
+import '../../assets/css/modules/combinaciones.css'
 import PymeSearch from '../../components/pyme/PymeSearch';
 import { useCompany } from '../../../Context/ContextProvider';
 import { useEffect } from 'react';
 import useAjax from '../../../hooks/useAjax';
 import { roundTo } from '../../../utils/Utils';
+import RenderTd from '../../components/modules/combinaciones/RenderTd';
 export default function Combinaciones() {
 
   const company = useCompany();
@@ -61,7 +63,7 @@ export default function Combinaciones() {
   }, [combinaciones])
 
   return <div id="combinaciones-module"
-    className=" h-screen relative flex  items-center 
+    className="table-pyme h-screen relative flex w-full  items-center 
 flex-col gap-3 p-4"
   >
     <PymeSearch
@@ -90,9 +92,9 @@ flex-col gap-3 p-4"
               <th></th>
 
               {Object.keys(combinaciones[0]).map((key, i) => {
-                  if (key[0] !== '_') {
-                return <th key={'th-combinaciones-' + key + '-' + i} id={'th-' + i} className="">{key}</th>;
-                  }
+                if (key[0] !== '_') {
+                  return <th key={'th-combinaciones-' + key + '-' + i} id={'th-' + i} className="">{key}</th>;
+                }
               })}
 
 
@@ -102,14 +104,12 @@ flex-col gap-3 p-4"
             {combinaciones.map((comb, _i) => {
 
               return (
-                <tr key={'tr-combinaciones-' + _i} id={'tr-' + _i} className="even:bg- odd:bg-white">
+                <tr key={'tr-combinaciones-' + _i} id={'tr-' + _i} className="h-9 odd:bg-white">
                   <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
                   {Object.entries(comb).map(([key, value], i) => {
                     if (key[0] !== '_') {
                       return (
-                        <td key={'td-combinaciones-' + key + '-' + i} id={"td-2-" + i} className="border border-slate-300  w-4 text-center ">
-                          <input readOnly name={`${_i}-${key}`} className=" text-xs w-full" type="text" defaultValue={key === 'STOCK1' ? roundTo(value, 0) : value} />
-                        </td>
+                        <RenderTd key={key} value={value}/>
                       );
                     }
                   })}

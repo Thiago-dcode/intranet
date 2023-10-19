@@ -1,13 +1,13 @@
-#eans-module {
+.table-pyme {
   width: 100%;
 }
 
-#eans-module td {
+.table-pyme td {
  
 
   margin: auto;
 }
-#eans-module td input {
+.table-pyme td input {
   background: none;
 
   text-align: center;
@@ -16,10 +16,17 @@
 .cod-barra-nuevo input {
   width: 100%;
 }
-#eans-module td,
-th {
+.table-pyme td,
+th,  input {
   font-size: 0.5rem;
- max-width: 150px;
+  
+
+}
+.table-pyme input, select{
+
+ background: none;
+ height: 100%;
+
 }
 
 .ean-error {

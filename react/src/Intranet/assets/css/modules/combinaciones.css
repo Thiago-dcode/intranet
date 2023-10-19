@@ -1,0 +1,20 @@
+#combinaciones-module {
+  width: 100%;
+}
+#combinaciones-module table {
+  width: 100%;
+}
+#combinaciones-module th {
+  font-size: 0.8rem;
+}
+#combinaciones-module tr{
+ 
+}
+#combinaciones-module td {
+  max-width: 50px;
+ 
+}
+#combinaciones-module td input {
+  width: 100%;
+
+}

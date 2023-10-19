@@ -170,7 +170,7 @@ export default function Eans() {
 
 
         (<div id="eans-module"
-          className=" h-screen relative flex  items-center 
+          className="table-pyme w-full h-screen relative flex  items-center 
     flex-col gap-3 p-4"
         >
 
@@ -193,6 +193,8 @@ export default function Eans() {
             handleBtn={() => {
               setLimit(50)
             }}
+            proveedor={proveedor}
+            codArticulo={codarticulo}
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}
@@ -239,7 +241,7 @@ export default function Eans() {
                       
                         return (
                           <tr key={'tr-eans-' + _i} id={'tr-' + _i} className="even:bg- odd:bg-white">
-                            <td className=" border border-slate-300  text-xs  text-center w-2">{_i + 1}</td>
+                            <td className=" border border-slate-300  text-xs  text-center">{_i + 1}</td>
                             {Object.entries(ean).map(([key, value], i) => {
                               return (
                                 <td key={'td-eans-' + key + '-' + i} id={"td-2-" + i} className="border border-slate-300  text-center ">
