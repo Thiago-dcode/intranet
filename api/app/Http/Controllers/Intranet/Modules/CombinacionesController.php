@@ -4,6 +4,7 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Intranet\Utils\Validate;
+use App\Intranet\Utils\TreeBuilder;
 use App\Http\Controllers\Controller;
 use App\Intranet\Modules\Combinaciones;
 
@@ -23,6 +24,23 @@ class CombinacionesController extends Controller{
 		
 		$result= Combinaciones::get($companyName,$cod_articulo,$proveedor);
 
+
+		return $this->success($result,'Success');
+	}
+
+	public function categoriaWeb($companyName,Request $request){
+
+		if(!Validate::module($request->user(),"combinaciones",$companyName)){
+
+			return response("You are not authorized to access to Combinaciones module",401);
+		}
+
+		if(!isset($request['id'])){
+
+			return $this->error([],'Missing data',400 );
+		}
+
+		$result = TreeBuilder::build(Combinaciones::getWebCategoria((int)$request['id'],$companyName), 'CODIGO', 'CODPADRE', 'NOMBRE');
 
 		return $this->success($result,'Success');
 	}

@@ -31,6 +31,9 @@ function customModulesRoutes($moduleName){
                 Route::patch('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'update']);
                 Route::delete('/modules/graficos/{id}',[ App\Http\Controllers\Intranet\Modules\GraficosController::class,'delete']);
                 break;
+            case 'combinaciones':
+                Route::get('{company:name}/modules/combinaciones/categoriaweb',[ App\Http\Controllers\Intranet\Modules\CombinacionesController::class,'categoriaWeb']);
+                break;
         default:
             # code...
             break;

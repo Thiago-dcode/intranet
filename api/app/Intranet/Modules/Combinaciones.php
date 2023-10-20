@@ -26,7 +26,7 @@ class Combinaciones
 
         $offset = 0;
         $page = 1;
-      
+
 
         if ($proveedor) {
             // $sql = "select count(*) as total from compra WHERE codproveedor = :codproveedor";
@@ -53,7 +53,6 @@ class Combinaciones
             $stmt->execute();
 
             $result = $stmt->fetchAll();
-             
         } elseif ($codArticulo) {
 
 
@@ -64,7 +63,6 @@ class Combinaciones
             // to uppercase
             $stmt->execute();
             $result = $stmt->fetchAll();
-          
         }
 
         $data = [];
@@ -153,7 +151,7 @@ class Combinaciones
         }
 
 
-        
+
 
         return self::parseData($data);
     }
@@ -202,8 +200,12 @@ class Combinaciones
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public static function getWebCategoria($cod)
+    public static function getWebCategoria($cod, $company = '')
     {
+        if (!static::$firebird) {
+
+            static::$firebird = PymeConnection::start(Constants::get($company));
+        }
 
         try {
             $sql = 'SELECT CODGRUPOCATEGORIA, CODIGO as codigo, CODPADRE, NOMBRE as nombre, ORDEN FROM WEBCATEGORIA WHERE CODGRUPOCATEGORIA = ' . $cod . 'ORDER BY ORDEN;';
@@ -233,7 +235,12 @@ class Combinaciones
 
         $familia = TreeBuilder::build(self::getFamilia(), 'CODIGO', 'PADRE', 'NOMBRE', -1);
 
-       
+
+        // all keys from the api start with  S,A,T,OR C 
+        // S: The value of that key is a simple string or number.
+        // A: The value is an Array.
+        // T: The value is a Tree.
+        // C: The value depends on combinations.
 
 
         $dataOfdataFormated = [];
@@ -245,75 +252,111 @@ class Combinaciones
             foreach ($d as $key => $value) {
 
                 switch ($key) {
-                        //some values start with a underscore to easy identify them on frontend to avoid to printing them
-                        //They store important data that is necessary to identify some data.
+
+
                     case 'CODIGO':
-                        $dataFormated['COD'] = $value;
+                        $dataFormated['S_COD'] = $value;
 
                         break;
-                    case 'descuento':
-                        $dataFormated['desc'] = $value;
+
+                    case 'METAKEYWORDS':
+                        $dataFormated['S_metakey'] = $value;
 
                         break;
+                    case 'COPA':
+
+
+                        break;
+
+
                     case 'CODMARCA':
-                        $dataFormated['_marca'] = $value;
-                        $dataFormated['%marca'] =  $marca;
+
+                        $dataFormated['A_marca'] = [
+                            'id' => $value,
+                            'data' =>  $marca,
+                        ];;
                         break;
                     case 'PROVEEDDEFECTO':
-                        $dataFormated['_proveedor'] = $value;
-                        $dataFormated['proveedor'] = $proveedor;
+
+                        $dataFormated['A_proveedor'] = [
+                            'id' => $value,
+                            'data' =>  $proveedor,
+                        ];
                         break;
                     case 'PRECIOCOSTE':
-                        $dataFormated['precio'] = Utils::roundTo($value, 2);
-                        $dataFormated['descuento'] = 0;
-                        $dataFormated['p.coste'] = Utils::roundTo($value, 2);
-                        $dataFormated['margen'] = Utils::percentage($value, $d['PRECIOVENTA']);
+                        $dataFormated['S_precio'] = Utils::roundTo($value, 2);
+                        $dataFormated['S_desc'] = 0;
+                        $dataFormated['S_p.coste'] = Utils::roundTo($value, 2);
+                        $dataFormated['S_margen'] = Utils::percentage($value, $d['PRECIOVENTA']);
 
                         break;
                     case 'PRECIOVENTA':
-                        $dataFormated['P.V.A'] = Utils::roundTo($value, 2);
+                        $dataFormated['S_P.V.A'] = Utils::roundTo($value, 2);
                         break;
                     case 'TEMPORADA':
-                        $dataFormated['_temporada'] = $value;
-                        $dataFormated['%temporada'] = $temporada;
+
+                        $dataFormated['A_temporada'] = [
+                            'id' => $value,
+                            'data' =>  $temporada,
+                        ];
 
                         break;
                     case 'COLECCION':
-                        $dataFormated['_coleccion'] = $value;
-                        $dataFormated['%coleccion'] = $coleccion;
+
+                        $dataFormated['A_coleccion'] = [
+                            'id' => $value,
+                            'data' =>  $coleccion,
+                        ];;
 
                         break;
                     case 'CODGRUPOCATEGORIA':
-                        $dataFormated["_grupocategoria"] = $value;
-                        $dataFormated["%hombre/mujer"] = $webGrupoCategoria;
 
-                        $dataFormated['#cat.web'] = TreeBuilder::build(self::getWebCategoria(((int)$value)), 'CODIGO', 'CODPADRE', 'NOMBRE');
+                        $dataFormated["A_hombre/mujer"] = [
+                            'id' => $value,
+                            'data' =>  $webGrupoCategoria
+                        ];
+
+                        $dataFormated['T_cat.web'] = [
+                            'id' => $d["CODCATEGORIADEFECTO"],
+
+                            'data' => TreeBuilder::build(self::getWebCategoria(((int)$value)), 'CODIGO', 'CODPADRE', 'NOMBRE'),
+                        ];
 
                         break;
                     case "CODFAMILIA":
 
-                        $dataFormated['_familia'] = $value;
-                        $dataFormated['#familia'] = $familia;
+
+                        $dataFormated['T_familia'] = [
+                            'id' => $value,
+                            'data' =>  $familia,
+                        ];;
                         break;
-                    case "CODCATEGORIADEFECTO":
-                        $dataFormated['_codcategoriadefecto'] = $value;
-                        break;
+
                     case 'VENTA':
-                        $dataFormated['%venta'] = $value;
+                        $dataFormated['C_venta'] = $value;
 
                         break;
                     case 'COMPRA':
-                        $dataFormated['%compra'] = $value;
+                        $dataFormated['C_compra'] = $value;
 
                         break;
 
                     case 'CODBARRAS':
-                        $dataFormated['%codbar'] = $value;
+                        $dataFormated['C_codbar'] = $value;
+
+                        break;
+                    case 'DESHABILITADO':
+                        $dataFormated['S_deshab'] = $value;
+
+                        break;
+                    case 'CODCATEGORIADEFECTO':
+
 
                         break;
 
+
                     default:
-                        $dataFormated[strtolower($key)] = $value;
+                        $dataFormated['S_' . strtolower($key)] = $value;
                         break;
                 }
             }
