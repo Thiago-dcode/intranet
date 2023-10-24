@@ -23,7 +23,7 @@ export default function Combinaciones() {
     e.preventDefault()
 
     const newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}`
-    console.log(newUrl);
+
     setUrl(newUrl);
 
 
@@ -32,6 +32,7 @@ export default function Combinaciones() {
     e.preventDefault()
 
     let rows = [];
+    // console.log(e.target)
     for (let i = 0; i < e.target.length; i++) {
       const element = e.target[i];
       const [index, name] = element.name.split("-")
@@ -49,9 +50,11 @@ export default function Combinaciones() {
 
       for (let j = 0; j < e.target.length; j++) {
         const element = e.target[j];
-
+        
         const [index, key] = element.name.split("-")
-
+        if(key === 'venta'){
+          console.log(element)
+        }
         if (isNaN(parseInt(index))) continue;
         if (parseInt(index) !== row) continue;
 
@@ -62,14 +65,13 @@ export default function Combinaciones() {
       form.push(obj);
 
     }
-    console.log(form);
+    // console.log(form);
 
   }
 
   const handleUpdateForm = (row, key, value) => {
 
 
-    console.log(row, key, value);
 
     let obj = updateForm;
 
@@ -112,7 +114,7 @@ export default function Combinaciones() {
 
     if (!combinaciones) return
     // console.log(Object.keys(combinaciones[0]).map((key, i) => key))
-    console.log(combinaciones)
+
   }, [combinaciones])
   useEffect(() => {
 

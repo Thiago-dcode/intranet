@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
 import useAjax from '../../../../hooks/useAjax';
-import { roundTo } from '../../../../utils/Utils';
+import { capitalize, roundTo } from '../../../../utils/Utils';
 
 export default function RenderTd({ company, _key, value, i, handleForm }) {
     const [desahabilitado, setDeshabilitado] = useState([]);
@@ -41,10 +41,10 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
     const handlePrice = (i) => {
 
-        const descuento = document.getElementById(`${i}-descuento`);
+        const descuento = document.getElementById(`${i}-des`);
         const precio = document.getElementById(`${i}-precio`);
-        const pcoste = document.getElementById(`${i}-p.coste`);
-        const margen = document.getElementById(`${i}-margen`);
+        const pcoste = document.getElementById(`${i}-coste`);
+        const margen = document.getElementById(`${i}-marg`);
         const pventa = document.getElementById(`${i}-P.V.A`);
 
         pcoste.value = roundTo(parseFloat(!precio.value ? 0 : precio.value) / 100 * (100 - parseFloat(!descuento.value ? 0 : descuento.value)), 2);
@@ -140,7 +140,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
             case 'S':
 
                 return (
-                    <td className=" W-10 px-1 border border-slate-300  text-center ">
+                    <td className=" w-6 px-1 border border-slate-300  text-center ">
 
 
                         <input id={`${i}-${key}`} onChange={(e) => {
@@ -149,7 +149,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                                 handlePrice(i)
                             }
 
-                        }} style={value.readonly ? readonlyStyle : {}} title={value.data} readOnly={value.readonly} name={`${i}-${key}`} className="w-full  text-[0.5rem]" type="text" defaultValue={value.data} />
+                        }} style={value.readonly ? readonlyStyle : {}} title={value.data} readOnly={value.readonly} name={`${i}-${key}`} className="w-full text-[0.7rem]" type="text" value={value.data} />
 
 
                     </td>
@@ -160,7 +160,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                 return (
 
-                    <td className="px-1 border-slate-300  text-center ">
+                    <td className="px-1 max-w-md border-slate-300  text-center ">
                         <select name={`${i}-${key}`} onChange={(e) => {
 
                             setAllowed(true)
@@ -168,12 +168,12 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                             handleForm(i, key, e.target.value);
 
-                        }} className='w-10 text-xs' defaultValue={value.id} id="">
+                        }} className='max-w-[5rem] text-xs' defaultValue={value.id} id="">
 
                             {
-                                Array.isArray(value.data) && value.data.map(obj => {
+                                Array.isArray(value.data) && value.data.map((obj,_i) => {
 
-                                    return <option className='w-full' value={obj.CODIGO}>{obj.NOMBRE}</option>
+                                    return <option key={`${i}-${key}-${_i}`} className='w-full pr-2' title={obj.NOMBRE ? capitalize(obj.NOMBRE) : obj.NOMBRE} value={obj.CODIGO}>{obj.NOMBRE ? capitalize(obj.NOMBRE) : obj.NOMBRE}</option>
 
                                 })
                             }
@@ -202,12 +202,12 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                             handleForm(i, key, e.target.value);
 
-                        }} className='w-10' defaultValue={value.id} >
+                        }} className='max-w-[5rem] text-xs' defaultValue={value.id} >
 
                             {
                                 tree.map(branch => {
 
-                                    return <option className='w-full' value={branch.id}>{branch.name}</option>
+                                    return <option key={`${i}-${key}-${branch.id}`} className='w-full' value={branch.id}>{branch.name}</option>
 
                                 })
                             }
@@ -221,30 +221,30 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
 
                 return (
-                    <td className="   overflow-auto  flex flex-col w-full px-1 border border-slate-300  text-center justify-between relative ">
+                    <td className="    overflow-auto   flex flex-col w-full px-1 border border-slate-300  text-center justify-between relative ">
 
 
                         {Array.isArray(value.data) && <select onChange={(e) => {
 
                             setDeshabilitado(prev => [e.target.value, ...prev])
 
-                        }} className='right-[0.02rem]   hover::invisible overflow-auto  h-5 w-full flex flex-col items-center justify-start' >
+                        }} defaultValue={''} className='right-[0.02rem]    hover::invisible overflow-auto  h-5 w-full flex flex-col items-center justify-start' >
                             <option value="" disabled hidden>Select</option>
 
                             {
                                 value.data.filter(data => !desahabilitado.includes(data)).map(data => {
 
-                                    return <option value={data}>{data}</option>
+                                    return <option key={`deshabilitar-${data}`} className='w-full' value={data}>{data}</option>
                                 })
 
 
                             }
 
                         </select>}
-                        <ul className=' w-full flex  gap-[0.1rem] flex-col overflow-auto'>
+                        <ul className='  w-14 flex  gap-[0.1rem] flex-col overflow-auto'>
                             {desahabilitado.map((d, _i) => {
 
-                                return <li className='h-3 overflow-auto text-white flex flex-row items-center gap-1 bg-gray-400 rounded-sm px-0.5'>
+                                return <li key={`deshabilitado-${d}`} className='h-3 overflow-auto text-white flex flex-row items-center gap-1 bg-gray-400 rounded-sm px-0.5'>
 
                                     <button onClick={() => {
 
@@ -253,7 +253,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                                         setDeshabilitado(remove);
 
-                                    }} className='px-0.5 text-center border-r border-r-white'>x</button><input name={`${i}-${key}-${_i}`} type="text" className='text-center m-auto text-[0.4rem]' value={d} />
+                                    }} className='px-0.5 text-center border-r border-r-white '>x</button><input name={`${i}-${key}-${_i}`} type="text" className='text-center m-auto text-[0.4rem]' value={d} />
 
                                 </li>
                             })}
@@ -265,14 +265,13 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
             case 'C':
 
-                console.log(key)
                 return (
-                    <td className=" w-12 h-10 overflow-auto px-1 border border-slate-300  text-center ">
+                    <td className=" max-w-[5rem] h-10 overflow-auto px-1 border border-slate-300  text-center ">
 
                         <div className='w-full h-full hover:h-14 items-center overflow-auto flex-col justify-center'>
                             {value.data.map((data, _i) => {
                                 if (key === 'codbar') {
-                                    return <input title={data.VALORCARACT} name={`${i}-${key}-${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" value={data.CODBARRAS} />
+                                    return <input key={`${i}-${key}-${data.VALORCARACT}`}   title={data.VALORCARACT} name={`${i}-${key}-${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" value={data.CODBARRAS} />
                                 }
                                 return <input title={data.VALORCARACT} name={`${i}-${key}-${data.VALORCARACT}`} className='w-10 max-h-2' type="text" placeholder={data.VALORCARACT} value={data.hasPrice ? data.PRECIO : null} />
                             })}

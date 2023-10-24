@@ -333,7 +333,7 @@ class Combinaciones
 
                         break;
                     case 'NOMBRE':
-                        $dataFormated['S_nombre'] = [
+                        $dataFormated['S_nom'] = [
                             'id' => '',
                             'data' =>  $value,
                             'readonly' => false
@@ -343,17 +343,17 @@ class Combinaciones
                             'data' =>  $marca,
                             'readonly' => false
                         ];
-                        $dataFormated['A_proveedor'] = [
+                        $dataFormated['A_proveed'] = [
                             'id' => $d['PROVEEDDEFECTO'],
                             'data' =>  $proveedor,
                             'readonly' => false
                         ];
-                        $dataFormated['S_COLOR'] = [
+                        $dataFormated['S_color'] = [
                             'id' => '',
                             'data' =>  $d['COLOR'],
                             'readonly' => true
                         ];
-                        $dataFormated['S_TALL'] = [
+                        $dataFormated['S_talla'] = [
                             'id' => '',
                             'data' =>  $d['TALLA'],
                             'readonly' => true
@@ -398,18 +398,18 @@ class Combinaciones
                             'data' =>   $precio,
                             'readonly' => false,
                         ];
-                        $dataFormated['S_descuento'] = [
+                        $dataFormated['S_des'] = [
                             'id' => '',
                             'data' =>  $descuento,
                             'readonly' => false,
                         ];
 
-                        $dataFormated['S_p.coste'] = [
+                        $dataFormated['S_coste'] = [
                             'id' => '',
                             'data' =>  Utils::roundTo($value, 2),
                             'readonly' => true,
                         ];
-                        $dataFormated['S_margen'] = [
+                        $dataFormated['S_marg'] = [
                             'id' => '',
                             'data' =>  Utils::percentageBtwNumbers($value, $d['PRECIOVENTA']),
                             'readonly' => false,
