@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ls from "localstorage-slim";
 import Api from "../api/Api";
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 export default function useAjax(
   url = "",
@@ -41,6 +41,9 @@ export default function useAjax(
 
         const response = await Api.get("/sanctum/csrf-cookie");
 
+      }
+      if (import.meta.env.DEV) {
+        console.log(form)
       }
 
       const { data } = await Api({

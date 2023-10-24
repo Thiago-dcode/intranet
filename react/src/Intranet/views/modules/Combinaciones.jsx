@@ -19,6 +19,8 @@ export default function Combinaciones() {
 
   const [data, error, isPending, setConfig] = useAjax();
 
+  const [update, errorUpdate, isPendingUpdate, setConfigUpdate] = useAjax();
+
   const handleSearch = (e) => {
     e.preventDefault()
 
@@ -35,7 +37,7 @@ export default function Combinaciones() {
     // console.log(e.target)
     for (let i = 0; i < e.target.length; i++) {
       const element = e.target[i];
-      const [index, name] = element.name.split("-")
+      const [index, name] = element.name.split("_")
 
       if (rows.includes(parseInt(index))) continue;
 
@@ -43,6 +45,7 @@ export default function Combinaciones() {
     }
 
     let form = [];
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (isNaN(row)) continue;
@@ -50,13 +53,23 @@ export default function Combinaciones() {
 
       for (let j = 0; j < e.target.length; j++) {
         const element = e.target[j];
-        
-        const [index, key] = element.name.split("-")
-        if(key === 'venta'){
-          console.log(element)
-        }
+        const [index, key, comb] = element.name.split("_")
         if (isNaN(parseInt(index))) continue;
         if (parseInt(index) !== row) continue;
+
+
+        if (key === 'venta' || key === 'compra' || key === 'codbar' || key === 'deshab') {
+          if (!element.value) continue;
+          if (!obj.hasOwnProperty(key)) {
+            obj[key] = [];
+          }
+          obj[key].push({
+            VALORCARACT: comb,
+            value: element.value
+          })
+          continue;
+        }
+
 
         obj[key] = element.value;
 
@@ -65,22 +78,10 @@ export default function Combinaciones() {
       form.push(obj);
 
     }
-    // console.log(form);
+    setUpdateForm(form);
 
   }
 
-  const handleUpdateForm = (row, key, value) => {
-
-
-
-    let obj = updateForm;
-
-    obj[row] = value;
-
-
-    setUpdateForm(obj);
-
-  }
   const handleArticulos = (articulo) => {
 
     setCodArticulo(articulo);
@@ -97,7 +98,7 @@ export default function Combinaciones() {
 
   useEffect(() => {
     if (!url) return
-
+    setCombinaciones([])
     setConfig('/api/' + url)
 
   }, [url])
@@ -113,14 +114,28 @@ export default function Combinaciones() {
   useEffect(() => {
 
     if (!combinaciones) return
-    // console.log(Object.keys(combinaciones[0]).map((key, i) => key))
+    console.log(combinaciones)
 
   }, [combinaciones])
   useEffect(() => {
 
+    if (Object.keys(updateForm).length) {
+      console.log(updateForm)
 
+      setConfigUpdate(`/api/${company.name}/modules/combinaciones`,updateForm, 'PATCH')
+    }
 
   }, [updateForm])
+
+  useEffect(() => {
+
+    if (update && !errorUpdate) {
+      console.log(update)
+      return
+    }
+    console.log(errorUpdate)
+
+  }, [update, errorUpdate])
 
   return <div id="combinaciones-module"
     className="table-pyme h-screen relative flex w-full  items-center 
@@ -173,7 +188,7 @@ flex-col gap-3 p-4"
                   {Object.entries(comb).map(([key, value], i) => {
 
                     return (
-                      <RenderTd company={company} handleForm={handleUpdateForm} i={_i} key={'td-combinaciones-' + key + '-' + i} _key={key} value={value} />
+                      <RenderTd company={company} i={_i} key={'td-combinaciones-' + key + '-' + i} _key={key} value={value} />
                     );
 
                   })}

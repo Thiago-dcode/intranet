@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import useAjax from '../../../../hooks/useAjax';
 import { capitalize, roundTo } from '../../../../utils/Utils';
 
-export default function RenderTd({ company, _key, value, i, handleForm }) {
+export default function RenderTd({ company, _key, value, i }) {
     const [desahabilitado, setDeshabilitado] = useState([]);
     const [categoriaWeb, setCategoriaWeb] = useState(null)
     const [idCatWeb, setIdCatWeb] = useState(null);
@@ -149,7 +149,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                                 handlePrice(i)
                             }
 
-                        }} style={value.readonly ? readonlyStyle : {}} title={value.data} readOnly={value.readonly} name={`${i}-${key}`} className="w-full text-[0.7rem]" type="text" value={value.data} />
+                        }} style={value.readonly ? readonlyStyle : {}} title={value.data} readOnly={value.readonly} name={`${i}_${key}`} className="w-full text-[0.7rem]" type="text" value={value.data} />
 
 
                     </td>
@@ -161,12 +161,11 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                 return (
 
                     <td className="px-1 max-w-md border-slate-300  text-center ">
-                        <select name={`${i}-${key}`} onChange={(e) => {
+                        <select name={`${i}_${key}`} onChange={(e) => {
 
                             setAllowed(true)
                             handleChange(i, key, e.target.value)
 
-                            handleForm(i, key, e.target.value);
 
                         }} className='max-w-[5rem] text-xs' defaultValue={value.id} id="">
 
@@ -198,11 +197,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                 return (
 
                     <td className="px-1 border-slate-300  text-center ">
-                        {Array.isArray(tree) && <select id={`${i}-${key}`} name={`${i}-${key}`} onChange={(e) => {
-
-                            handleForm(i, key, e.target.value);
-
-                        }} className='max-w-[5rem] text-xs' defaultValue={value.id} >
+                        {Array.isArray(tree) && <select id={`${i}-${key}`} name={`${i}_${key}`}  className='max-w-[5rem] text-xs' defaultValue={value.id} >
 
                             {
                                 tree.map(branch => {
@@ -228,7 +223,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                             setDeshabilitado(prev => [e.target.value, ...prev])
 
-                        }} defaultValue={''} className='right-[0.02rem]    hover::invisible overflow-auto  h-5 w-full flex flex-col items-center justify-start' >
+                        }} defaultValue={' '} className='right-[0.02rem]    hover::invisible overflow-auto  h-5 w-full flex flex-col items-center justify-start' >
                             <option value="" disabled hidden>Select</option>
 
                             {
@@ -253,7 +248,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
 
                                         setDeshabilitado(remove);
 
-                                    }} className='px-0.5 text-center border-r border-r-white '>x</button><input name={`${i}-${key}-${_i}`} type="text" className='text-center m-auto text-[0.4rem]' value={d} />
+                                    }} className='px-0.5 text-center border-r border-r-white '>x</button><input name={`${i}_${key}_${d}`} type="text" className='text-center m-auto text-[0.4rem]' readOnly value={d} />
 
                                 </li>
                             })}
@@ -271,9 +266,9 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                         <div className='w-full h-full hover:h-14 items-center overflow-auto flex-col justify-center'>
                             {value.data.map((data, _i) => {
                                 if (key === 'codbar') {
-                                    return <input key={`${i}-${key}-${data.VALORCARACT}`}   title={data.VALORCARACT} name={`${i}-${key}-${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" value={data.CODBARRAS} />
+                                    return <input key={`${i}-${key}-${data.VALORCARACT}`}   title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" value={data.CODBARRAS} />
                                 }
-                                return <input title={data.VALORCARACT} name={`${i}-${key}-${data.VALORCARACT}`} className='w-10 max-h-2' type="text" placeholder={data.VALORCARACT} value={data.hasPrice ? data.PRECIO : null} />
+                                return <input title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2' type="text" placeholder={data.VALORCARACT} value={ data.PRECIO} />
                             })}
                         </div>
 
@@ -287,7 +282,7 @@ export default function RenderTd({ company, _key, value, i, handleForm }) {
                     <td className=" W-10 px-1 border border-slate-300  text-center ">
 
                         <div className='overflow-auto'>
-                            <input title={value} readOnly name={`${i}-${key}`} className="w-full  text-[0.7rem]" type="text" defaultValue={value} />
+                            <input title={value} readOnly name={`${i}_${key}`} className="w-full  text-[0.7rem]" type="text" defaultValue={value} />
                         </div>
 
                     </td>
