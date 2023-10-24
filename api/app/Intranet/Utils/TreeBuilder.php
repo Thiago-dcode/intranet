@@ -9,7 +9,7 @@ class TreeBuilder {
    private static function setBranch($item, $name, $id, $level = 0)
     {
         $sticks = '';
-        for ($i = 0; $i >= $level; $i--) {
+        for ($i = 0; $i > $level; $i--) {
             $sticks .= '|';
         }
         $sticks .= '-';
@@ -29,7 +29,7 @@ class TreeBuilder {
 
             if (isset($branch['id']) && $branch['id'] === $item[$parentId]) {
 
-                array_push($_tree[$key]['children'], self::setBranch($item, $name, $id, $level + 1));
+                array_push($_tree[$key]['children'], self::setBranch($item, $name, $id, $level -1));
                 continue;
             }
             if (!isset($branch['children'])  || !$branch['children']) {

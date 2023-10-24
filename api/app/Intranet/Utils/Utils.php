@@ -35,7 +35,7 @@ class Utils
     
         return floatval(number_format($num, $place, '.', ''));
     }
-   public static  function percentage($number1, $number2, $round = 2) {
+   public static  function percentageBtwNumbers($number1, $number2, $round = 2) {
         try {
             // Check if the input values are numbers
             if (!is_numeric((float)$number1) || !is_numeric((float)$number2)) {

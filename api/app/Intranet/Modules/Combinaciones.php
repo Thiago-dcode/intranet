@@ -235,6 +235,47 @@ class Combinaciones
 
         $familia = TreeBuilder::build(self::getFamilia(), 'CODIGO', 'PADRE', 'NOMBRE', -1);
 
+        function getComb($color, $talla)
+        {
+
+
+            $comb = [];
+            foreach (explode(',', $color) as $key => $col) {
+
+                foreach (explode(',', $talla) as $key => $tal) {
+
+                    array_push($comb, "$col-$tal");
+                }
+            }
+
+            return $comb;
+        }
+
+        function getCompraVenta($arr, $defaultPrice, $codBarra, $priceKeyName = 'PRECIOCOSTE')
+        {
+
+
+            return array_map(function ($cod) use ($arr, $defaultPrice, $priceKeyName) {
+
+
+                foreach ($arr as $key => $value) {
+
+                    if ($value["VALORCARACT"] !== $cod["VALORCARACT"]) continue;
+                    return [
+
+                        "VALORCARACT" => $value["VALORCARACT"],
+                        'hasPrice' => true,
+                        'PRECIO' => Utils::roundTo($value[$priceKeyName], 2)
+
+                    ];
+                }
+                return [
+                    "VALORCARACT" => $cod["VALORCARACT"],
+                    'hasPrice' => false,
+                    'PRECIO' => Utils::roundTo($defaultPrice, 2)
+                ];
+            }, $codBarra);
+        }
 
         // all keys from the api start with  S,A,T,OR C 
         // S: The value of that key is a simple string or number.
@@ -247,6 +288,21 @@ class Combinaciones
 
         foreach ($data as  $d) {
 
+            $comb = getComb($d['COLOR'], $d['TALLA']);
+            $codBarra = array_map(function ($cod) use ($comb) {
+
+                foreach ($comb as $key => $value) {
+
+                    if ($cod["VALORCARACT"] !== $value) continue;
+
+                    return $cod;
+                }
+            }, $d['CODBARRAS']);
+
+            $pCompra = getCompraVenta($d['COMPRA'], $d['PRECIOCOSTE'], $codBarra);
+
+            $pVenta = getCompraVenta($d['VENTA'], $d['PRECIOVENTA'], $codBarra, 'PRECIO');
+
             $dataFormated = [];
 
             foreach ($d as $key => $value) {
@@ -255,15 +311,64 @@ class Combinaciones
 
 
                     case 'CODIGO':
-                        $dataFormated['S_COD'] = $value;
+                        $dataFormated['S_COD'] = [
+                            'id' => '',
+                            'data' =>  $value,
+                            'readonly' => true
+                        ];
+                        $dataFormated['S_REF'] = [
+                            'id' => '',
+                            'data' =>  $value,
+                            'readonly' => true
+                        ];
 
                         break;
 
                     case 'METAKEYWORDS':
-                        $dataFormated['S_metakey'] = $value;
+                        $dataFormated['S_metakey'] = [
+                            'id' => '',
+                            'data' =>  $value,
+                            'readonly' => false
+                        ];
+
+                        break;
+                    case 'NOMBRE':
+                        $dataFormated['S_nombre'] = [
+                            'id' => '',
+                            'data' =>  $value,
+                            'readonly' => false
+                        ];
+                        $dataFormated['A_marca'] = [
+                            'id' => $d['CODMARCA'],
+                            'data' =>  $marca,
+                            'readonly' => false
+                        ];
+                        $dataFormated['A_proveedor'] = [
+                            'id' => $d['PROVEEDDEFECTO'],
+                            'data' =>  $proveedor,
+                            'readonly' => false
+                        ];
+                        $dataFormated['S_COLOR'] = [
+                            'id' => '',
+                            'data' =>  $d['COLOR'],
+                            'readonly' => true
+                        ];
+                        $dataFormated['S_TALL'] = [
+                            'id' => '',
+                            'data' =>  $d['TALLA'],
+                            'readonly' => true
+                        ];
 
                         break;
                     case 'COPA':
+
+
+                        break;
+                    case 'COLOR':
+
+
+                        break;
+                    case 'TALLA':
 
 
                         break;
@@ -271,33 +376,61 @@ class Combinaciones
 
                     case 'CODMARCA':
 
-                        $dataFormated['A_marca'] = [
-                            'id' => $value,
-                            'data' =>  $marca,
-                        ];;
+
                         break;
                     case 'PROVEEDDEFECTO':
 
-                        $dataFormated['A_proveedor'] = [
-                            'id' => $value,
-                            'data' =>  $proveedor,
-                        ];
+
                         break;
                     case 'PRECIOCOSTE':
-                        $dataFormated['S_precio'] = Utils::roundTo($value, 2);
-                        $dataFormated['S_desc'] = 0;
-                        $dataFormated['S_p.coste'] = Utils::roundTo($value, 2);
-                        $dataFormated['S_margen'] = Utils::percentage($value, $d['PRECIOVENTA']);
+                        $precio = null;
+                        $descuento = '';
+                        foreach ($d['COMPRA'] as $key => $val) {
+
+                            if ($val['CODPROVEEDOR'] !== $d['PROVEEDDEFECTO']) continue;
+                            $precio = Utils::roundTo((int)$val['DESCUENTO'] / 100  * (float)$value + (float)$value, 2);
+                            $descuento =  $val['DESCUENTO'];
+                            break;
+                        }
+
+                        $dataFormated['S_precio'] = [
+                            'id' => '',
+                            'data' =>   $precio,
+                            'readonly' => false,
+                        ];
+                        $dataFormated['S_descuento'] = [
+                            'id' => '',
+                            'data' =>  $descuento,
+                            'readonly' => false,
+                        ];
+
+                        $dataFormated['S_p.coste'] = [
+                            'id' => '',
+                            'data' =>  Utils::roundTo($value, 2),
+                            'readonly' => true,
+                        ];
+                        $dataFormated['S_margen'] = [
+                            'id' => '',
+                            'data' =>  Utils::percentageBtwNumbers($value, $d['PRECIOVENTA']),
+                            'readonly' => false,
+                        ];
+                        $dataFormated['S_P.V.A'] = [
+                            'id' => '',
+                            'data' =>  Utils::roundTo($d['PRECIOVENTA'], 2),
+                            'readonly' => true,
+                        ];
 
                         break;
                     case 'PRECIOVENTA':
-                        $dataFormated['S_P.V.A'] = Utils::roundTo($value, 2);
+
                         break;
                     case 'TEMPORADA':
 
                         $dataFormated['A_temporada'] = [
                             'id' => $value,
                             'data' =>  $temporada,
+                            'readonly' => false,
+
                         ];
 
                         break;
@@ -306,6 +439,7 @@ class Combinaciones
                         $dataFormated['A_coleccion'] = [
                             'id' => $value,
                             'data' =>  $coleccion,
+                            'readonly' => false,
                         ];;
 
                         break;
@@ -313,40 +447,63 @@ class Combinaciones
 
                         $dataFormated["A_hombre/mujer"] = [
                             'id' => $value,
-                            'data' =>  $webGrupoCategoria
+                            'data' =>  $webGrupoCategoria,
+                            'readonly' => false,
                         ];
 
                         $dataFormated['T_cat.web'] = [
                             'id' => $d["CODCATEGORIADEFECTO"],
 
                             'data' => TreeBuilder::build(self::getWebCategoria(((int)$value)), 'CODIGO', 'CODPADRE', 'NOMBRE'),
+                            'readonly' => false,
+                        ];
+                        $dataFormated['T_familia'] = [
+                            'id' => $d['CODFAMILIA'],
+                            'data' =>  $familia,
+                            'readonly' => false,
                         ];
 
                         break;
                     case "CODFAMILIA":
 
 
-                        $dataFormated['T_familia'] = [
-                            'id' => $value,
-                            'data' =>  $familia,
-                        ];;
                         break;
 
                     case 'VENTA':
-                        $dataFormated['C_venta'] = $value;
+
 
                         break;
                     case 'COMPRA':
-                        $dataFormated['C_compra'] = $value;
+
 
                         break;
 
                     case 'CODBARRAS':
-                        $dataFormated['C_codbar'] = $value;
+                        $dataFormated['C_venta'] = [
+                            'id' => '',
+                            'data' =>  $pVenta,
+                            'readonly' => false
+                        ];
+                        $dataFormated['C_compra'] = [
+                            'id' => '',
+                            'data' =>  $pCompra,
+                            'readonly' => false
+                        ];
+                        $dataFormated['D_deshab'] = [
+                            'id' => '',
+                            'data' =>  $comb,
+                            'readonly' => false
+                        ];
+                        $dataFormated['C_codbar'] = [
+                            'id' => '',
+                            'data' =>  $codBarra,
+                            'readonly' => false
+                        ];
 
                         break;
                     case 'DESHABILITADO':
-                        $dataFormated['S_deshab'] = $value;
+
+
 
                         break;
                     case 'CODCATEGORIADEFECTO':
@@ -356,7 +513,12 @@ class Combinaciones
 
 
                     default:
-                        $dataFormated['S_' . strtolower($key)] = $value;
+
+                        $dataFormated['S_' . strtolower($key)] = [
+                            'id' => $value,
+                            'data' =>  $value,
+                            'readonly' => false
+                        ];
                         break;
                 }
             }
