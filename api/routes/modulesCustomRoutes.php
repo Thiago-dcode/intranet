@@ -33,6 +33,7 @@ function customModulesRoutes($moduleName){
                 break;
             case 'combinaciones':
                 Route::get('{company:name}/modules/combinaciones/categoriaweb',[ App\Http\Controllers\Intranet\Modules\CombinacionesController::class,'categoriaWeb']);
+                Route::patch('{company:name}/modules/combinaciones',[ App\Http\Controllers\Intranet\Modules\CombinacionesController::class,'update']);
                 break;
         default:
             # code...

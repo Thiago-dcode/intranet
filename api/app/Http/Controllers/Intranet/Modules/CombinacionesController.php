@@ -45,4 +45,21 @@ class CombinacionesController extends Controller{
 		return $this->success($result,'Success');
 	}
 
+	public function update($companyName,Request $request){
+
+		if(!Validate::module($request->user(),"combinaciones",$companyName)){
+
+			return response("You are not authorized to access to Combinaciones module",401);
+		}
+
+		foreach ($request->toArray() as $key => $articulo) {
+			
+
+			 Combinaciones::update($companyName,$articulo);
+			
+		}
+		
+		return $this->success($request->toArray(),'');
+
+	}
 }
