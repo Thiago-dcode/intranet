@@ -47,9 +47,9 @@ export default function RenderTd({ company, _key, value, i }) {
         const margen = document.getElementById(`${i}-marg`);
         const pventa = document.getElementById(`${i}-P.V.A`);
 
-        pcoste.value = roundTo(parseFloat(!precio.value ? 0 : precio.value) / 100 * (100 - parseFloat(!descuento.value ? 0 : descuento.value)), 2);
+        pcoste.value = roundTo(parseFloat(!precio.value ? 0 : precio.value) / 100 * (100 - parseFloat(!descuento.value ? 0 : descuento.value)), 8);
 
-        pventa.value = roundTo(parseFloat(pcoste.value) + pcoste.value * (parseFloat(!margen.value ? 0 : margen.value) / 100), 2);
+        pventa.value = roundTo(parseFloat(pcoste.value) + pcoste.value * (parseFloat(!margen.value ? 0 : margen.value) / 100), 8);
 
 
 
@@ -81,9 +81,11 @@ export default function RenderTd({ company, _key, value, i }) {
     }, [fetchCategoriaWeb, error])
     useEffect(() => {
 
-        if (_key !== 'T_cat.web') return;
-
-        setCategoriaWeb(printTree(value.data));
+        if (_key === 'T_cat.web') { setCategoriaWeb(printTree(value.data)) };
+        if (_key === 'D_deshab') {
+           
+            setDeshabilitado(value.deshab.map(d => d.VALORCARACT))
+        }
 
     }, [_key]);
 
@@ -138,9 +140,9 @@ export default function RenderTd({ company, _key, value, i }) {
 
 
             case 'S':
-
+                    
                 return (
-                    <td className=" w-6 px-1 border border-slate-300  text-center ">
+                    <td className=" max-w-[4rem]  border border-slate-300  text-center ">
 
 
                         <input id={`${i}-${key}`} onChange={(e) => {
@@ -149,7 +151,7 @@ export default function RenderTd({ company, _key, value, i }) {
                                 handlePrice(i)
                             }
 
-                        }} style={value.readonly ? readonlyStyle : {}} title={value.data} readOnly={value.readonly} name={`${i}_${key}`} className="w-full text-[0.7rem]" type="text" value={value.data} />
+                        }} style={value.readonly ? readonlyStyle : {}} value={value.readonly? value.data: null} title={value.data} readOnly={value.readonly} name={`${i}_${key}`} className="w-full text-[0.7rem]" type="text" defaultValue={!value.readonly? value.data: null} />
 
 
                     </td>
@@ -167,10 +169,10 @@ export default function RenderTd({ company, _key, value, i }) {
                             handleChange(i, key, e.target.value)
 
 
-                        }} className='max-w-[5rem] text-xs' defaultValue={value.id} id="">
+                        }} className='max-w-[4rem] text-xs ' value={value.readonly ? value.id : null} defaultValue={value.id} id="">
 
                             {
-                                Array.isArray(value.data) && value.data.map((obj,_i) => {
+                                Array.isArray(value.data) && value.data.map((obj, _i) => {
 
                                     return <option key={`${i}-${key}-${_i}`} className='w-full pr-2' title={obj.NOMBRE ? capitalize(obj.NOMBRE) : obj.NOMBRE} value={obj.CODIGO}>{obj.NOMBRE ? capitalize(obj.NOMBRE) : obj.NOMBRE}</option>
 
@@ -197,7 +199,7 @@ export default function RenderTd({ company, _key, value, i }) {
                 return (
 
                     <td className="px-1 border-slate-300  text-center ">
-                        {Array.isArray(tree) && <select id={`${i}-${key}`} name={`${i}_${key}`}  className='max-w-[5rem] text-xs' defaultValue={value.id} >
+                        {Array.isArray(tree) && <select id={`${i}-${key}`} name={`${i}_${key}`} className='max-w-[4rem] text-xs' defaultValue={value.id} >
 
                             {
                                 tree.map(branch => {
@@ -227,9 +229,9 @@ export default function RenderTd({ company, _key, value, i }) {
                             <option value="" disabled hidden>Select</option>
 
                             {
-                                value.data.filter(data => !desahabilitado.includes(data)).map(data => {
+                                value.data.filter(data => !desahabilitado.includes(data)).map((data, _i) => {
 
-                                    return <option key={`deshabilitar-${data}`} className='w-full' value={data}>{data}</option>
+                                    return <option key={`deshabilitar-${data}-${_i}`} className='w-full' value={data}>{data}</option>
                                 })
 
 
@@ -266,9 +268,9 @@ export default function RenderTd({ company, _key, value, i }) {
                         <div className='w-full h-full hover:h-14 items-center overflow-auto flex-col justify-center'>
                             {value.data.map((data, _i) => {
                                 if (key === 'codbar') {
-                                    return <input key={`${i}-${key}-${data.VALORCARACT}`}   title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" value={data.CODBARRAS} />
+                                    return <input key={`${i}-${key}-${data.VALORCARACT}`} title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2 mr-2' type="text" readOnly value={data.CODBARRAS} />
                                 }
-                                return <input title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2' type="text" placeholder={data.VALORCARACT} value={ data.PRECIO} />
+                                return <input title={data.VALORCARACT} name={`${i}_${key}_${data.VALORCARACT}`} className='w-10 max-h-2' type="text" placeholder={data.VALORCARACT} defaultValue={data.PRECIO} />
                             })}
                         </div>
 

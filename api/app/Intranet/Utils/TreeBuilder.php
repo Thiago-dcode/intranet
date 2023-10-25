@@ -17,7 +17,7 @@ class TreeBuilder {
         return [
             'name' => $sticks . $item[$name],
             'id' => $item[$id],
-            'order' => $item['ORDEN'],
+            'order' => isset($item['ORDEN'])?? $item['ORDEN'],
             'children' => []
         ];
     }
@@ -54,7 +54,7 @@ class TreeBuilder {
 
             if (!$item[$parentId] || $item[$parentId] === $valueOfParentId) {
 
-                array_push($tree, self::setBranch($item, $name, $id));
+                array_push($tree, self::setBranch($item, $name, $id,-1));
                 continue;
             }
 

@@ -24,7 +24,7 @@ export default function useAjax(
 
 
   const setConfig = (__url = '', form = null, method = 'GET') => {
-
+   
     if (__url) _setUrl(__url);
     if (form) setForm(form);
     if (method) setMethod(method);
@@ -49,7 +49,7 @@ export default function useAjax(
       const { data } = await Api({
         method: _method === 'PATCH' ? 'POST' : _method,
         url: _url,
-        data: _method === 'PATCH' ? { ...form, _method: "patch" } : form,
+        data: _method === 'PATCH' ? { form, _method: "patch" } : form,
         headers: { ...headers },
         params: { signal, ...config },
       });

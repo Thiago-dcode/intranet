@@ -8,9 +8,12 @@ import useAjax from '../../../hooks/useAjax';
 import Button from '../../components/button/Button';
 import IsPending from '../../../components/pending/IsPending';
 import RenderTd from '../../components/modules/combinaciones/RenderTd';
+import Success from '../../components/popup/Success';
 export default function Combinaciones() {
 
   const company = useCompany();
+  const [success, setSuccess] = useState([]);
+
   const [combinaciones, setCombinaciones] = useState([]);
   const [codArticulo, setCodArticulo] = useState('');
   const [proveedor, setProveedor] = useState('');
@@ -24,6 +27,7 @@ export default function Combinaciones() {
   const handleSearch = (e) => {
     e.preventDefault()
 
+    setSuccess([]);
     const newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}`
 
     setUrl(newUrl);
@@ -97,9 +101,11 @@ export default function Combinaciones() {
 
 
   useEffect(() => {
+
     if (!url) return
-    setCombinaciones([])
-    setConfig('/api/' + url)
+   
+
+    setConfig('/api/' + url, [], 'GET')
 
   }, [url])
   useEffect(() => {
@@ -111,18 +117,12 @@ export default function Combinaciones() {
 
   }, [data, error])
 
-  useEffect(() => {
 
-    if (!combinaciones) return
-    console.log(combinaciones)
-
-  }, [combinaciones])
   useEffect(() => {
 
     if (Object.keys(updateForm).length) {
-      console.log(updateForm)
 
-      setConfigUpdate(`/api/${company.name}/modules/combinaciones`,updateForm, 'PATCH')
+      setConfigUpdate(`/api/${company.name}/modules/combinaciones`, updateForm, 'PATCH')
     }
 
   }, [updateForm])
@@ -130,7 +130,12 @@ export default function Combinaciones() {
   useEffect(() => {
 
     if (update && !errorUpdate) {
-      console.log(update)
+      setCombinaciones([])
+      setSuccess(update.data);
+      if (url) {
+        setUrl('');
+      }
+     
       return
     }
     console.log(errorUpdate)
@@ -157,7 +162,7 @@ flex-col gap-3 p-4"
     />
 
 
-    {Array.isArray(combinaciones) && combinaciones.length > 0 && !isPending ? <form onSubmit={(e) => {
+    {Array.isArray(combinaciones) && combinaciones.length > 0 && !isPending && success.length < 1 ? <form onSubmit={(e) => {
       handleSubmitUpdate(e)
 
 
@@ -199,9 +204,11 @@ flex-col gap-3 p-4"
           </tbody>
         </table>
       </div>
-      {!error && !isPending ? <Button type="submit" content="Actualizar" /> : <div className=' flex  flex-row  items-start justify-start'><IsPending size="25" color={company.color} /></div>}
-    </form> : null}
+      {!error && !isPending && !isPendingUpdate ? <Button type="submit" content="Actualizar" /> : <div className=' flex  flex-row  items-start justify-start'><IsPending size="25" color={company.color} /></div>}
 
+
+    </form> : null}
+    {success.length > 0 && <Success messages={success.map(articulo => `Artículo: ${articulo.COD}, actualizado con éxito!`)} />}
 
   </div>;
 }

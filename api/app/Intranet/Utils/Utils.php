@@ -33,7 +33,7 @@ class Utils
             return $num;
         }
     
-        return floatval(number_format($num, $place, '.', ''));
+        return round($num, $place);
     }
    public static  function percentageBtwNumbers($number1, $number2, $round = 2) {
         try {
