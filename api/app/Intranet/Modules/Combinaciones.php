@@ -15,7 +15,7 @@ class Combinaciones
 
 
 
-    public static function get($company, $codArticulo, $proveedor)
+    public static function get($company, $codArticulo, $proveedor, $limit = 10)
     {
 
         static::$firebird = PymeConnection::start(Constants::get($company));
@@ -47,7 +47,7 @@ class Combinaciones
             //     );
             // }
 
-            $sql = "SELECT first 10 skip $offset codarticulo as codigo FROM compra WHERE codproveedor = $proveedor";
+            $sql = "SELECT  codarticulo as codigo FROM compra WHERE codproveedor = $proveedor";
             $stmt = $firebird->prepare($sql);
 
             $stmt->execute();
@@ -58,7 +58,7 @@ class Combinaciones
 
             $codArticulo = strtoupper($codArticulo);
 
-            $sql = "SELECT first 10 skip $offset codigo FROM articulo WHERE codigo LIKE '%$codArticulo%'";
+            $sql = "SELECT  codigo FROM articulo WHERE codigo LIKE '%$codArticulo%'";
             $stmt = $firebird->prepare($sql);
             // to uppercase
             $stmt->execute();
@@ -80,7 +80,7 @@ class Combinaciones
         }
 
 
-
+        $to = $limit - 9;
         $sql = "select articulo.codigo, articulo.nombre, articulo.preciocoste, articulo.precioventa, articulo.codmarca, articulo.codfamilia, articulo.proveeddefecto, articulo.metakeywords,
         carvalortemporada.valor as temporada, carvalorcoleccion.valor as coleccion, webgrupocategoriaarticulo.codgrupocategoria, webgrupocategoriaarticulo.codcategoriadefecto
         from articulo
@@ -89,12 +89,14 @@ class Combinaciones
         left join caract as caractcoleccion on caractcoleccion.codclase=2 and caractcoleccion.nombre='Colección'
         left join carvalor as carvalorcoleccion on carvalorcoleccion.codcaract = caractcoleccion.codcaract and carvalorcoleccion.codobjeto= articulo.codigo
         left join webgrupocategoriaarticulo on webgrupocategoriaarticulo.codarticulo= articulo.codigo
-        where articulo.codigo IN ($in)";
+        where articulo.codigo IN ($in)
+        ROWS $to to $limit";
 
         $stmt = $firebird->prepare($sql);
         $stmt->execute($in_params);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $data = $result;
+
 
         foreach ($data as $key => $articulo) {
             $sql = 'select carvalid.dimension, carvalid.orden, carvalid.valor, caract.nombre
@@ -269,30 +271,33 @@ class Combinaciones
             return $comb;
         }
 
-        function getCompraVenta($arr, $codBarra, $priceKeyName = 'PRECIOCOSTE')
+        function getCompraVenta($arr, $codBarra, $priceKeyName = 'PRECIOCOSTE', $articulo = [])
         {
 
+            try {
 
-            return array_map(function ($cod) use ($arr, $priceKeyName) {
+                return array_map(function ($cod) use ($arr, $priceKeyName) {
 
 
-                foreach ($arr as $key => $value) {
+                    foreach ($arr as $key => $value) {
 
-                    if ($value["VALORCARACT"] !== $cod["VALORCARACT"]) continue;
+                        if ($value["VALORCARACT"] !== $cod["VALORCARACT"]) continue;
+                        return [
+
+                            "VALORCARACT" => $value["VALORCARACT"],
+                            'hasPrice' => true,
+                            'PRECIO' => Utils::roundTo((float)$value[$priceKeyName], 2)
+
+                        ];
+                    }
                     return [
-
-                        "VALORCARACT" => $value["VALORCARACT"],
-                        'hasPrice' => true,
-                        'PRECIO' => Utils::roundTo($value[$priceKeyName], 2)
-
+                        "VALORCARACT" => $cod["VALORCARACT"],
+                        'hasPrice' => false,
+                        'PRECIO' => null
                     ];
-                }
-                return [
-                    "VALORCARACT" => $cod["VALORCARACT"],
-                    'hasPrice' => false,
-                    'PRECIO' => null
-                ];
-            }, $codBarra);
+                }, $codBarra);
+            } catch (\Throwable $th) {
+            }
         }
 
 
@@ -307,6 +312,7 @@ class Combinaciones
 
         foreach ($data as  $d) {
 
+            if (isset($d['COPA']) && $d['COPA'])  continue;
 
             $comb = getComb($d['COLOR'], $d['TALLA']);
             $codBarra = array_map(function ($cod) use ($comb) {
@@ -330,7 +336,8 @@ class Combinaciones
 
             $precio = self::getPrecio($d['CODIGO'], $d['PROVEEDDEFECTO']);
 
-            $pCompra = getCompraVenta($d['COMPRA'], $codBarra);
+            $pCompra = getCompraVenta($d['COMPRA'], $codBarra, 'PRECIOCOSTE', $d);
+
 
             $pVenta = getCompraVenta($d['VENTA'], $codBarra, 'PRECIO');
 
@@ -555,7 +562,11 @@ class Combinaciones
             array_push($dataOfdataFormated, $dataFormated);
         }
 
-        return $dataOfdataFormated;
+        return [
+            'count' => count($data),
+            'data' => $dataOfdataFormated,
+
+        ];
     }
 
     private static function getHombreMujer($articulo)

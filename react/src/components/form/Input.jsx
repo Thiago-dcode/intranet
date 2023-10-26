@@ -24,7 +24,7 @@ export default function Input({
   return (
     <>
       <label
-        className={"font-semibold text-xs self-start"}
+        className={"font-semibold text-sm self-start"}
         htmlFor={name.toLocaleLowerCase()}
       >
         {name}
@@ -45,7 +45,7 @@ export default function Input({
             handleInput(target.value);
           }}
           className={
-            "flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2"
+            "flex items-center  text-sm h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2"
           }
           value={value}
           style={style}

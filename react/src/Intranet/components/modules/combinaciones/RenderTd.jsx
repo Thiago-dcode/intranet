@@ -83,7 +83,7 @@ export default function RenderTd({ company, _key, value, i }) {
 
         if (_key === 'T_cat.web') { setCategoriaWeb(printTree(value.data)) };
         if (_key === 'D_deshab') {
-           
+
             setDeshabilitado(value.deshab.map(d => d.VALORCARACT))
         }
 
@@ -140,9 +140,9 @@ export default function RenderTd({ company, _key, value, i }) {
 
 
             case 'S':
-                    
+
                 return (
-                    <td className=" max-w-[4rem]  border border-slate-300  text-center ">
+                    <td className="hover:max-w-[6rem] max-w-[4rem]  border border-slate-300  text-center ">
 
 
                         <input id={`${i}-${key}`} onChange={(e) => {
@@ -151,8 +151,12 @@ export default function RenderTd({ company, _key, value, i }) {
                                 handlePrice(i)
                             }
 
-                        }} style={value.readonly ? readonlyStyle : {}} value={value.readonly? value.data: null} title={value.data} readOnly={value.readonly} name={`${i}_${key}`} className="w-full text-[0.7rem]" type="text" defaultValue={!value.readonly? value.data: null} />
+                        }} style={value.readonly ? readonlyStyle : {}} value={value.readonly ? value.data : null} title={value.data} readOnly={value.readonly} name={`${i}_${key}`} className="w-full text-[0.7rem] " type={key === 'color' || key === 'talla' ? 'hidden' : 'text'} defaultValue={!value.readonly ? value.data : null} />
+                        {(key === 'color' || key === 'talla') && <div className='flex flex-col max-h-5 overflow-auto  items-center hover:max-h-14 justify-between'>
+                            {value.data.split(',').map((word,_i )=> <p key={`${word}-${_i}`}>{word}</p>)}
+                        </div>
 
+                        }
 
                     </td>
                 );

@@ -13,10 +13,12 @@ export default function Combinaciones() {
 
   const company = useCompany();
   const [success, setSuccess] = useState([]);
-
+  const [count, setCount] = useState(10);
+  const [isSearch, setIsSearch] = useState(true);
   const [combinaciones, setCombinaciones] = useState([]);
   const [codArticulo, setCodArticulo] = useState('');
   const [proveedor, setProveedor] = useState('');
+  const [limit, setLimit] = useState(10);
   const [url, setUrl] = useState('')
   const [updateForm, setUpdateForm] = useState({});
 
@@ -26,11 +28,25 @@ export default function Combinaciones() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-
+    const btn = e.nativeEvent.submitter.name;
     setSuccess([]);
-    const newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}`
+    let newUrl = '';
+   
 
+    if (btn === 'search') {
+      setIsSearch(true);
+      setCombinaciones([]);
+      newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}&limit=${10}`
+      console.log(newUrl);
+    }
+    else {
+      setIsSearch(false);
+
+      newUrl = `${company.name}/modules/combinaciones?codarticulo=${codArticulo}&proveedor=${proveedor}&limit=${limit}`
+
+    }
     setUrl(newUrl);
+
 
 
   }
@@ -82,6 +98,7 @@ export default function Combinaciones() {
       form.push(obj);
 
     }
+
     setUpdateForm(form);
 
   }
@@ -103,7 +120,7 @@ export default function Combinaciones() {
   useEffect(() => {
 
     if (!url) return
-   
+
 
     setConfig('/api/' + url, [], 'GET')
 
@@ -112,7 +129,13 @@ export default function Combinaciones() {
 
     if (data && !error) {
       console.log(data);
-      setCombinaciones(data.data);
+
+      if (isSearch) {
+        setCount(data.data.count);
+        setCombinaciones(data.data.data);
+        return;
+      }
+      setCombinaciones(prev => [...prev, ...data.data.data])
     }
 
   }, [data, error])
@@ -136,12 +159,15 @@ export default function Combinaciones() {
       if (url) {
         setUrl('');
       }
-     
+
       return
     }
     console.log(errorUpdate)
 
   }, [update, errorUpdate])
+  useEffect(() => {
+    console.log(combinaciones)
+  }, [combinaciones])
 
   return <div id="combinaciones-module"
     className="table-pyme h-screen relative flex w-full  items-center 
@@ -161,13 +187,23 @@ flex-col gap-3 p-4"
 
 
     />
+    {Array.isArray(data?.data?.data) && count === 10 && <form onSubmit={(e) => {
+      handleSearch(e)
+    }} className=" self-end mr-2">
 
+      {!isPending ? <Button name="more" handleBtn={() => {
+        setLimit(limit + 10)
+      }} content="Más" type="submit" >
+        <Icon icon={'ArrowDown'} />
+      </Button> : <IsPending size="25" color={company.color} />}
+    </form>}
 
-    {Array.isArray(combinaciones) && combinaciones.length > 0 && !isPending && success.length < 1 ? <form onSubmit={(e) => {
+    {Array.isArray(combinaciones) && combinaciones.length > 0 && (!isPending || !isSearch) && success.length < 1 ? <form onSubmit={(e) => {
       handleSubmitUpdate(e)
 
 
     }} className=" flex flex-col  h-3/4 items-center gap-3  z-10 w-full " >
+
       <div className="w-full  px-2  relative  overflow-auto gap-4 pb-6">
         <table className="font-sans w-full text-sm rounded-lg border-collapse border border-slate-400">
           <thead className=" py-2 sticky top-0 bg-bera-textil text-xs capitalize m-auto text-white">

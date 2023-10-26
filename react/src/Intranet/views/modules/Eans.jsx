@@ -127,12 +127,12 @@ export default function Eans() {
     if (data && !error) {
 
       if (isSearchBtn) {
-        
-       
+
+
         setEans(data)
         return;
       }
-      
+
       setEans(prev => [...prev, ...data])
 
 
@@ -149,7 +149,7 @@ export default function Eans() {
       return
     }
     setIsSearchBtn(true)
-   setConfigTotalEans(`/api/${company.name}/modules/eans/total`)
+    setConfigTotalEans(`/api/${company.name}/modules/eans/total`)
     setUrl(`${company.name}/modules/eans?limit=${50}&codarticulo=${codarticulo}&proveedor=${proveedor}`)
 
   }, [company])
@@ -198,7 +198,7 @@ export default function Eans() {
             handleSearch={handleSearch}
             setCodArticulo={setCodArticulo}
             setProveedor={setProveedor}
-          
+
 
 
           />
@@ -238,7 +238,7 @@ export default function Eans() {
                     <tbody>
 
                       {eans.map((ean, _i) => {
-                      
+
                         return (
                           <tr key={'tr-eans-' + _i} id={'tr-' + _i} className="even:bg- odd:bg-white">
                             <td className=" border border-slate-300  text-xs  text-center">{_i + 1}</td>

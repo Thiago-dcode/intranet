@@ -20,9 +20,10 @@ class CombinacionesController extends Controller{
 		}
 		$cod_articulo = isset($request['codarticulo']) ? $request['codarticulo'] : '';
 		$proveedor = isset($request['proveedor']) ? $request['proveedor'] : '';
+		$limit = isset($request['limit']) ? $request['limit'] : 10;
 		
 		
-		$result= Combinaciones::get($companyName,$cod_articulo,$proveedor);
+		$result= Combinaciones::get($companyName,$cod_articulo,$proveedor,$limit);
 
 
 		return $this->success($result,'Success');
