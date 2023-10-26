@@ -111,7 +111,7 @@ export default function Combinaciones() {
   useEffect(() => {
 
     if (data && !error) {
-
+      console.log(data);
       setCombinaciones(data.data);
     }
 
@@ -131,6 +131,7 @@ export default function Combinaciones() {
 
     if (update && !errorUpdate) {
       setCombinaciones([])
+      console.log(update);
       setSuccess(update.data);
       if (url) {
         setUrl('');

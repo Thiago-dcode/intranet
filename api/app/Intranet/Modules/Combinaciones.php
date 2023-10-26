@@ -222,12 +222,12 @@ class Combinaciones
 
 
         try {
-            $sql = "select preciotarifa from compra where codarticulo = :codarticulo and codproveedor = :codproveedor";
+            $sql = "select preciotarifa from compra where codarticulo = '$codart' and codproveedor = $proveed";
+
             $stmt = static::$firebird->prepare($sql);
-            $stmt->execute([
-                'codarticulo' => $codart,
-                'codproveedor' => $proveed
-            ]);
+
+            $stmt->execute();
+
             return $stmt->fetch(PDO::FETCH_ASSOC)['PRECIOTARIFA'];
         } catch (PDOException $e) {
             // Handle the exception, e.g., log the error or display an error message
@@ -327,8 +327,8 @@ class Combinaciones
                 $descuento =  $val['DESCUENTO'];
                 break;
             }
-            $precio = self::getPrecio($d['CODIGO'], $d['PROVEEDDEFECTO']);
 
+            $precio = self::getPrecio($d['CODIGO'], $d['PROVEEDDEFECTO']);
 
             $pCompra = getCompraVenta($d['COMPRA'], $codBarra);
 
@@ -336,12 +336,15 @@ class Combinaciones
 
             $dataFormated = [];
 
+
             foreach ($d as $key => $value) {
+
 
                 switch ($key) {
 
 
                     case 'CODIGO':
+
                         $dataFormated['S_COD'] = [
                             'id' => '',
                             'data' =>  $value,
@@ -364,6 +367,7 @@ class Combinaciones
 
                         break;
                     case 'NOMBRE':
+
                         $dataFormated['S_nom'] = [
                             'id' => '',
                             'data' =>  $value,
@@ -421,6 +425,7 @@ class Combinaciones
                             'data' =>   Utils::roundTo($precio, 10),
                             'readonly' => false,
                         ];
+
                         $dataFormated['S_des'] = [
                             'id' => '',
                             'data' =>  $descuento,
@@ -557,38 +562,36 @@ class Combinaciones
     {
         $hombreMujer = $articulo["hombre/mujer"];
 
-        $sql = 'select codigo, nombre from webgrupocategoria where codigo = :codigo';
+        $sql = "select codigo, nombre from webgrupocategoria where codigo = $hombreMujer";
         $stmt =  static::$firebird->prepare($sql);
-        $stmt->execute(['codigo' => $hombreMujer]);
+
+        $stmt->execute();
+
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result[0]['NOMBRE'];
     }
     private static function getCategoriaWeb($articulo)
     {
-        
-        if(!$articulo["hombre/mujer"] ||!$articulo["cat.web"] ) return '';
-        $sql = 'select codgrupocategoria, codigo, codpadre, nombre, orden from webcategoria
-        where codgrupocategoria = :codgrupocategoria
-        and codigo = :codigo';
+        $codgrupo = $articulo["hombre/mujer"];
+        $codigo = $articulo["cat.web"];
+
+        if (!$codgrupo || !$codigo) return '';
+        $sql = "select codgrupocategoria, codigo, codpadre, nombre, orden from webcategoria
+        where codgrupocategoria = $codgrupo
+        and codigo = $codigo";
         $stmt =  static::$firebird->prepare($sql);
-        $stmt->execute([
-            'codgrupocategoria' => $articulo["hombre/mujer"],
-            'codigo' => $articulo["cat.web"]
-        ]);
+        $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $categoriaWeb = $result[0]['NOMBRE'];
 
         while ($result[0]['CODPADRE'] != 0) {
             $sql = 'select codgrupocategoria, codigo, codpadre, nombre, orden from webcategoria
-            where codgrupocategoria = :codgrupocategoria
-            and codigo = :codigo';
+            where codgrupocategoria = ' . $articulo["hombre/mujer"] . '
+            and codigo = ' . $result[0]['CODPADRE'];
             $stmt =  static::$firebird->prepare($sql);
-            $stmt->execute([
-                'codgrupocategoria' => $articulo["hombre/mujer"],
-                'codigo' => $result[0]['CODPADRE']
-            ]);
+            $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $categoriaWeb = $result[0]['NOMBRE'] . '/' . $categoriaWeb;
         }
@@ -599,16 +602,17 @@ class Combinaciones
 
         $sql = "select * from carvalid
         left join caract on caract.codcaract = carvalid.codcaract and caract.dimension = carvalid.dimension
-        where codobjeto = :codigo
+        where codobjeto = '" . $articulo['COD'] . "'
         and caract.nombre like 'COLOR%'";
+
         $stmt = static::$firebird->prepare($sql);
-        $stmt->execute([
-            'codigo' => $articulo['COD'],
-        ]);
+        $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $codcaract = '';
         if (sizeof($result) > 0) {
-            return $result[0]['CODCARACT'];
+            $codcaract =  $result[0]['CODCARACT'];
         }
+        return $codcaract;
     }
 
 
@@ -620,21 +624,11 @@ class Combinaciones
 
         $categoriaWeb = self::getCategoriaWeb($articulo);
 
-        $sql = 'update articulo set
-        codmarca = :codmarca,
-        descripcion = :descripcion,
-        preciocoste = :preciocoste,
-        precioventa = :precioventa,
-        codfamilia = :codfamilia,
-        metakeywords = :metakeywords
-        where codigo = :codigo';
-        $stmt = static::$firebird->prepare($sql);
-
         $vars = [
             'codmarca' => (int) $articulo['marca'],
             'descripcion' => (string) utf8_decode($articulo['nom'] .
                 '<br><br>' .
-                $articulo['metakey'] .
+                $articulo['metakey'] ? $articulo['metakey'] : '' .
                 ',' .
                 $hombreMujer .
                 ',' .
@@ -646,13 +640,24 @@ class Combinaciones
             'codigo' => $articulo['COD']
         ];
 
-        return $stmt->execute($vars);
+
+        $sql = "update articulo set
+        codmarca = " . $vars["codmarca"] . ",
+        descripcion = '" . $vars["descripcion"] . "',
+        preciocoste ='" . $vars["preciocoste"] . "',
+        precioventa =" . $vars["precioventa"] . ",
+        codfamilia =" . $vars["codfamilia"] . ",
+        metakeywords ='" . $vars["metakeywords"] . "'
+        where codigo ='" . $vars["codigo"] . "'";
+
+        $stmt = static::$firebird->prepare($sql);
+
+
+
+        return $stmt->execute();
     }
     private static function updateCompra($articulo)
     {
-        $sql = 'update compra set preciocoste =:preciocoste, preciotarifa = :preciotarifa, descuento = :descuento
-        where codarticulo = :codarticulo and codproveedor = :codproveedor';
-        $stmt = static::$firebird->prepare($sql);
         $vars = [
             'codarticulo' => (string) $articulo['COD'],
             'codproveedor' => (int) $articulo['proveed'],
@@ -661,36 +666,46 @@ class Combinaciones
             'descuento' => (float) $articulo['des'],
         ];
 
-        return $stmt->execute($vars);
+
+        $sql = 'update compra 
+        set preciocoste = ' . (float) $vars['preciocoste'] . ', 
+            preciotarifa = ' . (float) $vars['preciotarifa'] . ', 
+            descuento = ' . (float) $vars['descuento'] . ' 
+        WHERE codarticulo = \'' . $vars['codarticulo'] . '\' 
+        AND codproveedor = ' . (int) $vars['codproveedor'];
+        $stmt = static::$firebird->prepare($sql);
+
+
+        return $stmt->execute();
         // $combinacionesLogger->debug('Compra actualizada', $vars);
     }
 
     private static function updateCategoriaWeb($articulo)
     {
-        // return $articulo;
-        $sql = 'update webcategoriaarticulo set codgrupocategoria = :codgrupocategoria, codcategoria = :codcategoria
-        where codarticulo = :codarticulo';
-        $stmt = static::$firebird->prepare($sql);
+        return $articulo;
         $vars = [
             'codarticulo' => $articulo['COD'],
-            'codgrupocategoria' => (int)$articulo["hombre/mujer"],
+            'codgrupocategoria' => (int) $articulo["hombre/mujer"],
             'codcategoria' => (int) $articulo["cat.web"]
         ];
-        return $stmt->execute($vars);
+
+        $sql = 'UPDATE webcategoriaarticulo 
+                SET codgrupocategoria = ' . (int)$vars['codgrupocategoria'] . ', 
+                    codcategoria = ' . (int)$vars['codcategoria'] . ' 
+                WHERE codarticulo = \'' . $vars['codarticulo'] . '\'';
+
+        $stmt = static::$firebird->prepare($sql);
+
+        return $stmt->execute();
         // $combinacionesLogger->debug('Categoriasweb actualizada', $vars);
     }
 
     private static function getCodCaractCarValor($nombre)
     {
-
-
         $codcaract = '';
-
-        $sql = 'select codcaract from caract where codclase=2 and nombre=:nombre';
+        $sql = "select codcaract from caract where codclase=2 and nombre='$nombre'";
         $stmt = static::$firebird->prepare($sql);
-        $stmt->execute([
-            'nombre' => $nombre
-        ]);
+        $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (sizeof($result) > 0) {
             $codcaract = $result[0]['CODCARACT'];
@@ -708,21 +723,13 @@ class Combinaciones
         $result = false;
 
         //temporada
-        $sql = 'update carvalor set valor = :valor
-                    where codobjeto = :codobjeto and codclase = :codclase and codcaract = :codcaract';
-        $stmt =  static::$firebird->prepare($sql);
+
         $vars = [
             'codclase' => 2,
             'codobjeto' => $articulo['COD'],
             'codcaract' => $codcaractTemporada,
             'valor' => $articulo['temporada'],
         ];
-        $vars;
-        $result = $stmt->execute($vars);
-
-
-        //coleccion
-        $stmt2 = static::$firebird->prepare($sql);
         $vars2 = [
             'codclase' => 2,
             'codobjeto' => $articulo['COD'],
@@ -730,7 +737,23 @@ class Combinaciones
             'valor' => $articulo['coleccion'],
         ];
 
-        $result =  $stmt2->execute($vars2);
+        $sql = 'UPDATE carvalor 
+                SET valor = \'' . $vars['valor'] . '\'
+                WHERE codobjeto = \'' . $vars['codobjeto'] . '\' 
+                AND codclase = ' . $vars['codclase'] . '
+                AND codcaract = ' . $vars['codcaract'];
+
+        $stmt =  static::$firebird->prepare($sql);
+
+
+        $result = $stmt->execute();
+
+
+        //coleccion
+        $stmt2 = static::$firebird->prepare($sql);
+
+
+        $result =  $stmt2->execute();
         // $combinacionesLogger->debug('Carvalor Temporada actualizada', $vars);
 
         return $result;
@@ -743,17 +766,21 @@ class Combinaciones
 
 
         foreach ($articulo['venta'] as $key => $precioVenta) {
-
-
-            $sql = 'update venta set precio = :precio where codarticulo = :codarticulo and codcaract = :codcaract and valorcaract = :valorcaract';
-            $stmt = static::$firebird->prepare($sql);
             $vars = [
                 'codarticulo' => $articulo['COD'],
                 'codcaract' => $codcaract,
                 'valorcaract' => $precioVenta['VALORCARACT'],
                 'precio' => (float) $precioVenta['value'],
             ];
-            return $stmt->execute($vars);
+
+            $sql = 'UPDATE venta 
+                    SET precio = ' . (float) $vars['precio'] . '
+                    WHERE codarticulo = \'' . $vars['codarticulo'] . '\' 
+                    AND codcaract = \'' . $vars['codcaract'] . '\' 
+                    AND valorcaract = \'' . $vars['valorcaract'] . '\'';
+            $stmt = static::$firebird->prepare($sql);
+
+            return $stmt->execute();
             // $combinacionesLogger->debug('venta actualizada', $vars);
 
         }
@@ -765,16 +792,21 @@ class Combinaciones
 
 
         foreach ($articulo['compra'] as $key => $precioCompra) {
-
-            $sql = 'update compra set preciocoste = :preciocoste where codarticulo = :codarticulo and codcaract = :codcaract and valorcaract = :valorcaract';
-            $stmt = static::$firebird->prepare($sql);
             $vars = [
                 'codarticulo' => $articulo['COD'],
                 'codcaract' => $codcaract,
                 'valorcaract' => $precioCompra['VALORCARACT'],
                 'preciocoste' => (float) $precioCompra['value'],
             ];
-            return $stmt->execute($vars);
+
+            $sql = 'UPDATE compra 
+                    SET preciocoste = ' . (float) $vars['preciocoste'] . '
+                    WHERE codarticulo = \'' . $vars['codarticulo'] . '\' 
+                    AND codcaract = \'' . $vars['codcaract'] . '\' 
+                    AND valorcaract = \'' . $vars['valorcaract'] . '\'';
+            $stmt = static::$firebird->prepare($sql);
+
+            return $stmt->execute();
             // $combinacionesLogger->debug('compra actualizada', $vars);
 
 
@@ -785,17 +817,22 @@ class Combinaciones
 
 
         foreach ($articulo['codbar'] as $key => $codigoBarras) {
-
-
-            $sql = 'update codbarra set codbarras = :codbarras where codarticulo = :codarticulo and codcaract = :codcaract and valorcaract = :valorcaract';
-            $stmt = static::$firebird->prepare($sql);
             $vars = [
                 'codarticulo' => $articulo['COD'],
                 'codcaract' => $codcaract,
                 'valorcaract' => $codigoBarras['VALORCARACT'],
-                'codbarras' => (float) $codigoBarras['value'],
+                'codbarras' => (int) $codigoBarras['value'],
             ];
-            return $stmt->execute($vars);
+
+
+            $sql = 'UPDATE codbarra 
+                    SET codbarras = ' . (int) $vars['codbarras'] . '
+                    WHERE codarticulo = \'' . $vars['codarticulo'] . '\' 
+                    AND codcaract = \'' . $vars['codcaract'] . '\' 
+                    AND valorcaract = \'' . $vars['valorcaract'] . '\'';
+            $stmt = static::$firebird->prepare($sql);
+
+            return $stmt->execute();
             // $combinacionesLogger->debug('codigo de barras actualizado', $vars);
 
 
@@ -806,12 +843,14 @@ class Combinaciones
     {
 
         $success = false;
-        $sql = 'select valorcaract, excluirweb from carvaliddeshabilitado where codobjeto = :codarticulo and codcaract = :codcaract';
+        $codarticulo = $articulo['COD'];
+
+        $sql = 'SELECT valorcaract, excluirweb FROM carvaliddeshabilitado 
+        WHERE codobjeto = \'' . $codarticulo . '\' 
+        AND codcaract = \'' . $codcaract . '\'';
+
         $stmt = static::$firebird->prepare($sql);
-        $stmt->execute([
-            'codarticulo' => $articulo['COD'],
-            'codcaract' => $codcaract,
-        ]);
+        $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $excluirwebs = [];
@@ -821,8 +860,7 @@ class Combinaciones
 
         foreach ($articulo['deshab'] as $key => $inhabilitar) {
             if (isset($excluirwebs[$inhabilitar['value']])) {
-                $sql = 'update carvaliddeshabilitado set excluirweb = :excluirweb where codobjeto = :codarticulo and codcaract = :codcaract and valorcaract = :valorcaract';
-                $stmt = static::$firebird->prepare($sql);
+
                 $vars = [
                     'codarticulo' => $articulo['COD'],
                     'codcaract' => $codcaract,
@@ -830,15 +868,18 @@ class Combinaciones
                     'excluirweb' => 'T',
                 ];
 
-                $success = $stmt->execute($vars);
+                $sql = 'UPDATE carvaliddeshabilitado 
+                        SET excluirweb = \'' . $vars['excluirweb'] . '\' 
+                        WHERE codobjeto = \'' . $vars['codarticulo'] . '\' 
+                        AND codcaract = \'' . $vars['codcaract'] . '\' 
+                        AND valorcaract = \'' . $vars['valorcaract'] . '\'';
+                $stmt = static::$firebird->prepare($sql);
+
+
+                $success = $stmt->execute();
                 // $combinacionesLogger->debug('carvaliddeshabilitado actualizada', $vars);
                 unset($excluirwebs[$inhabilitar['value']]);
             } else {
-                $sql = 'insert into carvaliddeshabilitado
-                    (codclase, codobjeto, codcaract, valorcaract, deshabilitado, excluirweb)
-                    values
-                    (:codclase, :codobjeto, :codcaract, :valorcaract, :deshabilitado, :excluirweb)';
-                $stmt = static::$firebird->prepare($sql);
                 $vars = [
                     'codclase' => 0,
                     'codobjeto' => $articulo['COD'],
@@ -847,19 +888,36 @@ class Combinaciones
                     'deshabilitado' => 'F',
                     'excluirweb' => 'T',
                 ];
-                $success = $stmt->execute($vars);
+
+                $sql = 'INSERT INTO carvaliddeshabilitado 
+                        (codclase, codobjeto, codcaract, valorcaract, deshabilitado, excluirweb)
+                        VALUES
+                        (' . (int)$vars['codclase'] . ', 
+                        \'' . $vars['codobjeto'] . '\', 
+                        \'' . $vars['codcaract'] . '\', 
+                        \'' . $vars['valorcaract'] . '\', 
+                        \'' . $vars['deshabilitado'] . '\', 
+                        \'' . $vars['excluirweb'] . '\')';
+                $stmt = static::$firebird->prepare($sql);
+
+                $success = $stmt->execute();
                 // $combinacionesLogger->debug('carvaliddeshabilitado insertada', $vars);
             }
         }
         foreach ($excluirwebs as $key => $excluirweb) {
-            $sql = 'delete from carvaliddeshabilitado where codobjeto = :codarticulo and codcaract = :codcaract and valorcaract = :valorcaract';
-            $stmt = static::$firebird->prepare($sql);
             $vars = [
                 'codarticulo' => $articulo['COD'],
                 'codcaract' => $codcaract,
                 'valorcaract' => $key,
             ];
-            $success = $stmt->execute($vars);
+
+            $sql = 'DELETE FROM carvaliddeshabilitado 
+                    WHERE codobjeto = \'' . $vars['codarticulo'] . '\' 
+                    AND codcaract = \'' . $vars['codcaract'] . '\' 
+                    AND valorcaract = \'' . $vars['valorcaract'] . '\'';
+            $stmt = static::$firebird->prepare($sql);
+
+            $success = $stmt->execute();
             // $combinacionesLogger->debug('carvaliddeshabilitado eliminada', $vars);
         }
         return $success;
@@ -877,11 +935,12 @@ class Combinaciones
         $result = false;
 
         $result = self::updateArticulos($articulo);
+
         $result =  self::updateCompra($articulo);
 
         $result =  self::updateCarValor($articulo, $codcaract);
-        return $articulo;
-        if (isset($articulo['hombre/mujer']) && isset($articulo['cat.web']) && $articulo['hombre/mujer'] && $articulo['cat.web']) {
+
+        if ($articulo['hombre/mujer'] && $articulo['cat.web']) {
 
             $result = self::updateCategoriaWeb($articulo);
         };
@@ -894,7 +953,7 @@ class Combinaciones
 
             $result = self::updatePrecioCompra($articulo, $codcaract);
         };
-        if (isset($articulo['codbar'])) {
+        if (isset($articulo['codbar']) && $codcaract) {
 
             $result =  self::updateCodBar($articulo, $codcaract);
         };
@@ -907,115 +966,115 @@ class Combinaciones
     }
 
 
-    private static function insertArticulos($articulo)
-    {
-        $sql = 'insert into articulo
-        (codigo, codmarca, nombre, codfamilia, baja, descripcion, preciocoste, precioventa, tipoactualizacion, tipoiva, tipoivareducido, tipoivacompra, tipoivacomprareducido, controlstock, unidaddecimales, preciodecimales, costedecimales, stockfactor, etiquetasegununidadmedida, proveeddefecto, ubicacion, descripcioncorta, formatodesccorta, formatodescripcion, metakeywords, aplicarinvsujetopasivo, tipobc3, unidadcontrolcarubicstock, excluirweb)
-            values
-            (:codigo, :codmarca, :nombre, :codfamilia, :baja, :descripcion, :preciocoste, :precioventa, :tipoactualizacion, :tipoiva, :tipoivareducido, :tipoivacompra, :tipoivacomprareducido, :controlstock, :unidaddecimales, :preciodecimales, :costedecimales, :stockfactor, :etiquetasegununidadmedida, :proveeddefecto, :ubicacion, :descripcioncorta, :formatodesccorta, :formatodescripcion, :metakeywords, :aplicarinvsujetopasivo, :tipobc3, :unidadcontrolcarubicstock, :excluirweb)';
-        $stmt = static::$firebird->prepare($sql);
-        $vars = [
-            'codigo' => (string) $articulo['COD'],
-            'codmarca' => (int) $articulo['marca'],
-            'nombre' => (string) $articulo['nombre'],
-            'descripcion' => (string) utf8_decode($articulo['nombre'] .
-                '<br><br>' .
-                $articulo['metakeywords'] .
-                ',' .
-                $hombreMujer .
-                ',' .
-                $categoriaWeb),
-            'preciocoste' => (float) $articulo['preciocoste'],
-            'precioventa' => (float) $articulo['pva'],
-            'codfamilia' => (float) $articulo['familia'],
-            'baja' => 'F',
-            'tipoactualizacion' => 0,
-            'tipoiva' => 0,
-            'tipoivareducido' => 1,
-            'tipoivacompra' => 0,
-            'tipoivacomprareducido' => 1,
-            'controlstock' => 1,
-            'unidaddecimales' => 0,
-            'preciodecimales' => 2,
-            'costedecimales' => 2,
-            'stockfactor' => 1,
-            'etiquetasegununidadmedida' => 0,
-            'proveeddefecto' => (int) $articulo['proveedor'],
-            'ubicacion' => 0,
-            'descripcioncorta' => $articulo['nombre'],
-            'formatodesccorta' => 0,
-            'formatodescripcion' => 2,
-            'metakeywords' => $articulo['metakeywords'],
-            'aplicarinvsujetopasivo' => 0,
-            'tipobc3' => 20,
-            'unidadcontrolcarubicstock' => 0,
-            'excluirweb' => 'T',
-        ];
-        $stmt->execute($vars);
-        $vars['descripcion'] = $articulo['nombre'] .
-            '<br><br>' .
-            $articulo['metakeywords'] .
-            ',' .
-            $hombreMujer .
-            ',' .
-            $categoriaWeb;
-        $combinacionesLogger->debug('Articulo insertado', $vars);
-    }
-    private static function insertCompra($articulo)
-    {
-    }
-    private static function insertCategoriaweb($articulo)
-    {
-    }
-    private static function insertCarValor($articulo)
-    {
-    }
-    private static function insertPrecioVenta($articulo)
-    {
-    }
-    private static function insertPrecioCompra($articulo)
-    {
-    }
-    private static function insertCodBar($articulo)
-    {
-    }
-    private static function insertInhabilitar($articulo)
-    {
-    }
+    // private static function insertArticulos($articulo)
+    // {
+    //     $sql = 'insert into articulo
+    //     (codigo, codmarca, nombre, codfamilia, baja, descripcion, preciocoste, precioventa, tipoactualizacion, tipoiva, tipoivareducido, tipoivacompra, tipoivacomprareducido, controlstock, unidaddecimales, preciodecimales, costedecimales, stockfactor, etiquetasegununidadmedida, proveeddefecto, ubicacion, descripcioncorta, formatodesccorta, formatodescripcion, metakeywords, aplicarinvsujetopasivo, tipobc3, unidadcontrolcarubicstock, excluirweb)
+    //         values
+    //         (:codigo, :codmarca, :nombre, :codfamilia, :baja, :descripcion, :preciocoste, :precioventa, :tipoactualizacion, :tipoiva, :tipoivareducido, :tipoivacompra, :tipoivacomprareducido, :controlstock, :unidaddecimales, :preciodecimales, :costedecimales, :stockfactor, :etiquetasegununidadmedida, :proveeddefecto, :ubicacion, :descripcioncorta, :formatodesccorta, :formatodescripcion, :metakeywords, :aplicarinvsujetopasivo, :tipobc3, :unidadcontrolcarubicstock, :excluirweb)';
+    //     $stmt = static::$firebird->prepare($sql);
+    //     $vars = [
+    //         'codigo' => (string) $articulo['COD'],
+    //         'codmarca' => (int) $articulo['marca'],
+    //         'nombre' => (string) $articulo['nombre'],
+    //         'descripcion' => (string) utf8_decode($articulo['nombre'] .
+    //             '<br><br>' .
+    //             $articulo['metakeywords'] .
+    //             ',' .
+    //             $hombreMujer .
+    //             ',' .
+    //             $categoriaWeb),
+    //         'preciocoste' => (float) $articulo['preciocoste'],
+    //         'precioventa' => (float) $articulo['pva'],
+    //         'codfamilia' => (float) $articulo['familia'],
+    //         'baja' => 'F',
+    //         'tipoactualizacion' => 0,
+    //         'tipoiva' => 0,
+    //         'tipoivareducido' => 1,
+    //         'tipoivacompra' => 0,
+    //         'tipoivacomprareducido' => 1,
+    //         'controlstock' => 1,
+    //         'unidaddecimales' => 0,
+    //         'preciodecimales' => 2,
+    //         'costedecimales' => 2,
+    //         'stockfactor' => 1,
+    //         'etiquetasegununidadmedida' => 0,
+    //         'proveeddefecto' => (int) $articulo['proveedor'],
+    //         'ubicacion' => 0,
+    //         'descripcioncorta' => $articulo['nombre'],
+    //         'formatodesccorta' => 0,
+    //         'formatodescripcion' => 2,
+    //         'metakeywords' => $articulo['metakeywords'],
+    //         'aplicarinvsujetopasivo' => 0,
+    //         'tipobc3' => 20,
+    //         'unidadcontrolcarubicstock' => 0,
+    //         'excluirweb' => 'T',
+    //     ];
+    //     $stmt->execute($vars);
+    //     $vars['descripcion'] = $articulo['nombre'] .
+    //         '<br><br>' .
+    //         $articulo['metakeywords'] .
+    //         ',' .
+    //         $hombreMujer .
+    //         ',' .
+    //         $categoriaWeb;
+    //     $combinacionesLogger->debug('Articulo insertado', $vars);
+    // }
+    // private static function insertCompra($articulo)
+    // {
+    // }
+    // private static function insertCategoriaweb($articulo)
+    // {
+    // }
+    // private static function insertCarValor($articulo)
+    // {
+    // }
+    // private static function insertPrecioVenta($articulo)
+    // {
+    // }
+    // private static function insertPrecioCompra($articulo)
+    // {
+    // }
+    // private static function insertCodBar($articulo)
+    // {
+    // }
+    // private static function insertInhabilitar($articulo)
+    // {
+    // }
 
 
 
-    public static function insert($company, $articulo)
-    {
-        if (!static::$firebird) {
+    // public static function insert($company, $articulo)
+    // {
+    //     if (!static::$firebird) {
 
-            static::$firebird = PymeConnection::start(Constants::get($company));
-        }
+    //         static::$firebird = PymeConnection::start(Constants::get($company));
+    //     }
 
-        $codcaract =   self::getCodCaract($articulo);
+    //     $codcaract =   self::getCodCaract($articulo);
 
-        $result = false;
+    //     $result = false;
 
-        self::insertArticulos($articulo);
-        self::insertCompra($articulo);
-        self::insertCategoriaWeb($articulo);
-        self::insertCarValor($articulo);
+    //     self::insertArticulos($articulo);
+    //     self::insertCompra($articulo);
+    //     self::insertCategoriaWeb($articulo);
+    //     self::insertCarValor($articulo);
 
-        if (isset($articulo['venta'])) {
+    //     if (isset($articulo['venta'])) {
 
-            self::insertPrecioVenta($articulo, $codcaract);
-        };
-        if (isset($articulo['compra'])) {
+    //         self::insertPrecioVenta($articulo, $codcaract);
+    //     };
+    //     if (isset($articulo['compra'])) {
 
-            self::insertPrecioCompra($articulo, $codcaract);
-        };
-        if (isset($articulo['codbar'])) {
+    //         self::insertPrecioCompra($articulo, $codcaract);
+    //     };
+    //     if (isset($articulo['codbar'])) {
 
-            self::insertCodBar($articulo, $codcaract);
-        };
-        if (isset($articulo['deshab'])) {
+    //         self::insertCodBar($articulo, $codcaract);
+    //     };
+    //     if (isset($articulo['deshab'])) {
 
-            self::insertInhabilitar($articulo, $codcaract);
-        };
-    }
+    //         self::insertInhabilitar($articulo, $codcaract);
+    //     };
+    // }
 }
