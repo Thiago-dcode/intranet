@@ -610,20 +610,24 @@ class Combinaciones
     }
     private static function getCodCaract($articulo)
     {
+        try {
 
-        $sql = "select * from carvalid
+            $sql = "select * from carvalid
         left join caract on caract.codcaract = carvalid.codcaract and caract.dimension = carvalid.dimension
         where codobjeto = '" . $articulo['COD'] . "'
         and caract.nombre like 'COLOR%'";
 
-        $stmt = static::$firebird->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $codcaract = '';
-        if (sizeof($result) > 0) {
-            $codcaract =  $result[0]['CODCARACT'];
+            $stmt = static::$firebird->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $codcaract = '';
+            if (sizeof($result) > 0) {
+                $codcaract =  $result[0]['CODCARACT'];
+            }
+            return $codcaract;
+        } catch (\Throwable $th) {
+           return $articulo;
         }
-        return $codcaract;
     }
 
 
@@ -942,7 +946,7 @@ class Combinaciones
         }
 
         $codcaract =   self::getCodCaract($articulo);
-
+        return $codcaract;
         $result = false;
 
         $result = self::updateArticulos($articulo);

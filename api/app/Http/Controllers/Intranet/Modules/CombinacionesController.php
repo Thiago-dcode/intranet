@@ -53,14 +53,16 @@ class CombinacionesController extends Controller{
 			return response("You are not authorized to access to Combinaciones module",401);
 		}
 		$result = false;
-		foreach ($request->toArray()['form'] as $key => $articulo) {
+		
+		
+		foreach ($request->toArray() as $key => $articulo) {
 			
 
 			 $result = Combinaciones::update($companyName,$articulo);
 			
 		}
 		if($result)
-		{ return $this->success($request->toArray()['form'],'');}
+		{ return $this->success($request->toArray(),'');}
 
 		return $this->error([],'',420);
 

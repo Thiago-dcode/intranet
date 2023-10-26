@@ -145,7 +145,7 @@ export default function Combinaciones() {
 
     if (Object.keys(updateForm).length) {
 
-      setConfigUpdate(`/api/${company.name}/modules/combinaciones`, updateForm, 'PATCH')
+      setConfigUpdate(`/api/${company.name}/modules/combinaciones/update`, updateForm, 'POST')
     }
 
   }, [updateForm])
@@ -187,7 +187,7 @@ flex-col gap-3 p-4"
 
 
     />
-    {Array.isArray(data?.data?.data) && count === 10 && <form onSubmit={(e) => {
+    {Array.isArray(data?.data?.data) && count === 10 && success.length < 1 && <form onSubmit={(e) => {
       handleSearch(e)
     }} className=" self-end mr-2">
 
