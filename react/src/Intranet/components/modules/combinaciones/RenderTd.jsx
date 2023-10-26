@@ -166,7 +166,7 @@ export default function RenderTd({ company, _key, value, i }) {
 
                 return (
 
-                    <td className="px-1 max-w-md border-slate-300  text-center ">
+                    <td className="px-1 max-w-md border  border-slate-300  text-center ">
                         <select name={`${i}_${key}`} onChange={(e) => {
 
                             setAllowed(true)
@@ -202,7 +202,7 @@ export default function RenderTd({ company, _key, value, i }) {
 
                 return (
 
-                    <td className="px-1 border-slate-300  text-center ">
+                    <td className="px-1 border border-slate-300  text-center ">
                         {Array.isArray(tree) && <select id={`${i}-${key}`} name={`${i}_${key}`} className='max-w-[4rem] text-xs' defaultValue={value.id} >
 
                             {
@@ -222,14 +222,14 @@ export default function RenderTd({ company, _key, value, i }) {
 
 
                 return (
-                    <td className="    overflow-auto   flex flex-col w-full px-1 border border-slate-300  text-center justify-between relative ">
+                    <td className=" min-w-[7rem]   overflow-auto   flex flex-col w-full px-1 border border-slate-300  text-center justify-between relative ">
 
 
                         {Array.isArray(value.data) && <select onChange={(e) => {
 
                             setDeshabilitado(prev => [e.target.value, ...prev])
 
-                        }} defaultValue={' '} className='right-[0.02rem]    hover::invisible overflow-auto  h-5 w-full flex flex-col items-center justify-start' >
+                        }} defaultValue={' '} className='right-[0.02rem] overflow-auto  z-10 h-5 w-full flex flex-col items-center ' >
                             <option value="" disabled hidden>Select</option>
 
                             {

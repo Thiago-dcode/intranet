@@ -206,7 +206,7 @@ flex-col gap-3 p-4"
 
       <div className="w-full  px-2  relative  overflow-auto gap-4 pb-6">
         <table className="font-sans w-full text-sm rounded-lg border-collapse border border-slate-400">
-          <thead className=" py-2 sticky top-0 bg-bera-textil text-xs capitalize m-auto text-white">
+          <thead className="z-[100] py-2 sticky top-0 bg-bera-textil text-xs capitalize m-auto text-white">
             <tr>
               <th></th>
 
